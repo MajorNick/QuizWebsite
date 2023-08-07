@@ -3,6 +3,6 @@
         <title>Home</title>
     </head>
     <body>
-        <div>Login</div>
+        <div>User</div>
     </body>
 </html>
