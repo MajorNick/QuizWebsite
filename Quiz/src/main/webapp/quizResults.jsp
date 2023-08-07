@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Home</title>
+        <title>Quiz rez</title>
     </head>
     <body>
         <div>A</div>
