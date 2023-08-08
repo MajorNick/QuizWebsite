@@ -12,25 +12,29 @@
         }
         .best_performances{
             display: inline-block;
-            border: 1px solid black;
+            border: 1px solid #087cfc;
+            border-radius: 10px;
             padding: 10px;
             margin: 5px;
         }
         .highest_scores{
             display: inline-block;
-            border: 1px solid black;
+            border: 1px solid #087cfc;
+            border-radius: 10px;
             padding: 10px;
             margin: 5px;
         }
         .today_highest_scores{
             display: inline-block;
-            border: 1px solid black;
+            border: 1px solid #087cfc;
+            border-radius: 10px;
             padding: 10px;
             margin: 5px;
         }
         .last_quiz_takesr{
             display: inline-block;
-            border: 1px solid black;
+            border: 1px solid #087cfc;
+            border-radius: 10px;
             padding: 10px;
             margin: 5px;
         }
