@@ -28,28 +28,30 @@
             font-weight: bold;
         }
 
-        .block-container {
+        .user-container {
             display: flex;
             /* align-items: center; */
-            justify-content: center;
-            margin-top: 10px;
+            /* border: 1px solid #ccc; */
             padding: 20px;
+            /* margin: 10px; */
+        }
+        .history-ach{
+            display: flex;
+            padding: 20px;
+        }
+        
+        .history-ach-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-right: 20px;
+            margin: 3px;
             border: 2px solid #007bff;
             border-radius: 12px;
         }
-
-        .block-contents {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .block-title {
-            font-size: 40px;
-        }
-
-        .block-items {
-            font-size: 20px;
+        .history-ach-side-h2 {
+            padding: 10px;
+            align-items: center;
         }
 
         .left-side {
@@ -95,7 +97,9 @@
             <input  class="navbarItem" rows="1" cols="30" placeholder="Look up user"/>
             </div>
         </div>
-        <div class="block-container">
+        <!-- <div>History</div>
+        <div>Achievements</div> -->
+        <div class="user-container">
             <div class="left-side">
                 <img class="profile-image" src="https://via.placeholder.com/200x200" alt="Profile Image">
                 <div class="username">John Doe</div>
@@ -106,31 +110,30 @@
                 <button class="action-button">Note</button>
             </div>
         </div>
-        <div class="block-container">
-            <div class="block-contents">
-                <div class="block-title">History</div>
-                <div class="block-items">
+        <div class="history-ach">
+            <div class="history-ach-side">
+                <h2 class="history-ach-side-h2">History</h2>
+                <h4>
                     <ol>
                         <li>List here</li>
                         <li>List here</li>
                         <li>List here</li>
                         <li>List here</li>
                     </ol>
-                </div>
+                </h3>
             </div>
-        </div>
-        <div class="block-container">
-            <div class="block-contents">
-                <div class="block-title">Achievements</div>
-                <div class="block-items">
+            <div class="history-ach-side">
+                <h2 class="history-ach-side-h2">Achievements</h2>
+                <h4>
                     <ol>
                         <li>List here</li>
                         <li>List here</li>
                         <li>List here</li>
                         <li>List here</li>
                     </ol>
-                </div class="block-items">
+                </h3>
             </div>
         </div>
+        
     </body>
 </html>
