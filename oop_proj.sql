@@ -42,6 +42,7 @@ CREATE TABLE questions (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     question_num INT,
     quiz_id INT,
+    question_type INT,
     question VARCHAR(2000),
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
 );
@@ -81,8 +82,17 @@ CREATE TABLE announcements (
 
 CREATE TABLE achievements (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    achievement VARCHAR(2000)
+    achievement VARCHAR(2000),
+    to_earn VARCHAR(2000)
 );
+
+INSERT INTO achievements (achievement, to_earn) 
+VALUES ('Amateur Author', 'Create your first quiz'), 
+	   ('Prolific Author', 'Create 5 quizzes'), 
+       ('Prodigious Author', 'Create 10 quizzes'), 
+       ('Quiz Machine', 'Take 10 quizzes'), 
+       ('I am the Greatest', 'Get the highest score on a quiz'), 
+       ('Practice Makes Perfect', 'Take your first practice quiz');
 
 CREATE TABLE user_achievements (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -92,20 +102,31 @@ CREATE TABLE user_achievements (
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
 
+-- TEST DATA:
+
 INSERT INTO users (username, password_hash)
 VALUES ('John Deer', '1234'),
 	   ('Serena Anderson', '5678'),
        ('Xavier Patel', '4321');
-       
+
 INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body) 
 VALUES (1, 2, 'note', 'Hello'),
 	   (2, 1, 'note', 'Hi'),
 	   (1, 2, 'note', 'Test1'),
-	   (1, 3, 'note', 'Test2');
+	   (1, 3, 'note', 'Test2'),
+       (3, 2, 'note', 'qwer'),
+	   (3, 1, 'note', 'tyui');
        
-SELECT * FROM notifications;
-
-
-
-
+INSERT INTO user_achievements(user_id, achievement_id)
+VALUES (1,1),
+       (1,2),
+       (1,3),
+       (1,4),
+       (1,5),
+       (1,6),
+       (2,4),
+       (2,5),
+       (2,6),
+       (3,1),
+       (3,2);
 
