@@ -93,9 +93,9 @@ public class DBConn{
         String q = "SELECT * FROM notifications";
 
         if(receiver_id == -1){
-            q = String.format("SELECT * FROM notifications n WHERE n.sender_id = '%s'", sender_id);
+            q = String.format("SELECT * FROM notifications n WHERE n.sender_id = %d", sender_id);
         } else if (sender_id == -1){
-            q = String.format("SELECT * FROM notifications n WHERE n.receiver_id = '%s'", receiver_id);
+            q = String.format("SELECT * FROM notifications n WHERE n.receiver_id = %d", receiver_id);
         }
 
         ArrayList<Notification> selection = new ArrayList<>();
@@ -149,7 +149,7 @@ public class DBConn{
             executeQuery(q);
 
             while (rs.next()) {
-                Achievement achievement = new Achievement(rs.getInt("id"), rs.getString("achievement"));
+                Achievement achievement = new Achievement(rs.getInt("id"), rs.getString("achievement"), rs.getString("to_earn"));
                 selection.add(achievement);
             }
 
@@ -160,18 +160,17 @@ public class DBConn{
         return selection;
     }
 
-    public ArrayList<UserAchievement> getUserAchievements(int user_id) {
-        String q = "SELECT * FROM achievements";
-        if(user_id != -1){
-            q = String.format("SELECT * FROM achievements a where a.user_id = %d", user_id);
-        }
+    public ArrayList<Achievement> getUserAchievements(int user_id) {
+        String q = String.format("SELECT a.id, a.achievement, a.to_earn \n" +
+                                 "FROM user_achievements u JOIN achievements a ON(u.achievement_id = a.id) \n" +
+                                 "WHERE u.user_id = %d;", user_id);
 
-        ArrayList<UserAchievement> selection = new ArrayList<>();
+        ArrayList<Achievement> selection = new ArrayList<>();
         try{
             executeQuery(q);
 
             while (rs.next()) {
-                UserAchievement userAchievement = new UserAchievement(rs.getInt("id"), rs.getInt("user_id"), rs.getInt("achievement_id"));
+                Achievement userAchievement = new Achievement(rs.getInt("id"), rs.getString("achievement"), rs.getString("to_earn"));
                 selection.add(userAchievement);
             }
 
