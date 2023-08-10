@@ -90,8 +90,17 @@
             cursor: pointer;
             border-radius: 5px;
         }
+
+        textarea.note_text{
+            margin-top: 10px;
+            margin-bottom: -10px;
+            resize: none;
+        }
+
     </style>
     <body>
+        <% int userId = 1;%>
+        <% int targetId = 2;%>
         <div class="navbar">
             <button class="navbarItem">Home</button>
             <div>
@@ -102,11 +111,28 @@
             <div class="left-side">
                 <img class="profile-image" src="https://via.placeholder.com/200x200" alt="Profile Image">
                 <div class="username">John Doe</div>
+                <div class="user-id">User Id: 1</div>
             </div>
             <div class="right-side">
-                <button class="action-button">Add friend</button>
-                <button class="action-button">Challenge</button>
-                <button class="action-button">Note</button>
+                <form action="./AddFriend" method="post">
+                    <button class="action-button">Add friend</button>
+                    <input type="hidden" name="userId" value="<%= userId %>">
+                    <input type="hidden" name="targetId" value="<%= targetId %>">
+                </form>
+                <form action="./Challenge" method="post">
+                    <textarea name="note_text" class="note_text" placeholder="Challenge user to Quiz Name / URL" rows="1" cols="50"></textarea>
+                    <br>
+                    <button class="action-button">Challenge</button>
+                    <input type="hidden" name="userId" value="<%= userId %>">
+                    <input type="hidden" name="targetId" value="<%= targetId %>">
+                </form>
+                <form action="./Note" method="post">
+                    <textarea name="note_text" class="note_text" placeholder="Send a note to user" rows="4" cols="50"></textarea>
+                    <br>
+                    <button class="action-button">Send Note</button>
+                    <input type="hidden" name="userId" value="<%= userId %>">
+                    <input type="hidden" name="targetId" value="<%= targetId %>">
+                </form>
             </div>
         </div>
         <div class="block-container">
