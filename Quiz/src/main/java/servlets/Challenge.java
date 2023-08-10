@@ -31,7 +31,7 @@ public class Challenge extends HttpServlet {
         DBConn dbConn = new DBConn();
 
         String challengeText = String.format("User %s has Challenged you to Quiz: %s", userId, note_text);
-        Notification notification = new Notification(-1, targetId, userId, "Challenge", challengeText);
+        Notification notification = new Notification(-1, targetId, userId, "challenge", challengeText);
 
         dbConn.insertNotification(notification);
 

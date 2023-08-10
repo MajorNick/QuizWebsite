@@ -91,7 +91,7 @@ CREATE TABLE user_achievements (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
-SELECT * FROM users;
+
 INSERT INTO users (username, password_hash)
 VALUES ('John Deer', '1234'),
 	   ('Serena Anderson', '5678'),
@@ -102,7 +102,8 @@ VALUES (1, 2, 'note', 'Hello'),
 	   (2, 1, 'note', 'Hi'),
 	   (1, 2, 'note', 'Test1'),
 	   (1, 3, 'note', 'Test2');
-
+       
+SELECT * FROM notifications;
 
 
 

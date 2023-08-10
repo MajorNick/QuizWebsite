@@ -20,11 +20,8 @@ public class Note extends HttpServlet {
         response.setContentType("text/html");
 
         String note_text = request.getParameter("note_text");
-        String UserId = request.getParameter("userId");
-        String TargetId = request.getParameter("targetId");
-
-        int targetId = Integer.parseInt(TargetId);
-        int userId = Integer.parseInt(UserId);
+        int targetId = Integer.parseInt(request.getParameter("userId"));
+        int userId = Integer.parseInt(request.getParameter("targetId"));
 
         System.out.println(note_text);
         System.out.println(userId);
@@ -32,7 +29,7 @@ public class Note extends HttpServlet {
 
         DBConn dbConn = new DBConn();
 
-        Notification notification = new Notification(-1, targetId, userId, "Message", note_text);
+        Notification notification = new Notification(-1, targetId, userId, "note", note_text);
 
         dbConn.insertNotification(notification);
 
