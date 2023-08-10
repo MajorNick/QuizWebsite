@@ -7,8 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class models {
-    private static final String account = "'quiz'";
-    private static final String password = "qazqaz123";
+    private static final String account = "oopUser";
+    private static final String password = "oopUserPasswrd";
     private static final String server = "localhost";
     private static final String database = "oop_proj";
     public class Quiz{
