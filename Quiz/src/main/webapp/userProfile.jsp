@@ -107,8 +107,10 @@
   }
 </style>
 <body>
+  <!-- get userId from context !!! -->
   <% int userId=1;%>
   <% String TargetId=request.getParameter("id"); %>
+  <% TargetId = TargetId == null ? ""+userId : TargetId; %>
   <% int targetId=Integer.parseInt(TargetId); %>
 
   <% String AddFriendText = request.getParameter("addfriendtext"); %>

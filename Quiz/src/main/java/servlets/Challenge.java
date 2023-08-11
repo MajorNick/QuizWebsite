@@ -36,7 +36,7 @@ public class Challenge extends HttpServlet {
         // check if challenger completed quiz
         // get challenger score
 
-        String quizLink = String.format("<a href=\"./quiz.jsp?id=%d\">Quiz</a>", quizId);
+        String quizLink = String.format("<a href=\"./quizSummary.jsp?id=%d\">Quiz</a>", quizId);
         String challengeText = String.format("User %d has Challenged you to %s", userId, quizLink);
         System.out.println(challengeText);
 
