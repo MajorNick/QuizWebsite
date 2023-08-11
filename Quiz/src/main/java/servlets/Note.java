@@ -21,8 +21,14 @@ public class Note extends HttpServlet {
         response.setContentType("text/html");
 
         String note_text = request.getParameter("note_text");
-        int targetId = Integer.parseInt(request.getParameter("userId"));
-        int userId = Integer.parseInt(request.getParameter("targetId"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        int targetId = Integer.parseInt(request.getParameter("targetId"));
+
+        if(note_text == "" || note_text == null){
+            String redirectUrl = String.format("./userProfile.jsp?id=%d&notephtext=%s", targetId, "Note Can not be empty");
+            response.sendRedirect(redirectUrl);
+            return;
+        }
 
         System.out.println(note_text);
         System.out.println(userId);
@@ -31,9 +37,12 @@ public class Note extends HttpServlet {
         DBConn dbConn = new DBConn();
 
         Notification notification = new Notification(-1, targetId, userId, "note", note_text);
-
         dbConn.insertNotification(notification);
 
         dbConn.closeDBConn();
+
+        String redirectUrl = String.format("./userProfile.jsp?id=%d&notephtext=Note sent", targetId);
+
+        response.sendRedirect(redirectUrl);
     }
 }

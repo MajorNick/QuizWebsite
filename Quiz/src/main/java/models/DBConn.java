@@ -89,13 +89,30 @@ public class DBConn{
         executeUpdate(q);
     }
 
-    public ArrayList<Notification> getNotifications(int receiver_id, int sender_id) {
-        String q = "SELECT * FROM notifications";
+    public ArrayList<Notification> getNotifications(int receiverId, int senderId, String notifType) {
+        String q = "SELECT * FROM notifications n";
 
-        if(receiver_id == -1){
-            q = String.format("SELECT * FROM notifications n WHERE n.sender_id = %d", sender_id);
-        } else if (sender_id == -1){
-            q = String.format("SELECT * FROM notifications n WHERE n.receiver_id = %d", receiver_id);
+        boolean needsAnd = false;
+
+        if(receiverId != -1 || senderId != -1 || notifType != ""){
+            q += " WHERE";
+        }
+        if(receiverId != -1){
+            q += String.format(" n.receiver_id = %d", receiverId);
+            needsAnd = true;
+        }
+        if(senderId != -1){
+            if(needsAnd){
+                q += " AND";
+            }
+            q += String.format(" n.sender_id = %d", senderId);
+            needsAnd = true;
+        }
+        if(notifType != ""){
+            if(needsAnd){
+                q += " AND";
+            }
+            q += String.format(" n.notif_type = '%s'", notifType);
         }
 
         ArrayList<Notification> selection = new ArrayList<>();

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/Challenge")
@@ -17,24 +18,37 @@ public class Challenge extends HttpServlet {
         System.out.println("Send Challenge Servlet");
         response.setContentType("text/html");
 
-        String note_text = request.getParameter("note_text");
+        String QuizId = request.getParameter("quizId");
         String UserId = request.getParameter("userId");
         String TargetId = request.getParameter("targetId");
 
         int targetId = Integer.parseInt(TargetId);
         int userId = Integer.parseInt(UserId);
 
-        System.out.println(note_text);
-        System.out.println(userId);
-        System.out.println(targetId);
+        if(QuizId == "" || QuizId == null){
+            String redirectUrl = String.format("./userProfile.jsp?id=%d&challengetext=%s", targetId, "Incorrect Quiz Id");
+            response.sendRedirect(redirectUrl);
+            return;
+        }
+
+        int quizId = Integer.parseInt(QuizId);
+
+        // check if challenger completed quiz
+        // get challenger score
+
+        String quizLink = String.format("<a href=\"./quiz.jsp?id=%d\">Quiz</a>", quizId);
+        String challengeText = String.format("User %d has Challenged you to %s", userId, quizLink);
+        System.out.println(challengeText);
 
         DBConn dbConn = new DBConn();
 
-        String challengeText = String.format("User %s has Challenged you to Quiz: %s", userId, note_text);
         Notification notification = new Notification(-1, targetId, userId, "challenge", challengeText);
 
         dbConn.insertNotification(notification);
 
         dbConn.closeDBConn();
+
+        String redirectUrl = String.format("./userProfile.jsp?id=%d&challengetext=%s", targetId, "Challenge Sent");
+        response.sendRedirect(redirectUrl);
     }
 }

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/AddFriend")
@@ -27,10 +28,33 @@ public class AddFriend extends HttpServlet {
 
         DBConn dbConn = new DBConn();
 
-        // Friend friend = new Friend(-1, userId, targetId);
+        ArrayList<Notification> notifications = dbConn.getNotifications(targetId, userId, "friend request");
 
-        // dbConn.insertNotification(friend);
+        if(notifications.size() > 0){
+            dbConn.closeDBConn();
+            String redirectUrl = String.format("./userProfile.jsp?id=%d&addfriendtext=%s", targetId, "Request Already Sent");
+            response.sendRedirect(redirectUrl);
+
+            return;
+        }
+
+//        ArrayList<User> users = dbConn.getUser("userId", "");
+//        User user = users.get(0);
+//        String userName = user.getUsername();
+        String userName = "Jonathan smith";
+        String confirmLink = "    <form action=\"./ConfirmFriendRequest\" method=\"post\">\n" +
+                "      <button class=\"action-button\">Confirm</button>\n" +
+                "      <input type=\"hidden\" name=\"userId\" value=\"" + userId + "\">\n" +
+                "      <input type=\"hidden\" name=\"targetId\" value=\"" + targetId + "\">\n" +
+                "    </form>";
+//        String confirmLink = "<a href=\"./home.jsp\">Confirm</a>";
+
+        Notification notification2 = new Notification(-1, targetId, userId, "friend request", String.format("%s has sent you a friend request! click here to confirm: %s", userName, confirmLink));
+        dbConn.insertNotification(notification2);
 
         dbConn.closeDBConn();
+
+        String redirectUrl = String.format("./userProfile.jsp?id=%d&addfriendtext=%s", targetId, "Request Sent");
+        response.sendRedirect(redirectUrl);
     }
 }

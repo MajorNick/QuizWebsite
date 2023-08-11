@@ -19,9 +19,10 @@
     padding: 5px;
   }
 
-  input.navbarItem {
+  input.navbarSubItem {
     border: 2px solid #ccc;
     resize: none;
+    padding: 5px;
   }
 
   button.navbarItem {
@@ -85,26 +86,40 @@
   }
 
   .action-button {
-    background-color: #007bff;
+    background-color: #2b91fe;
     color: white;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 10px;
+    /* border: none; */
+    border: 1px solid #000000;
+    border-radius: 12px;
+    padding: 5px 10px;
     cursor: pointer;
     border-radius: 5px;
   }
 
-  textarea.note_text {
+  .action-button:hover {
+      background-color: #9dff0a; /* Change to the color you want on hover */
+  }
+
+  .note_text {
     margin-top: 10px;
-    margin-bottom: -10px;
+    margin-bottom: 0px;
     resize: none;
   }
 </style>
-
 <body>
   <% int userId=1;%>
   <% String TargetId=request.getParameter("id"); %>
   <% int targetId=Integer.parseInt(TargetId); %>
+
+  <% String AddFriendText = request.getParameter("addfriendtext"); %>
+  <% AddFriendText = AddFriendText == null ? "Add friend" : AddFriendText; %>
+
+  <% String NotePHText = request.getParameter("notephtext"); %>
+  <% NotePHText = NotePHText == null ? "Send a note to user" : NotePHText; %>
+
+  <% String ChallengeText = request.getParameter("challengetext"); %>
+  <% ChallengeText = ChallengeText == null ? "Challenge user to Quiz" : ChallengeText; %>
+
   <% //DBConn dbConn=new DBConn(); //ArrayList<User> us = dbConn.getUsers(targetId);
     //User u = us.get(0);
     //String userName = u.getUsername();
@@ -112,7 +127,14 @@
     //dbConn.closeDBConn();
   %>
   <div class="navbar">
-    <button class="navbarItem">Home</button>
+    <a href="./home.jsp">
+      <button class="navbarItem">Home</button>
+    </a>
+    <form class="navbarItem" action="./SearchUser" method="post">
+      <input class="navbarSubItem" name="search_text" rows="1" cols="30" placeholder="Look up user"/>
+      <button class="action-button">Search User</button>
+    </form>
+
   </div>
   <div class="block-container">
     <div class="left-side">
@@ -125,20 +147,19 @@
     </div>
     <div class="right-side">
       <form action="./AddFriend" method="post">
-        <button class="action-button">Add friend</button>
+        <button class="action-button"><%= AddFriendText%></button>
         <input type="hidden" name="userId" value="<%= userId %>">
         <input type="hidden" name="targetId" value="<%= targetId %>">
       </form>
       <form action="./Challenge" method="post">
-        <textarea name="note_text" class="note_text" placeholder="Challenge user to Quiz Name / URL"
-          rows="1" cols="50"></textarea>
+        <input name="quizId" class="note_text" placeholder="<%= ChallengeText%>" type="number" step="1"></input>
         <br>
         <button class="action-button">Challenge</button>
         <input type="hidden" name="userId" value="<%= userId %>">
         <input type="hidden" name="targetId" value="<%= targetId %>">
       </form>
       <form action="./Note" method="post">
-        <textarea name="note_text" class="note_text" placeholder="Send a note to user" rows="4"
+        <textarea name="note_text" class="note_text" placeholder="<%= NotePHText %>" rows="4"
           cols="50"></textarea>
         <br>
         <button class="action-button">Send Note</button>
