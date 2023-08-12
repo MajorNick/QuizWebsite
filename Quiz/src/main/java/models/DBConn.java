@@ -58,30 +58,58 @@ public class DBConn{
     }
 
     public void insertNotification(Notification n){
-        if(n == null) {throw new RuntimeException("Provided Notification is null");}
+        if(n == null)
+            throw new RuntimeException("Provided Notification is null");
 
         String q = String.format("INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body)  VALUES(%d, %d, '%s', '%s')", n.getReceiverId(), n.getSenderId(), n.getNotifType(), n.getNotifBody());
         executeUpdate(q);
     }
 
     public void insertAnnouncement(Announcement a){
-        if(a == null) {throw new RuntimeException("Provided Announcement is null");}
+        if(a == null)
+            throw new RuntimeException("Provided Announcement is null");
 
         String q = String.format("INSERT INTO announcements (announcement)  VALUES('%s')", a.getAnnouncementBody());
         executeUpdate(q);
     }
 
     public void insertAchievement(Achievement a){
-        if(a == null) {throw new RuntimeException("Provided Achievement is null");}
+        if(a == null)
+            throw new RuntimeException("Provided Achievement is null");
 
         String q = String.format("INSERT INTO achievements (achievement, to_earn)  VALUES('%s', '%s')", a.getAchievementBody(), a.getAchievementToEarn());
         executeUpdate(q);
     }
 
     public void insertUserAchievement(UserAchievement u){
-        if(u == null) {throw new RuntimeException("Provided UserAchievement is null");}
+        if(u == null)
+            throw new RuntimeException("Provided UserAchievement is null");
 
         String q = String.format("INSERT INTO user_achievements (user_id, achievement_id)  VALUES(%d, %d)", u.getUserId(), u.getAchievementId());
+        executeUpdate(q);
+    }
+
+    public void insertUser(User u){
+        if(u == null)
+            throw new RuntimeException("Provided UserAchievement is null");
+
+        String q = String.format("INSERT INTO users (username, password_hash)  VALUES(%s, %s)", u.getUsername(), u.getPasswordHash());
+        executeUpdate(q);
+    }
+
+    public void insertFriend(Friend f){
+        if(f == null)
+            throw new RuntimeException("Provided UserAchievement is null");
+
+        String q = String.format("INSERT INTO friends (user_id, friend_id)  VALUES(%d, %d)", f.getUser_id(), f.getFriend_id());
+        executeUpdate(q);
+    }
+
+    public void insertQuizHistory(QuizHistory qh){
+        if(qh == null)
+            throw new RuntimeException("Provided UserAchievement is null");
+
+        String q = String.format("INSERT INTO quiz_history (score, quiz_id, user_id, time_taken)  VALUES(%f, %d, %d, %d)", qh.getScore(), qh.getQuiz_id(), qh.getUser_id(), qh.getTime_taken());
         executeUpdate(q);
     }
 
@@ -93,8 +121,8 @@ public class DBConn{
         String notifBody = n.getNotifBody();
 
         String q = "UPDATE notifications n\n" +
-                   "SET " + String.format("n.receiver_id = %d, n.sender_id = %d, n.notif_type = '%s', n.notif_body = '%s'", targetId, senderId, notifType, notifBody) +
-                   "WHERE " + String.format("n.id = %d", nId);
+                "SET " + String.format("n.receiver_id = %d, n.sender_id = %d, n.notif_type = '%s', n.notif_body = '%s'", targetId, senderId, notifType, notifBody) +
+                "WHERE " + String.format("n.id = %d", nId);
         executeUpdate(q);
     }
 
@@ -206,5 +234,71 @@ public class DBConn{
             System.out.println(e.getStackTrace());
         }
         return selection;
+    }
+
+    public ArrayList<User> getUsers(int id) {
+        String query = "SELECT * FROM users";
+        if(id != -1){
+            query = String.format("SELECT * FROM users u where u.id = %d", id);
+        }
+
+        ArrayList<User> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("passwordHash"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+        }
+        return selection;
+    }
+
+    public ArrayList<Friend> GetUserFriends(int user_id) {
+        String query = "SELECT * FROM friends";
+        if(user_id != -1){
+            query = String.format("SELECT * FROM friends f where f.user_id = %d", user_id);
+        }
+
+        ArrayList<Friend> friends = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                Friend friend = new Friend(rs.getInt("id"), rs.getInt("user_id"), rs.getInt("friend_id"));
+                friends.add(friend);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+        }
+        return friends;
+    }
+
+    public ArrayList<QuizHistory> GetUserQuizHistory(int user_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(user_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.user_id = %d", user_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("user_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+        }
+        return quizHistory;
     }
 }
