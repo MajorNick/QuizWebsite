@@ -321,4 +321,92 @@ public class DBConn{
         }
         return quizHistory;
     }
+
+    public ArrayList<Quiz> getQuizzes(){
+        String quizzesQuery = "SELECT * FROM quizzes;";
+        ArrayList<Quiz> selection = new ArrayList<>();
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("USE " + database);
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(quizzesQuery);
+
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt("id"),
+                        rs.getInt("creator_id"),
+                        rs.getString("quiz_name"),
+                        rs.getBoolean("is_single_page"),
+                        rs.getBoolean("can_be_practiced")
+                );
+                selection.add(quiz);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+    public ArrayList<Question> getQuestions(int quiz_id){
+        String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d",quiz_id);
+        ArrayList<Question> selection = new ArrayList<>();
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("USE " + database);
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(questionQuery);
+
+            while (rs.next()) {
+                Question question  = new Question(rs.getInt("id"),
+                        rs.getInt("quiz_id"),
+                        rs.getString("question")
+                );
+                selection.add(question);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+    public ArrayList<Answer> getAnswers( int question_id){
+        String questionQuery = String.format("SELECT * FROM answers where question_id = %d",question_id);
+        ArrayList<Answer> selection = new ArrayList<>();
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("USE " + database);
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(questionQuery);
+
+            while (rs.next()) {
+                Answer answer  = new Answer(rs.getInt("id"),
+                        rs.getInt("question_id"),
+                        rs.getString("answer"),
+                        rs.getBoolean("is_correct")
+                );
+                selection.add(answer);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
 }
