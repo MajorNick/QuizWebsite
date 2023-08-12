@@ -1,3 +1,6 @@
+<%@ page import="Quiz.src.main.java.models.Notification" %>
+<%@ page import="Quiz.src.main.java.models.DBConn" %>
+<%@ page import="java.util.ArrayList" %>
 <html>
     <head>
         <title>Home</title>
@@ -231,6 +234,22 @@
         </ul>
     </div>
 
+    <div class = "friendsActivities">
+        <h1>Notifications</h1>
+        <ol>
+            <% 
+                int targetId = 3; // contextindan current user
+              DBConn dbConn=new DBConn();
+              ArrayList<Notification> ns = dbConn.getNotifications(targetId, -1, "");
+              for(Notification n : ns) {
+            %> 
+            <li> <%= n.getNotifBody()%> </li> 
+            <% 
+              } 
+              dbConn.closeDBConn();
+            %>
+          </ul>
+    </div>
 
     </body>
 </html>

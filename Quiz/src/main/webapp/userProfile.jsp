@@ -207,24 +207,6 @@
       </div>
     </div>
   </div>
-  <div class="block-container">
-    <div class="block-contents">
-      <div class="block-title">Notifications</div>
-      <div class="block-items">
-        <ol>
-          <% 
-            ArrayList<Notification> ns = dbConn.getNotifications(targetId, -1, "");
-            for(Notification n : ns) {
-          %> 
-          <li> <%= n.getNotifBody()%> </li> 
-          <% 
-            } 
-          %>
-        </ol>
-      </div>
-    </div>
-  </div>
   <% dbConn.closeDBConn(); %>
 </body>
-
 </html>
