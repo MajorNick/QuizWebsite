@@ -89,6 +89,30 @@ public class DBConn{
         executeUpdate(q);
     }
 
+    public void insertUser(User u){
+        if(u == null)
+            throw new RuntimeException("Provided UserAchievement is null");
+
+        String q = String.format("INSERT INTO users (username, password_hash)  VALUES(%s, %s)", u.getUsername(), u.getPasswordHash());
+        executeUpdate(q);
+    }
+
+    public void insertFriend(Friend f){
+        if(f == null)
+            throw new RuntimeException("Provided UserAchievement is null");
+
+        String q = String.format("INSERT INTO friends (user_id, friend_id)  VALUES(%d, %d)", f.getUser_id(), f.getFriend_id());
+        executeUpdate(q);
+    }
+
+    public void insertQuizHistory(QuizHistory qh){
+        if(qh == null)
+            throw new RuntimeException("Provided UserAchievement is null");
+
+        String q = String.format("INSERT INTO quiz_history (score, quiz_id, user_id, time_taken)  VALUES(%f, %d, %d, %d)", qh.getScore(), qh.getQuiz_id(), qh.getUser_id(), qh.getTime_taken());
+        executeUpdate(q);
+    }
+
     public ArrayList<Notification> getNotifications(int receiver_id, int sender_id) {
         String q = "SELECT * FROM notifications";
 
@@ -180,5 +204,71 @@ public class DBConn{
             System.out.println(e.getStackTrace());
         }
         return selection;
+    }
+
+    public ArrayList<User> getUsers(int id) {
+        String query = "SELECT * FROM users";
+        if(id != -1){
+            query = String.format("SELECT * FROM users u where u.id = %d", id);
+        }
+
+        ArrayList<User> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("passwordHash"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+        }
+        return selection;
+    }
+
+    public ArrayList<Friend> GetUserFriends(int user_id) {
+        String query = "SELECT * FROM friends";
+        if(user_id != -1){
+            query = String.format("SELECT * FROM friends f where f.user_id = %d", user_id);
+        }
+
+        ArrayList<Friend> friends = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                Friend friend = new Friend(rs.getInt("id"), rs.getInt("user_id"), rs.getInt("friend_id"));
+                friends.add(friend);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+        }
+        return friends;
+    }
+
+    public ArrayList<QuizHistory> GetUserQuizHistory(int user_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(user_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.user_id = %d", user_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("user_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+        }
+        return quizHistory;
     }
 }
