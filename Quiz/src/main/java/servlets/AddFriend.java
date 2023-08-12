@@ -42,14 +42,14 @@ public class AddFriend extends HttpServlet {
 //        User user = users.get(0);
 //        String userName = user.getUsername();
         String userName = "Jonathan smith";
-        String confirmLink = "    <form action=\"./ConfirmFriendRequest\" method=\"post\">\n" +
-                "      <button class=\"action-button\">Confirm</button>\n" +
-                "      <input type=\"hidden\" name=\"userId\" value=\"" + userId + "\">\n" +
-                "      <input type=\"hidden\" name=\"targetId\" value=\"" + targetId + "\">\n" +
-                "    </form>";
-//        String confirmLink = "<a href=\"./home.jsp\">Confirm</a>";
+//        String confirmLink = "    <form action=\"./ConfirmFriendRequest\" method=\"post\">\n" +
+//                "      <button class=\"action-button\">Confirm</button>\n" +
+//                "      <input type=\"hidden\" name=\"userId\" value=\"" + userId + "\">\n" +
+//                "      <input type=\"hidden\" name=\"targetId\" value=\"" + targetId + "\">\n" +
+//                "    </form>";
+        String confirmLink = String.format("<a href=\"./ConfirmFriendRequest?userId=%d&targetId=%d\">Confirm</a>", userId, targetId);
 
-        Notification notification2 = new Notification(-1, targetId, userId, "friend request", String.format("%s has sent you a friend request! click here to confirm: %s", userName, confirmLink));
+        Notification notification2 = new Notification(-1, targetId, userId, "friend request", String.format("%s has sent you a friend request! click here to %s", userName, confirmLink));
         dbConn.insertNotification(notification2);
 
         dbConn.closeDBConn();

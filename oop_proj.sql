@@ -18,7 +18,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255),
-    password_hash VARCHAR(255)
+    password_hash VARCHAR(255),
+    pfp VARCHAR(1000)
 );
 
 CREATE TABLE friends (

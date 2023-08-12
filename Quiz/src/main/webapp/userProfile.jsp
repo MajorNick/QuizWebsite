@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="Quiz.src.main.java.models.Achievement" %>
+<%@ page import="Quiz.src.main.java.models.Notification" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
@@ -108,25 +109,31 @@
 </style>
 <body>
   <!-- get userId from context !!! -->
-  <% int userId=1;%>
-  <% String TargetId=request.getParameter("id"); %>
-  <% TargetId = TargetId == null ? ""+userId : TargetId; %>
-  <% int targetId=Integer.parseInt(TargetId); %>
+  <% 
+    DBConn dbConn=new DBConn();
+    int userId=1;
+    String TargetId=request.getParameter("id");
+    TargetId = TargetId == null ? ""+userId : TargetId;
+    int targetId=Integer.parseInt(TargetId);
 
-  <% String AddFriendText = request.getParameter("addfriendtext"); %>
-  <% AddFriendText = AddFriendText == null ? "Add friend" : AddFriendText; %>
+    String AddFriendText = request.getParameter("addfriendtext");
+    AddFriendText = AddFriendText == null ? "Add friend" : AddFriendText;
 
-  <% String NotePHText = request.getParameter("notephtext"); %>
-  <% NotePHText = NotePHText == null ? "Send a note to user" : NotePHText; %>
+    // fs = dbConn.getFriends(userId, targetId);
+    // if (fs.size() > 0) { AddFriendText = "Friends"}
 
-  <% String ChallengeText = request.getParameter("challengetext"); %>
-  <% ChallengeText = ChallengeText == null ? "Challenge user to Quiz" : ChallengeText; %>
+    String NotePHText = request.getParameter("notephtext");
+    NotePHText = NotePHText == null ? "Send a note to user" : NotePHText;
 
-  <% //DBConn dbConn=new DBConn(); //ArrayList<User> us = dbConn.getUsers(targetId);
+    String ChallengeText = request.getParameter("challengetext");
+    ChallengeText = ChallengeText == null ? "Challenge user to Quiz" : ChallengeText;
+
+    //ArrayList<User> us = dbConn.getUsers(targetId);
     //User u = us.get(0);
     //String userName = u.getUsername();
     String userName = "Josh Smith";
-    //dbConn.closeDBConn();
+    //String PfpLink = u.getPfpLink();
+    String PfpLink = "https://media.tenor.com/1t5F4JOye68AAAAC/amogus-sus.gif";
   %>
   <div class="navbar">
     <a href="./home.jsp">
@@ -140,7 +147,7 @@
   </div>
   <div class="block-container">
     <div class="left-side">
-      <img class="profile-image" src="https://via.placeholder.com/200x200" alt="Profile Image">
+      <img class="profile-image" src="<%= PfpLink %>" alt="Profile Image">
       <div class="username">
         <%= userName%>
       </div>
@@ -188,15 +195,36 @@
       <div class="block-title">Achievements</div>
       <div class="block-items">
         <ol>
-          <% DBConn dbConn=new DBConn(); ArrayList<Achievement> uas =
-            dbConn.getUserAchievements(targetId);
+          <%
+            ArrayList<Achievement> uas = dbConn.getUserAchievements(targetId);
             for(Achievement ua : uas) {
-            %> <li> <%= ua.getAchievementBody()%> </li> <% 
-          } %>
+          %> 
+          <li> <%= ua.getAchievementBody()%> </li> 
+          <% 
+            } 
+          %>
         </ol>
       </div>
     </div>
   </div>
+  <div class="block-container">
+    <div class="block-contents">
+      <div class="block-title">Notifications</div>
+      <div class="block-items">
+        <ol>
+          <% 
+            ArrayList<Notification> ns = dbConn.getNotifications(targetId, -1, "");
+            for(Notification n : ns) {
+          %> 
+          <li> <%= n.getNotifBody()%> </li> 
+          <% 
+            } 
+          %>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <% dbConn.closeDBConn(); %>
 </body>
 
 </html>

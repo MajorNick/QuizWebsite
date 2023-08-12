@@ -20,7 +20,7 @@ public class DBConn{
             executeUpdate("USE " + database);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            e.printStackTrace();
+            System.out.println(e.getStackTrace());
         }
 
     }
@@ -32,8 +32,8 @@ public class DBConn{
             stmt.close();
             conn.close();
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
         }
     }
 
@@ -58,34 +58,43 @@ public class DBConn{
     }
 
     public void insertNotification(Notification n){
-        if(n == null)
-            throw new RuntimeException("Provided Notification is null");
+        if(n == null) {throw new RuntimeException("Provided Notification is null");}
 
         String q = String.format("INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body)  VALUES(%d, %d, '%s', '%s')", n.getReceiverId(), n.getSenderId(), n.getNotifType(), n.getNotifBody());
         executeUpdate(q);
     }
 
     public void insertAnnouncement(Announcement a){
-        if(a == null)
-            throw new RuntimeException("Provided Announcement is null");
+        if(a == null) {throw new RuntimeException("Provided Announcement is null");}
 
         String q = String.format("INSERT INTO announcements (announcement)  VALUES('%s')", a.getAnnouncementBody());
         executeUpdate(q);
     }
 
     public void insertAchievement(Achievement a){
-        if(a == null)
-            throw new RuntimeException("Provided Achievement is null");
+        if(a == null) {throw new RuntimeException("Provided Achievement is null");}
 
-        String q = String.format("INSERT INTO achievements (achievement)  VALUES('%s')", a.getAchievementBody());
+        String q = String.format("INSERT INTO achievements (achievement, to_earn)  VALUES('%s', '%s')", a.getAchievementBody(), a.getAchievementToEarn());
         executeUpdate(q);
     }
 
     public void insertUserAchievement(UserAchievement u){
-        if(u == null)
-            throw new RuntimeException("Provided UserAchievement is null");
+        if(u == null) {throw new RuntimeException("Provided UserAchievement is null");}
 
         String q = String.format("INSERT INTO user_achievements (user_id, achievement_id)  VALUES(%d, %d)", u.getUserId(), u.getAchievementId());
+        executeUpdate(q);
+    }
+
+    public void updateNotification(Notification n){
+        int nId = n.getId();
+        int targetId = n.getReceiverId();
+        int senderId = n.getSenderId();
+        String notifType = n.getNotifType();
+        String notifBody = n.getNotifBody();
+
+        String q = "UPDATE notifications n\n" +
+                   "SET " + String.format("n.receiver_id = %d, n.sender_id = %d, n.notif_type = '%s', n.notif_body = '%s'", targetId, senderId, notifType, notifBody) +
+                   "WHERE " + String.format("n.id = %d", nId);
         executeUpdate(q);
     }
 
@@ -114,6 +123,7 @@ public class DBConn{
             }
             q += String.format(" n.notif_type = '%s'", notifType);
         }
+        q += " ORDER BY n.id DESC";
 
         ArrayList<Notification> selection = new ArrayList<>();
 

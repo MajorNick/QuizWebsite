@@ -8,12 +8,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/ConfirmFriendRequest")
 public class ConfirmFriendRequest extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("Confirm Friend Request Servlet");
         response.setContentType("text/html");
 
@@ -30,7 +31,14 @@ public class ConfirmFriendRequest extends HttpServlet {
 //        dbConn.insertFriend(friend1);
 //        dbConn.insertFriend(friend2);
 
+        ArrayList<Notification> notifs = dbConn.getNotifications(targetId, userId, "friend request");
+        Notification notif = notifs.get(0);
+        Notification newNotif = new Notification(notif.getId(), notif.getReceiverId(), notif.getSenderId(), "confirmed", "Friend Request Confirmed");
+        dbConn.updateNotification(newNotif);
+
         dbConn.closeDBConn();
 
+        String redirectUrl = String.format("./userProfile.jsp?id=%d", targetId);
+        response.sendRedirect(redirectUrl);
     }
 }
