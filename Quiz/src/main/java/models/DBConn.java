@@ -205,6 +205,7 @@ public class DBConn{
 
             while (rs.next()) {
                 Achievement achievement = new Achievement(rs.getInt("id"), rs.getString("achievement"), rs.getString("to_earn"));
+                achievement.setAchievementIcon(rs.getString("icon"));
                 selection.add(achievement);
             }
 
@@ -216,7 +217,7 @@ public class DBConn{
     }
 
     public ArrayList<Achievement> getUserAchievements(int user_id) {
-        String q = String.format("SELECT a.id, a.achievement, a.to_earn \n" +
+        String q = String.format("SELECT a.id, a.achievement, a.to_earn, a.icon \n" +
                 "FROM user_achievements u JOIN achievements a ON(u.achievement_id = a.id) \n" +
                 "WHERE u.user_id = %d;", user_id);
 
@@ -226,6 +227,7 @@ public class DBConn{
 
             while (rs.next()) {
                 Achievement userAchievement = new Achievement(rs.getInt("id"), rs.getString("achievement"), rs.getString("to_earn"));
+                userAchievement.setAchievementIcon(rs.getString("icon"));
                 selection.add(userAchievement);
             }
 
@@ -279,6 +281,18 @@ public class DBConn{
             e.printStackTrace();
         }
         return friends;
+    }
+
+    public void removeFriend(int user_id, int friend_id){
+        String q = String.format("DELETE FROM friends WHERE (user_id = %d AND friend_id = %d) OR (user_id = %d AND friend_id = %d)", user_id, friend_id, friend_id, user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public boolean areFriends(int user_id, int friend_id){

@@ -20,6 +20,7 @@ public class AddFriend extends HttpServlet {
         response.setContentType("text/html");
         String UserId = request.getParameter("userId");
         String TargetId = request.getParameter("targetId");
+        String addOrRemovePar = request.getParameter("removeFriend");
 
         int targetId = Integer.parseInt(TargetId);
         int userId = Integer.parseInt(UserId);
@@ -28,6 +29,16 @@ public class AddFriend extends HttpServlet {
         System.out.println(targetId);
 
         DBConn dbConn = new DBConn();
+
+        if(addOrRemovePar.equals("remove")){
+            dbConn.removeFriend(userId, targetId);
+            dbConn.closeDBConn();
+
+            String redirectUrl = String.format("./userProfile.jsp?id=%d&addfriendtext=%s", targetId, "Friend Removed");
+            response.sendRedirect(redirectUrl);
+
+            return;
+        }
 
         ArrayList<Notification> notifications = dbConn.getNotifications(targetId, userId, "friend request");
 

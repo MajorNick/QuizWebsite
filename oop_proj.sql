@@ -84,16 +84,17 @@ CREATE TABLE announcements (
 CREATE TABLE achievements (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     achievement VARCHAR(2000),
-    to_earn VARCHAR(2000)
+    to_earn VARCHAR(2000),
+    icon VARCHAR(1000)
 );
 
-INSERT INTO achievements (achievement, to_earn) 
-VALUES ('Amateur Author', 'Create your first quiz'), 
-	   ('Prolific Author', 'Create 5 quizzes'), 
-       ('Prodigious Author', 'Create 10 quizzes'), 
-       ('Quiz Machine', 'Take 10 quizzes'), 
-       ('I am the Greatest', 'Get the highest score on a quiz'), 
-       ('Practice Makes Perfect', 'Take your first practice quiz');
+INSERT INTO achievements (achievement, to_earn, icon) 
+VALUES ('Amateur Author', 'Create your first quiz', 'https://cdn-icons-png.flaticon.com/512/3601/3601002.png'), 
+	   ('Prolific Author', 'Create 5 quizzes', 'https://cdn-icons-png.flaticon.com/128/3601/3601646.png'), 
+       ('Prodigious Author', 'Create 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/7601/7601746.png'), 
+       ('Quiz Machine', 'Take 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/5289/5289226.png'), 
+       ('I am the Greatest', 'Get the highest score on a quiz', 'https://cdn-icons-png.flaticon.com/128/744/744922.png'), 
+       ('Practice Makes Perfect', 'Take your first practice quiz', 'https://cdn-icons-png.flaticon.com/128/1330/1330208.png');
 
 CREATE TABLE user_achievements (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

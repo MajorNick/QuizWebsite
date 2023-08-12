@@ -58,7 +58,7 @@
   }
 
   .block-items {
-    font-size: 20px;
+    font-size: 25px;
   }
 
   .left-side {
@@ -90,7 +90,6 @@
   .action-button {
     background-color: #2b91fe;
     color: white;
-    /* border: none; */
     border: 1px solid #000000;
     border-radius: 12px;
     padding: 5px 10px;
@@ -102,10 +101,30 @@
       background-color: #9dff0a; /* Change to the color you want on hover */
   }
 
+  .remove-friend-button {
+    background-color: #2b91fe;
+    color: white;
+    /* border: none; */
+    border: 1px solid #000000;
+    border-radius: 12px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .remove-friend-button:hover {
+      background-color: #ff2c2c; /* Change to the color you want on hover */
+  }
+
   .note_text {
     margin-top: 10px;
     margin-bottom: 0px;
     resize: none;
+  }
+  
+  .achievement-icon {
+    width: 30px;
+    height: 30px;
   }
 </style>
 <body>
@@ -120,8 +139,15 @@
     String AddFriendText = request.getParameter("addfriendtext");
     AddFriendText = AddFriendText == null ? "Add friend" : AddFriendText;
 
+    String friendButtonClass = "action-button";
     boolean friends = dbConn.areFriends(userId, targetId);
-    if (friends) { AddFriendText = "Friends"; }
+    String removeParam = "add";
+
+    if (friends) { 
+      AddFriendText = "Remove Friend";
+      friendButtonClass = "remove-friend-button";
+      removeParam = "remove";
+    }
 
     String NotePHText = request.getParameter("notephtext");
     NotePHText = NotePHText == null ? "Send a note to user" : NotePHText;
@@ -156,9 +182,10 @@
     </div>
     <div class="right-side">
       <form action="./AddFriend" method="post">
-        <button class="action-button"><%= AddFriendText%></button>
+        <button class="<%= friendButtonClass %>"><%= AddFriendText%></button>
         <input type="hidden" name="userId" value="<%= userId %>">
         <input type="hidden" name="targetId" value="<%= targetId %>">
+        <input type="hidden" name="removeFriend" value="<%= removeParam %>">
       </form>
       <form action="./Challenge" method="post">
         <input name="quizId" class="note_text" placeholder="<%= ChallengeText%>" type="number" step="1"></input>
@@ -194,16 +221,16 @@
     <div class="block-contents">
       <div class="block-title">Achievements</div>
       <div class="block-items">
-        <ol>
+        <ul>
           <%
             ArrayList<Achievement> uas = dbConn.getUserAchievements(targetId);
             for(Achievement ua : uas) {
           %> 
-          <li> <%= ua.getAchievementBody()%> </li> 
+          <li><img class="achievement-icon" src="<%= ua.getAchievementIcon()%>"  title="<%= ua.getAchievementToEarn()%>"/> <%= ua.getAchievementBody()%> </li> 
           <% 
             } 
           %>
-        </ol>
+        </ul>
       </div>
     </div>
   </div>
