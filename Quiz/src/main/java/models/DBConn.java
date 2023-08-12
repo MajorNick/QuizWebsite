@@ -20,7 +20,7 @@ public class DBConn{
             executeUpdate("USE " + database);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
 
     }
@@ -33,7 +33,7 @@ public class DBConn{
             conn.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
     }
 
@@ -43,7 +43,7 @@ public class DBConn{
             rs = stmt.executeQuery(q);
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
     }
 
@@ -53,7 +53,7 @@ public class DBConn{
             stmt.executeUpdate(u);
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
     }
 
@@ -99,7 +99,7 @@ public class DBConn{
 
     public void insertFriend(Friend f){
         if(f == null)
-            throw new RuntimeException("Provided UserAchievement is null");
+            throw new RuntimeException("Provided Friend is null");
 
         String q = String.format("INSERT INTO friends (user_id, friend_id)  VALUES(%d, %d)", f.getUser_id(), f.getFriend_id());
         executeUpdate(q);
@@ -107,7 +107,7 @@ public class DBConn{
 
     public void insertQuizHistory(QuizHistory qh){
         if(qh == null)
-            throw new RuntimeException("Provided UserAchievement is null");
+            throw new RuntimeException("Provided Quiz History is null");
 
         String q = String.format("INSERT INTO quiz_history (score, quiz_id, user_id, time_taken)  VALUES(%f, %d, %d, %d)", qh.getScore(), qh.getQuiz_id(), qh.getUser_id(), qh.getTime_taken());
         executeUpdate(q);
@@ -169,7 +169,7 @@ public class DBConn{
 
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return selection;
     }
@@ -188,7 +188,7 @@ public class DBConn{
 
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return selection;
     }
@@ -210,15 +210,15 @@ public class DBConn{
 
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return selection;
     }
 
     public ArrayList<Achievement> getUserAchievements(int user_id) {
         String q = String.format("SELECT a.id, a.achievement, a.to_earn \n" +
-                                 "FROM user_achievements u JOIN achievements a ON(u.achievement_id = a.id) \n" +
-                                 "WHERE u.user_id = %d;", user_id);
+                "FROM user_achievements u JOIN achievements a ON(u.achievement_id = a.id) \n" +
+                "WHERE u.user_id = %d;", user_id);
 
         ArrayList<Achievement> selection = new ArrayList<>();
         try{
@@ -231,7 +231,7 @@ public class DBConn{
 
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return selection;
     }
@@ -247,13 +247,14 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("passwordHash"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"));
+                user.setPfpLink(rs.getString("pfp"));
                 selection.add(user);
             }
 
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return selection;
     }
@@ -275,9 +276,28 @@ public class DBConn{
 
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return friends;
+    }
+
+    public boolean areFriends(int user_id, int friend_id){
+        String q = "SELECT COUNT(f.friend_id) AS are_friends\n" +
+                "FROM friends f \n" +
+                "WHERE " + String.format("f.user_id = %d AND f.friend_id = %d", user_id, friend_id);
+        try{
+            executeQuery(q);
+            rs.next();
+
+            int friends = rs.getInt("are_friends");
+            System.out.println(friends);
+
+            return friends > 0 ? true : false;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public ArrayList<QuizHistory> GetUserQuizHistory(int user_id) {
@@ -297,7 +317,7 @@ public class DBConn{
 
         } catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return quizHistory;
     }

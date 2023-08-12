@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="Quiz.src.main.java.models.Achievement" %>
+<%@ page import="Quiz.src.main.java.models.User" %>
 <%@ page import="Quiz.src.main.java.models.Notification" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="java.util.ArrayList" %>
@@ -119,8 +120,8 @@
     String AddFriendText = request.getParameter("addfriendtext");
     AddFriendText = AddFriendText == null ? "Add friend" : AddFriendText;
 
-    // fs = dbConn.getFriends(userId, targetId);
-    // if (fs.size() > 0) { AddFriendText = "Friends"}
+    boolean friends = dbConn.areFriends(userId, targetId);
+    if (friends) { AddFriendText = "Friends"; }
 
     String NotePHText = request.getParameter("notephtext");
     NotePHText = NotePHText == null ? "Send a note to user" : NotePHText;
@@ -128,12 +129,11 @@
     String ChallengeText = request.getParameter("challengetext");
     ChallengeText = ChallengeText == null ? "Challenge user to Quiz" : ChallengeText;
 
-    //ArrayList<User> us = dbConn.getUsers(targetId);
-    //User u = us.get(0);
-    //String userName = u.getUsername();
-    String userName = "Josh Smith";
-    //String PfpLink = u.getPfpLink();
-    String PfpLink = "https://media.tenor.com/1t5F4JOye68AAAAC/amogus-sus.gif";
+    ArrayList<User> us = dbConn.getUsers(targetId);
+    User u = us.get(0);
+    String userName = u.getUsername();
+    String PfpLink = u.getPfpLink();
+    PfpLink = PfpLink == null || PfpLink == "" ? "https://via.placeholder.com/200x200" : PfpLink;
   %>
   <div class="navbar">
     <a href="./home.jsp">

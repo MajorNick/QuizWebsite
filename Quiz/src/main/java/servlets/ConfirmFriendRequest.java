@@ -1,6 +1,7 @@
 package Quiz.src.main.java.servlets;
 
 import Quiz.src.main.java.models.DBConn;
+import Quiz.src.main.java.models.Friend;
 import Quiz.src.main.java.models.Notification;
 
 import javax.servlet.ServletException;
@@ -26,10 +27,10 @@ public class ConfirmFriendRequest extends HttpServlet {
 
         DBConn dbConn = new DBConn();
 
-//        Friend friend1 = new Friend(targetId, userId);
-//        Friend friend2 = new Friend(userId, targetId);
-//        dbConn.insertFriend(friend1);
-//        dbConn.insertFriend(friend2);
+        Friend friend1 = new Friend(-1, targetId, userId);
+        Friend friend2 = new Friend(-1, userId, targetId);
+        dbConn.insertFriend(friend1);
+        dbConn.insertFriend(friend2);
 
         ArrayList<Notification> notifs = dbConn.getNotifications(targetId, userId, "friend request");
         Notification notif = notifs.get(0);

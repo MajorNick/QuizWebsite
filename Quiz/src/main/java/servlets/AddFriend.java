@@ -2,6 +2,7 @@ package Quiz.src.main.java.servlets;
 
 import Quiz.src.main.java.models.DBConn;
 import Quiz.src.main.java.models.Notification;
+import Quiz.src.main.java.models.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -38,15 +39,9 @@ public class AddFriend extends HttpServlet {
             return;
         }
 
-//        ArrayList<User> users = dbConn.getUser("userId", "");
-//        User user = users.get(0);
-//        String userName = user.getUsername();
-        String userName = "Jonathan smith";
-//        String confirmLink = "    <form action=\"./ConfirmFriendRequest\" method=\"post\">\n" +
-//                "      <button class=\"action-button\">Confirm</button>\n" +
-//                "      <input type=\"hidden\" name=\"userId\" value=\"" + userId + "\">\n" +
-//                "      <input type=\"hidden\" name=\"targetId\" value=\"" + targetId + "\">\n" +
-//                "    </form>";
+        ArrayList<User> users = dbConn.getUsers(userId);
+        User user = users.get(0);
+        String userName = user.getUsername();
         String confirmLink = String.format("<a href=\"./ConfirmFriendRequest?userId=%d&targetId=%d\">Confirm</a>", userId, targetId);
 
         Notification notification2 = new Notification(-1, targetId, userId, "friend request", String.format("%s has sent you a friend request! click here to %s", userName, confirmLink));
