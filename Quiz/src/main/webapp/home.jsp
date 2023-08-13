@@ -1,255 +1,283 @@
-<%@ page import="Quiz.src.main.java.models.Notification" %>
-<%@ page import="Quiz.src.main.java.models.DBConn" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="java.util.ArrayList" %>
+<!DOCTYPE html>
 <html>
+<meta charset="UTF-8">
     <head>
         <title>Home</title>
     </head>
 
-        <style>
-            .navbar {
-                background-color: #007bff;
-                overflow: hidden;
-            }
+    <style>
+        .navbar {
+            background-color: #007bff;
+            overflow: hidden;
+        }
 
-            .navbar a {
-                float: left;
-                display: block;
-                color: white;
-                text-align: center;
-                padding: 14px 16px;
-                text-decoration: none;
-            }
+        .navbar a {
+            float: right;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 15px 16px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+        }
 
-            .navbar a.right {
-                float: right;
-            }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
 
-            /* Style the dropdown menu */
-            .dropdown {
-                float: right;
-                overflow: hidden;
-            }
+        .left {
+            flex: 2;
+            padding: 10px;
+        }
 
-            .dropdown .dropbtn {
-                font-size: 16px;
-                border: none;
-                outline: none;
-                color: white;
-                padding: 14px 16px;
-                background-color: inherit;
-                font-family: inherit;
-                margin: 0;
-            }
+        .right {
+            flex: 1;
+            padding: 10px;
+        }
 
-            .navbar a:hover, .dropdown:hover .dropbtn {
-                background-color: #1c98ff;
-                color: black;
-            }
+        .announcements{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            text-align: center;
+            margin: 10px;
+        }
 
-            .dropdown-content {
-                display: none;
-                position: absolute;
-                background-color: #f9f9f9;
-                min-width: 160px;
-                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                z-index: 1;
-            }
+        .announcementsList{
+            list-style-type: none;
+        }
 
-            .dropdown-content a {
-                float: none;
-                color: black;
-                padding: 12px 16px;
-                text-decoration: none;
-                display: block;
-                text-align: left;
-            }
+        .popularQuizzes{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+        }
 
-            .dropdown-content a:hover {
-                background-color: #ddd;
-            }
+        .popularQuizzesList {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
 
-            .dropdown:hover .dropdown-content {
-                display: block;
-            }
+        .recentlyCreatedQuizzes{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+        }
 
-            .announcments{
-                border: 5px solid #1c98ff;
-                border-radius: 15px;
-                text-align: center;
-                margin: 10px;
-            }
+        .recCrQuizList {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
 
-            .popularQuizzes{
-                border: 5px solid #1c98ff;
-                border-radius: 15px;
-                padding: 10px;
-                margin: 10px;
-            }
+        .recentlyTakenQuizzes{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+        }
 
-            .popularQuizzesList {
-                list-style-type: none;
-                display: flex;
-                gap: 20px;
-            }
+        .recTakenQuizList {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
 
-            .recentlyCreatedQuizzes{
-                border: 5px solid #1c98ff;
-                border-radius: 15px;
-                padding: 10px;
-                margin: 10px;
-            }
+        .myRecentlyCreatedQuizzes{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+        }
 
-            .recCrQuizList {
-                list-style-type: none;
-                display: flex;
-                gap: 20px;
-            }
+        .myRecCrQuizList {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
 
-            .recentlyTakenQuizzes{
-                border: 5px solid #1c98ff;
-                border-radius: 15px;
-                padding: 10px;
-                margin: 10px;
-            }
+        .notifications{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+        }
 
-            .recTakenQuizList {
-                list-style-type: none;
-                display: flex;
-                gap: 20px;
-            }
+        .notificationsList {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
 
-            .myRecentlyCreatedQuizzes{
-                border: 5px solid #1c98ff;
-                border-radius: 15px;
-                padding: 10px;
-                margin: 10px;
-            }
+        .achievements{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+        }
 
-            .myRecCrQuizList {
-                list-style-type: none;
-                display: flex;
-                gap: 20px;
-            }
+        .achievementsList {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
 
-            .achievements{
-                border: 5px solid #1c98ff;
-                border-radius: 15px;
-                padding: 10px;
-                margin: 10px;
-            }
+        .achievement-icon {
+            width: 30px;
+            height: 30px;
+        }
 
-            .achievementsList {
-                list-style-type: none;
-                display: flex;
-                gap: 20px;
-            }
+        .friendsActivities{
+            border: 5px solid #1c98ff;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+        }
 
-            .friendsActivities{
-                border: 5px solid #1c98ff;
-                border-radius: 15px;
-                padding: 10px;
-                margin: 10px;
-            }
+        .frUsername{
+            font-size: 20px;
+            font-weight: bold;
+        }
 
-            .frActivitiesList {
-                list-style-type: none;
-                display: flex;
-                gap: 20px;
-            }
+        .frAchievementsList {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
 
-        </style>
-    </head>
+    </style>
     <body>
+      <%
+        DBConn dbConn=new DBConn();
+        int userId=1;
+        String TargetId=request.getParameter("id");
+        TargetId = TargetId == null ? ""+userId : TargetId;
+        int targetId=Integer.parseInt(TargetId);
+        ArrayList<User> us = dbConn.getUsers(targetId);
+        User u = us.get(0);
+        String userName = u.getUsername();
+      %>
+        <div class="navbar">
+            <a>Logged in as <%= userName %></a>
+        </div>
 
-    <div class="navbar">
-        <a href="#home">Home</a>
-        <div class="dropdown">
-            <button class="dropbtn">Messages</button>
-            <div class="dropdown-content">
-                <a href="#message1">Message 1</a>
-                <a href="#message2">Message 2</a>
-                <a href="#message3">Message 3</a>
+        <div class = "announcements">
+            <h1>Announcements</h1>
+            <ul class="announcementsList">
+                <%
+                  ArrayList<Announcement> as = dbConn.getAnnouncements();
+                  for(Announcement a : as) {
+                %>
+                  <li> <%= a.getAnnouncementBody() %> </li>
+                <%
+                  }
+                %>
+            </ul>
+        </div>
+
+        <div class="container">
+            <div class="left">
+                <div class = "popularQuizzes">
+                    <h1>Popular Quizzes</h1>
+                    <ul class="popularQuizzesList">
+                        <li>Quiz 1</li>
+                        <li>Quiz 2</li>
+                        <li>Quiz 3</li>
+                    </ul>
+                </div>
+
+                <div class = "recentlyCreatedQuizzes">
+                    <h1>Recently Created Quizzes</h1>
+                    <ul class="recCrQuizList">
+                        <li>Quiz 1</li>
+                        <li>Quiz 2</li>
+                        <li>Quiz 3</li>
+                    </ul>
+                </div>
+
+                <div class = "recentlyTakenQuizzes">
+                    <h1>Recently Taken Quizzes</h1>
+                    <ul class="recTakenQuizList">
+                        <li>Quiz 1</li>
+                        <li>Quiz 2</li>
+                        <li>Quiz 3</li>
+                    </ul>
+                </div>
+
+                <div class = "myRecentlyCreatedQuizzes">
+                    <h1>My Recently Created Quizzes</h1>
+                    <ul class="myRecCrQuizList">
+                        <li>Quiz 1</li>
+                        <li>Quiz 2</li>
+                        <li>Quiz 3</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="right">
+                <div class = "notifications">
+                    <h1>Notifications</h1>
+                    <ul>
+                        <%
+                          ArrayList<Notification> ns = dbConn.getNotifications(targetId, -1, "");
+                          for(Notification n : ns) {
+                        %>
+                        <li> <%= n.getNotifBody()%> </li>
+                        <%
+                          }
+                        %>
+                    </ul>
+                </div>
+                <div class = "achievements">
+                    <h1>Achievements</h1>
+                    <ul class="achievementsList">
+                        <%
+                          ArrayList<Achievement> uas = dbConn.getUserAchievements(targetId);
+                          for(Achievement ua : uas) {
+                        %>
+                          <li><img class="achievement-icon" src="<%= ua.getAchievementIcon()%>"  title="<%= ua.getAchievementToEarn()%>"/> <br> <%= ua.getAchievementBody()%> </li>
+                        <%
+                          }
+                        %>
+                    </ul>
+                </div>
+
+                <div class = "friendsActivities">
+                    <h1>Friend&rsquo;s Activities</h1>
+                    <ul class="frActivitiesList">
+                        <%
+                          ArrayList<Friend> fs = dbConn.getUserFriends(targetId);
+                          for(Friend f : fs) {
+                            int friendId = f.getFriend_id();
+                            User friend = dbConn.getUsers(friendId).get(0);
+                        %>
+                          <dl>
+                            <dt class="frUsername"><%= friend.getUsername() %></dt>
+                            <dd class="frAchievementsList">
+                             <%
+                                ArrayList<Achievement> fas = dbConn.getUserAchievements(friendId);
+                                for(Achievement fa : fas) {
+                             %>
+                             <li><img class="achievement-icon" src="<%= fa.getAchievementIcon()%>"  title="<%= fa.getAchievementToEarn()%>"/> <br> <%= fa.getAchievementBody()%> </li>
+                             <% } %>
+                            </dd>
+
+                          </dl>
+                        <%
+                          }
+                        %>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class = "announcments">
-        <h1>Announcments</h1>
-        <p>New quiz added</p>
-        <p>Create quiz and get achievement badge</p>
-    </div>
-
-    <div class = "popularQuizzes">
-        <h1>Popular Quizzes</h1>
-        <ul class="popularQuizzesList">
-            <li>Quiz 1</li>
-            <li>Quiz 2</li>
-            <li>Quiz 3</li>
-        </ul>
-    </div>
-
-    <div class = "recentlyCreatedQuizzes">
-        <h1>Recently Created Quizzes</h1>
-        <ul class="recCrQuizList">
-            <li>Quiz 1</li>
-            <li>Quiz 2</li>
-            <li>Quiz 3</li>
-        </ul>
-    </div>
-
-    <div class = "recentlyTakenQuizzes">
-        <h1>Recently Taken Quizzes</h1>
-        <ul class="recTakenQuizList">
-            <li>Quiz 1</li>
-            <li>Quiz 2</li>
-            <li>Quiz 3</li>
-        </ul>
-    </div>
-
-    <div class = "myRecentlyCreatedQuizzes">
-        <h1>My Recently Created Quizzes</h1>
-        <ul class="myRecCrQuizList">
-            <li>Quiz 1</li>
-            <li>Quiz 2</li>
-            <li>Quiz 3</li>
-        </ul>
-    </div>
-
-    <div class = "achievements">
-        <h1>Achievements</h1>
-        <ul class="achievementsList">
-            <li><img src="badge1.png" alt="Badge 1"></li>
-            <li><img src="badge1.png" alt="Badge 2"></li>
-            <li><img src="badge1.png" alt="Badge 3"></li>
-        </ul>
-    </div>
-
-    <div class = "friendsActivities">
-        <h1>Friend&rsquo;s Activities</h1>
-        <ul class="frActivitiesList">
-            <li>Friend 1</li>
-            <li>Friend 2</li>
-            <li>Friend 3</li>
-        </ul>
-    </div>
-
-    <div class = "friendsActivities">
-        <h1>Notifications</h1>
-        <ol>
-            <% 
-                int targetId = 3; // contextindan current user
-              DBConn dbConn=new DBConn();
-              ArrayList<Notification> ns = dbConn.getNotifications(targetId, -1, "");
-              for(Notification n : ns) {
-            %> 
-            <li> <%= n.getNotifBody()%> </li> 
-            <% 
-              } 
-              dbConn.closeDBConn();
-            %>
-          </ul>
-    </div>
-
+      <% dbConn.closeDBConn(); %>
     </body>
 </html>

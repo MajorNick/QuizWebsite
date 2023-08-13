@@ -132,3 +132,12 @@ VALUES (1,1),
        (3,1),
        (3,2);
 
+INSERT INTO announcements(announcement)
+VALUES ('New quiz added'),
+	   ('Create quiz and get achievement');
+
+INSERT INTO friends (user_id, friend_id)
+VALUES (1, 2),
+	   (1, 3),
+       (2, 1),
+       (3, 1);
