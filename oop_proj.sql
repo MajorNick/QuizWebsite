@@ -34,6 +34,7 @@ CREATE TABLE quizzes (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     creator_id INT,
     quiz_name VARCHAR(2000),
+    description VARCHAR(2000),
     is_single_page bool,
     can_be_practiced bool,
     FOREIGN KEY (creator_id) REFERENCES users(id)
@@ -62,6 +63,7 @@ CREATE TABLE quiz_history (
     quiz_id INT,
     user_id INT,
     time_taken INT,
+    take_date TIMESTAMP,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
@@ -118,6 +120,10 @@ VALUES (1, 2, 'note', 'Hello'),
 	   (1, 3, 'note', 'Test2'),
        (3, 2, 'note', 'qwer'),
 	   (3, 1, 'note', 'tyui');
+
+INSERT INTO quizzes(  creator_id, quiz_name, description, is_single_page, can_be_practiced)
+VALUES  (1,'dinozavrebi','Dinosaurs are a diverse group of reptiles of the clade Dinosauria. They first appeared during the Triassic period, between 245 and 233.23 million years ago (mya), although the exact origin and timing of the evolution of dinosaurs is a subject of active research. They became the dominant terrestrial vertebrates after the Triassic–Jurassic extinction event 201.3 mya and their dominance continued throughout the Jurassic and Cretaceous periods. The fossil record shows that birds are feathered dinosaurs, having evolved from earlier theropods during the Late Jurassic epoch, and are the only dinosaur lineage known to have survived the Cretaceous–Paleogene extinction event approximately 66 mya. Dinosaurs can therefore be divided into avian dinosaurs—birds—and the extinct non-avian dinosaurs, which are all dinosaurs other than birds.',
+         true,false)
        
 INSERT INTO user_achievements(user_id, achievement_id)
 VALUES (1,1),

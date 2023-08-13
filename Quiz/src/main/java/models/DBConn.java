@@ -363,6 +363,7 @@ public class DBConn{
                 Quiz quiz = new Quiz(rs.getInt("id"),
                         rs.getInt("creator_id"),
                         rs.getString("quiz_name"),
+                        rs.getString("description"),
                         rs.getBoolean("is_single_page"),
                         rs.getBoolean("can_be_practiced")
                 );
@@ -378,6 +379,138 @@ public class DBConn{
             return  null;
         }
         return selection;
+    }
+    public Quiz getQuiz(int id){
+        String quizzesQuery = String.format("SELECT * FROM quizzes WHERE id = %d",id);
+        Quiz result = null;
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("USE " + database);
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(quizzesQuery);
+            rs.next();
+             result = new Quiz(rs.getInt("id"),
+                    rs.getInt("creator_id"),
+                    rs.getString("quiz_name"),
+                    rs.getString("description"),
+                    rs.getBoolean("is_single_page"),
+                    rs.getBoolean("can_be_practiced")
+                );
+
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return result;
+    }
+
+    public ArrayList<Integer> getYourBestPerformance(int quiz_id,int userid){
+        String query=String.format("SELECT score" +
+                "FROM quiz_history" +
+                "WHERE quiz_id = %d, user_id = %d" +
+                "ORDER BY score DESC" +
+                "LIMIT 3;",quiz_id,userid);
+
+        ArrayList<Integer> scores = new ArrayList<>();
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("USE " + database);
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int result = rs.getInt("user_id");;
+                scores.add(result);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return scores
+                ;
+    }
+    public ArrayList<Integer> getLastQuizPerformers(int quiz_id){
+        String query="SELECT  user_id" +
+                "FROM quiz_history" +
+                "ORDER BY take_date DESC" +
+                "LIMIT 3;";
+
+        ArrayList<Integer> users = new ArrayList<>();
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("USE " + database);
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int result = rs.getInt("user_id");;
+                users.add(result);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return users;
+    }
+    public ArrayList<Integer> getBestPerformance(int quiz_id,boolean today){
+        String query;
+        if (today){
+            query = "SELECT user_id" +
+                    "FROM quiz_history" +
+                    "WHERE DATE(take_date) = CURDATE()" +
+                    "GROUP BY user_id" +
+                    "ORDER BY total_score DESC" +
+                    "LIMIT 3;";
+        }else{
+            query = "SELECT user_id" +
+                    "FROM your_table_name" +
+                    "WHERE DATE_ADD(CURDATE(), INTERVAL 0 DAY) = DATE(user_id)" +
+                    "GROUP BY user_id" +
+                    "ORDER BY max_score DESC" +
+                    "LIMIT 3;";
+
+        }
+
+        ArrayList<Integer> users = new ArrayList<>();
+        try{
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("USE " + database);
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int result = rs.getInt("user_id");;
+                users.add(result);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return users;
     }
     public ArrayList<Question> getQuestions(int quiz_id){
         String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d",quiz_id);
