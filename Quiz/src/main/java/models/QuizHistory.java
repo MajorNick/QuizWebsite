@@ -6,6 +6,8 @@ public class QuizHistory {
     private int Quiz_id;
     private int User_id;
     private double Time_taken;
+    private Quiz _quiz;
+
     public QuizHistory(int id, double score, int quiz_id, int user_id, double time_taken){
         Id = id;
         Score = score;
@@ -32,5 +34,13 @@ public class QuizHistory {
 
     public double getTime_taken() {
         return Time_taken;
+    }
+
+    public void setQuiz(Quiz quiz){
+        _quiz = quiz;
+    }
+
+    public Quiz getQuiz(){
+        return _quiz;
     }
 }

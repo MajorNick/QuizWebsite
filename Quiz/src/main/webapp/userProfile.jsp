@@ -2,6 +2,8 @@
 <%@ page import="Quiz.src.main.java.models.Achievement" %>
 <%@ page import="Quiz.src.main.java.models.User" %>
 <%@ page import="Quiz.src.main.java.models.Notification" %>
+<%@ page import="Quiz.src.main.java.models.QuizHistory" %>
+<%@ page import="Quiz.src.main.java.models.Quiz" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
@@ -208,12 +210,17 @@
     <div class="block-contents">
       <div class="block-title">History</div>
       <div class="block-items">
-        <ol>
-          <li>List here</li>
-          <li>List here</li>
-          <li>List here</li>
-          <li>List here</li>
-        </ol>
+        <ul>
+          <%
+            ArrayList<QuizHistory> qhs = dbConn.GetUserQuizHistory(targetId);
+            for(QuizHistory qh : qhs) {
+              Quiz q = qh.getQuiz(); 
+          %> 
+          <li><%= String.format("%2.1f on '%s' by %s ", qh.getScore(), q.quiz_name, q.creatorName) %> </li> 
+          <% 
+            }
+          %>
+        </ul>
       </div>
     </div>
   </div>

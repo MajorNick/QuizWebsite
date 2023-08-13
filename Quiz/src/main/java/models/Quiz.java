@@ -6,6 +6,7 @@ public class Quiz{
     public  String quiz_name;
     public  boolean is_single_page;
     public boolean can_be_practiced;
+    public String creatorName;
 
     public Quiz(int id, int creator_id, String quiz_name, boolean is_single_page, boolean can_be_practiced) {
         this.id = id;
