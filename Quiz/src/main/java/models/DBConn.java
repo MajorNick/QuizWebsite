@@ -384,10 +384,10 @@ public class DBConn{
     }
 
     public ArrayList<Integer> getYourBestPerformance(int quiz_id,int userid){
-        String query=String.format("SELECT score" +
-                "FROM quiz_history" +
-                "WHERE quiz_id = %d, user_id = %d" +
-                "ORDER BY score DESC" +
+        String query=String.format("SELECT score " +
+                "FROM quiz_history " +
+                "WHERE quiz_id = %d AND user_id = %d " +
+                "ORDER BY score DESC " +
                 "LIMIT 3;",quiz_id,userid);
 
         ArrayList<Integer> scores = new ArrayList<>();
@@ -411,13 +411,12 @@ public class DBConn{
             e.printStackTrace();
             return  null;
         }
-        return scores
-                ;
+        return scores;
     }
     public ArrayList<Integer> getLastQuizPerformers(int quiz_id){
-        String query="SELECT  user_id" +
-                "FROM quiz_history" +
-                "ORDER BY take_date DESC" +
+        String query="SELECT  user_id " +
+                "FROM quiz_history " +
+                "ORDER BY take_date DESC " +
                 "LIMIT 3;";
 
         ArrayList<Integer> users = new ArrayList<>();
@@ -446,18 +445,18 @@ public class DBConn{
     public ArrayList<Integer> getBestPerformance(int quiz_id,boolean today){
         String query;
         if (today){
-            query = "SELECT user_id" +
-                    "FROM quiz_history" +
-                    "WHERE DATE(take_date) = CURDATE()" +
-                    "GROUP BY user_id" +
-                    "ORDER BY total_score DESC" +
+            query = "SELECT user_id, MAX(score) AS max_score " +
+                    "FROM quiz_history " +
+                    "WHERE DATE(take_date) = CURDATE() " +
+                    "GROUP BY user_id " +
+                    "ORDER BY total_score DESC " +
                     "LIMIT 3;";
         }else{
-            query = "SELECT user_id" +
-                    "FROM your_table_name" +
-                    "WHERE DATE_ADD(CURDATE(), INTERVAL 0 DAY) = DATE(user_id)" +
-                    "GROUP BY user_id" +
-                    "ORDER BY max_score DESC" +
+            query = "SELECT user_id, MAX(score) AS max_score " +
+                    "FROM quiz_history " +
+                    "WHERE DATE_ADD(CURDATE(), INTERVAL 0 DAY) = DATE(user_id) " +
+                    "GROUP BY user_id " +
+                    "ORDER BY max_score DESC " +
                     "LIMIT 3;";
 
         }

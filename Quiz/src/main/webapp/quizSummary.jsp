@@ -36,7 +36,7 @@
         padding: 10px;
         margin: 5px;
     }
-    .last_quiz_takesr{
+    .last_quiz_takers{
         display: inline-block;
         border: 1px solid #087cfc;
         border-radius: 10px;
@@ -76,9 +76,6 @@
     <h2>
         Quiz Description
     </h2>
-    <%
-
-    %>
     <p>
         <%=quiz.description%>
     </p>
