@@ -261,7 +261,7 @@ public class DBConn{
         return selection;
     }
 
-    public ArrayList<Friend> GetUserFriends(int user_id) {
+    public ArrayList<Friend> getUserFriends(int user_id) {
         String query = "SELECT * FROM friends";
         if(user_id != -1){
             query = String.format("SELECT * FROM friends f where f.user_id = %d", user_id);

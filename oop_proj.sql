@@ -142,7 +142,7 @@ INSERT INTO quizzes(creator_id, quiz_name, is_single_page, can_be_practiced)
 VALUES (1,'quiz 1',false,false),
        (2,'quiz 2',false,false),
        (3,'quiz 3',false,false);
-       
+
 INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
        (95.2,1,2),
