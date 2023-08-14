@@ -1,4 +1,8 @@
-<%--
+<%@ page import="Quiz.src.main.java.models.Question" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
+<%@ page import="Quiz.src.main.java.models.DBConn" %>
+<%@ page import="Quiz.src.main.java.models.Answer" %><%--
   Created by IntelliJ IDEA.
   User: majornick
   Date: 11.08.23
@@ -7,6 +11,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
+<link rel="stylesheet" href = "style.css">
 <style>
     .header{
         background-color: #087cfc;
@@ -19,8 +24,73 @@
 <body>
 <div class  = header>
     <header style = "color: white">
-        Quiz Summary
+        Quiz
     </header>
 </div>
+
+<form action="ProcessAnswers" method="post">
+    <%
+        int quizID = 1;
+        DBConn con = new DBConn();
+
+        // Assuming you have an ArrayList of Question objects named 'questions'
+        ArrayList<Question> questions = con.getQuestions(quizID);
+        %> <p>length is :  <%=questions.size() %></p>
+    <%
+        for (int i = 0; i < questions.size(); i++) {
+            Question question = questions.get(i);
+            QuestionType questionType = question.type;
+    %>
+
+
+    <% if (questionType == QuestionType.QUESTION_RESPONSE) { %>
+    <p>Question <%= i + 1 %>: <%= question.question %></p>
+    <input type="text" name="respons_q<%= i %>">
+
+    <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) { %>
+    <p>Question <%= i + 1 %>: <%= question.question %></p>
+    <input type="text" name="fill_in_the_blank_q<%= i %>">
+
+    <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
+    <p>Question <%= i + 1 %>: <%= question.question %></p>
+    <%
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id);
+        for(int j=0;j<answers.size();j++){
+            %>
+            <input type="radio" name="multiple_choice_q<%= i %>" value=<%=answers.get(j).answer%>> <%=answers.get(j).answer%><br>
+
+  <%
+     }
+  }else if (questionType == QuestionType.PICTURE_RESPONSE) { %>
+
+    <input type="text" name="picture_response_q<%= i %>">
+
+    <% } else if (questionType == QuestionType.MULTI_ANSWER) { %>
+    <p>Question <%= i + 1 %>: <%= question.question %></p>
+    <%
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id);
+        for(int j=0;j<answers.size();j++){
+    %>
+    <input type="text" name="multi_answer_q<%= j %>_1">
+
+
+    <% }
+        } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>
+    <p>Question <%= i + 1 %>: <%= question.question %></p>
+    <%
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id);
+        for(int j=0;j<answers.size();j++){
+    %>
+    <input type="checkbox" name="multi_choice_q<%= i %>_a" value="<%= answers.get(j).answer %>"> <%= answers.get(j).answer %><br>
+
+
+    <% }} }%>
+
+
+    <div>
+        <input class=submit_button type="submit" value="Submit">
+    </div>
+
+</form>
 </body>
 </html>

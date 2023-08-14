@@ -97,10 +97,10 @@
     </ul>
 </div>
 <div class="flex-container">
-    <form action = "./quiz" method = "GET">
+    <form action = "/quiz" method = "GET">
         <button class="test_start_button">Start</button>
      </form>
-    <form action = "./quizPractice" method = "GET">
+    <form action = "/quizPractice" method = "GET">
         <button class="test_start_button">Test</button>
     </form>
 </div>

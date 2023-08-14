@@ -485,14 +485,15 @@ public class DBConn{
         return users;
     }
     public ArrayList<Question> getQuestions(int quiz_id){
-        String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d",quiz_id);
+        String query = String.format("SELECT * FROM questions WHERE quiz_id = %d;",quiz_id);
+        System.out.println(query);
         ArrayList<Question> selection = new ArrayList<>();
         try{
             Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("USE " + database);
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(questionQuery);
+            ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
                 Question question  = new Question(rs.getInt("id"),
@@ -511,6 +512,7 @@ public class DBConn{
             e.printStackTrace();
             return  null;
         }
+
         return selection;
     }
     public ArrayList<Answer> getAnswers( int question_id){
