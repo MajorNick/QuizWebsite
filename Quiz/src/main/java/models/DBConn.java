@@ -194,7 +194,27 @@ public class DBConn{
         }
         return selection;
     }
+    public ArrayList<QuizHistory> getUserRecentQuizHistory(int user_id) {
+        String query = "SELECT * FROM quiz_history ORDER BY id DESC LIMIT 5";
+        if(user_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.user_id = %d ORDER BY id DESC LIMIT 5", user_id);
+        }
 
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
     public ArrayList<Achievement> getAchievements(int id) {
         String q = "SELECT * FROM achievements";
         if(id != -1){
@@ -602,7 +622,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
                 createdQuizzes.add(q);
             }
 
@@ -621,7 +641,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
             }
 
         } catch (Exception e){
@@ -642,7 +662,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
                 rq.add(q);
             }
 

@@ -119,26 +119,6 @@ CREATE TABLE user_achievements (
 
 -- TEST DATA:
 
-INSERT INTO questions(  question_num, quiz_id, question_type, question)
-VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
-       (2,1,0,'tavisufali universiteti kleoba xo araa?'),
-       (3,1,0,'ra aris veqtoruli velis potenciali?'),
-       (4,1,1,'jandrieri magari .... .'),
-       (5,1,2,'koleidoskopu magra adidebs.'),
-       (6,1,4,'chamotvalet top kanonieri qurdebi'),
-       (6,1,5,'shemoxaset top kanonieri qurdebi');
-
-INSERT INTO answers( question_id, answer, is_correct)
-VALUES (5,'TRUE',false),
-       (5,'FALSE',true),
-       (6,'tornike ramishvili',TRUE);
-        (6,'giorgi lekva lekveishvili',TRUE),
-        (7,'tornike ramishvili',TRUE),
-        (7,'nika tarkashvili',TRUE),
-        (7,'giorgi javakhishvili',TRUE),
-        (7,'mariam gamrekelashvili',TRUE),
-        (7,'vakhtang jandieri',FALSE);
-
 INSERT INTO users (username, password_hash)
 VALUES ('John Deer', '1234'),
 	   ('Serena Anderson', '5678'),
@@ -155,9 +135,6 @@ VALUES (1, 2, 'note', 'Hello'),
 INSERT INTO quizzes(  creator_id, quiz_name, description, is_single_page, can_be_practiced)
 VALUES  (1,'dinozavrebi','Dinosaurs are a diverse group of reptiles of the clade Dinosauria. They first appeared during the Triassic period, between 245 and 233.23 million years ago (mya), although the exact origin and timing of the evolution of dinosaurs is a subject of active research. They became the dominant terrestrial vertebrates after the Triassic–Jurassic extinction event 201.3 mya and their dominance continued throughout the Jurassic and Cretaceous periods. The fossil record shows that birds are feathered dinosaurs, having evolved from earlier theropods during the Late Jurassic epoch, and are the only dinosaur lineage known to have survived the Cretaceous–Paleogene extinction event approximately 66 mya. Dinosaurs can therefore be divided into avian dinosaurs—birds—and the extinct non-avian dinosaurs, which are all dinosaurs other than birds.',
          true,false);
-
-
-
 
 INSERT INTO user_achievements(user_id, achievement_id)
 VALUES (1,1),
@@ -192,3 +169,23 @@ INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
       (95.2,1,2),
       (12.4,3,1);
+
+-- INSERT INTO questions(  question_num, quiz_id, question_type, question)
+-- VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
+--        (2,1,0,'tavisufali universiteti kleoba xo araa?'),
+--        (3,1,0,'ra aris veqtoruli velis potenciali?'),
+--        (4,1,1,'jandrieri magari .... .'),
+--        (5,1,2,'koleidoskopu magra adidebs.'),
+--        (6,1,4,'chamotvalet top kanonieri qurdebi'),
+--        (6,1,5,'shemoxaset top kanonieri qurdebi');
+
+-- INSERT INTO answers( question_id, answer, is_correct)
+-- VALUES (5,'TRUE',false),
+--        (5,'FALSE',true),
+--        (6,'tornike ramishvili',TRUE),
+--         (6,'giorgi lekva lekveishvili',TRUE),
+--         (7,'tornike ramishvili',TRUE),
+--         (7,'nika tarkashvili',TRUE),
+--         (7,'giorgi javakhishvili',TRUE),
+--         (7,'mariam gamrekelashvili',TRUE),
+--         (7,'vakhtang jandieri',FALSE);
