@@ -2,6 +2,8 @@ package Quiz.src.main.java.models;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DBConn{
     private static final String account = "oopUser";
@@ -534,15 +536,14 @@ public class DBConn{
         return users;
     }
     public ArrayList<Question> getQuestions(int quiz_id){
-        String query = String.format("SELECT * FROM questions WHERE quiz_id = %d;",quiz_id);
-        System.out.println(query);
+        String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d",quiz_id);
         ArrayList<Question> selection = new ArrayList<>();
         try{
             Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("USE " + database);
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = stmt.executeQuery(questionQuery);
 
             while (rs.next()) {
                 Question question  = new Question(rs.getInt("id"),
@@ -561,7 +562,6 @@ public class DBConn{
             e.printStackTrace();
             return  null;
         }
-
         return selection;
     }
     public ArrayList<Answer> getAnswers( int question_id){
@@ -592,5 +592,89 @@ public class DBConn{
             return  null;
         }
         return selection;
+    }
+
+    public ArrayList<Quiz> getQuizzesByCreator(int creator_id){
+        String query = String.format("SELECT * FROM quizzes q where q.creator_id = %d", creator_id);
+
+        ArrayList<Quiz> createdQuizzes = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                createdQuizzes.add(q);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return createdQuizzes;
+    }
+
+    public Quiz getQuizById(int id){
+        String query = String.format("SELECT * FROM quizzes q where q.id = %d", id);
+
+        Quiz q = null;
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return q;
+    }
+
+    public ArrayList<Quiz> getRecentlyCreatedQuizzes(int creator_id){
+        String query = String.format("SELECT * FROM quizzes ORDER BY id DESC LIMIT 5");
+        if(creator_id != -1) {
+            query = String.format("SELECT * FROM quizzes WHERE creator_id = %d ORDER BY id DESC LIMIT 5", creator_id);
+        }
+
+        ArrayList<Quiz> rq = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                rq.add(q);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return rq;
+    }
+
+    public ArrayList<Quiz> getPopularQuizzes(){
+        String query = String.format("SELECT quiz_id, COUNT(*) AS frequency FROM quiz_history GROUP BY quiz_id ORDER BY frequency DESC LIMIT 5");
+        Map<Integer, Integer> quizFrequencyMap = new HashMap<>();
+        ArrayList<Quiz> popularQuizzes = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                int quizId = rs.getInt("quiz_id");
+                int frequency = rs.getInt("frequency");
+                quizFrequencyMap.put(quizId, frequency);
+            }
+            for (int quizId : quizFrequencyMap.keySet()) {
+                Quiz quiz = getQuizById(quizId);
+                if (quiz != null) {
+                    popularQuizzes.add(quiz);
+                }
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return popularQuizzes;
     }
 }

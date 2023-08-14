@@ -172,18 +172,23 @@ VALUES (1,1),
        (3,1),
        (3,2);
 
+INSERT INTO announcements(announcement)
+VALUES ('New quiz added'),
+	   ('Create quiz and get achievement');
+
 INSERT INTO friends(user_id, friend_id)
 VALUES (1,2),
        (2,1),
        (1,3),
        (3,1);
 
-INSERT INTO quizzes(creator_id, quiz_name, is_single_page, can_be_practiced)
-VALUES (1,'quiz 1',false,false),
-       (2,'quiz 2',false,false),
-       (3,'quiz 3',false,false);
+INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced)
+VALUES (1, 'History', true, false),
+	   (1, 'Geography', true, false),
+       (2, 'Physics', true, false),
+       (3, 'Chemistry', true, false);
 
 INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
-       (95.2,1,2),
-       (12.4,3,1);
+      (95.2,1,2),
+      (12.4,3,1);
