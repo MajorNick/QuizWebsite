@@ -141,3 +141,9 @@ VALUES (1, 2),
 	   (1, 3),
        (2, 1),
        (3, 1);
+
+INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced)
+VALUES (1, 'History', true, false),
+	   (1, 'Geography', true, false),
+       (2, 'Physics', true, false),
+       (3, 'Chemistry', true, false);

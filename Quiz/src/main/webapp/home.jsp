@@ -187,37 +187,57 @@
             <div class="left">
                 <div class = "popularQuizzes">
                     <h1>Popular Quizzes</h1>
-                    <ul class="popularQuizzesList">
-                        <li>Quiz 1</li>
-                        <li>Quiz 2</li>
-                        <li>Quiz 3</li>
+                    <ul class = "popularQuizzesList">
+                        <%
+                          ArrayList<Quiz> qs = dbConn.getPopularQuizzes();
+                          for(Quiz q : qs) {
+                        %>
+                        <li> <%= q.quiz_name %> </li>
+                        <%
+                          }
+                        %>
                     </ul>
                 </div>
 
                 <div class = "recentlyCreatedQuizzes">
                     <h1>Recently Created Quizzes</h1>
                     <ul class="recCrQuizList">
-                        <li>Quiz 1</li>
-                        <li>Quiz 2</li>
-                        <li>Quiz 3</li>
+                        <%
+                          ArrayList<Quiz> rcqs = dbConn.getRecentlyCreatedQuizzes(-1);
+                          for(Quiz q : rcqs) {
+                        %>
+                        <li> <%= q.quiz_name %> </li>
+                        <%
+                          }
+                        %>
                     </ul>
                 </div>
 
                 <div class = "recentlyTakenQuizzes">
                     <h1>Recently Taken Quizzes</h1>
                     <ul class="recTakenQuizList">
-                        <li>Quiz 1</li>
-                        <li>Quiz 2</li>
-                        <li>Quiz 3</li>
+                        <%
+                          ArrayList<QuizHistory> tqs = dbConn.getUserRecentQuizHistory(targetId);
+                          for(QuizHistory tq : tqs) {
+                        %>
+                        <li> <%= dbConn.getQuizById(tq.getQuiz_id()).quiz_name %> </li>
+                        <%
+                          }
+                        %>
                     </ul>
                 </div>
 
                 <div class = "myRecentlyCreatedQuizzes">
                     <h1>My Recently Created Quizzes</h1>
                     <ul class="myRecCrQuizList">
-                        <li>Quiz 1</li>
-                        <li>Quiz 2</li>
-                        <li>Quiz 3</li>
+                        <%
+                          ArrayList<Quiz> mqs = dbConn.getRecentlyCreatedQuizzes(targetId);
+                          for(Quiz mq : mqs) {
+                        %>
+                        <li> <%= mq.quiz_name %> </li>
+                        <%
+                          }
+                        %>
                     </ul>
                 </div>
             </div>
@@ -261,13 +281,26 @@
                         %>
                           <dl>
                             <dt class="frUsername"><%= friend.getUsername() %></dt>
-                            <dd class="frAchievementsList">
-                             <%
-                                ArrayList<Achievement> fas = dbConn.getUserAchievements(friendId);
-                                for(Achievement fa : fas) {
-                             %>
-                             <li><img class="achievement-icon" src="<%= fa.getAchievementIcon()%>"  title="<%= fa.getAchievementToEarn()%>"/> <br> <%= fa.getAchievementBody()%> </li>
-                             <% } %>
+                            <dd>
+                                <h3>Achievements:</h3>
+                                <ul class="frAchievementsList">
+                                <%
+                                   ArrayList<Achievement> fas = dbConn.getUserAchievements(friendId);
+                                   for(Achievement fa : fas) {
+                                %>
+                                <li><img class="achievement-icon" src="<%= fa.getAchievementIcon()%>"  title="<%= fa.getAchievementToEarn()%>"/> <br> <%= fa.getAchievementBody()%> </li>
+                                <% } %>
+                                </ul>
+
+                                <h3>Created Quizzes:</h3>
+                                <ul>
+                                <%
+                                   ArrayList<Quiz> cqs = dbConn.getRecentlyCreatedQuizzes(friendId);
+                                   for(Quiz cq : cqs) {
+                                %>
+                                <li><%= cq.quiz_name %></li>
+                                <% } %>
+                                </ul>
                             </dd>
 
                           </dl>
