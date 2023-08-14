@@ -497,7 +497,8 @@ public class DBConn{
             while (rs.next()) {
                 Question question  = new Question(rs.getInt("id"),
                         rs.getInt("quiz_id"),
-                        rs.getString("question")
+                        rs.getString("question"),
+                        rs.getInt("question_type")
                 );
                 selection.add(question);
             }

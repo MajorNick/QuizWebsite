@@ -7,52 +7,7 @@
 <title>
     Quiz summary
 </title>
-<style>
-    .header{
-        background-color: #087cfc;
-    }
-    header {
-        color: white;
-        font-size: 24px;
-    }
-    .best_performances{
-        display: inline-block;
-        border: 1px solid #087cfc;
-        border-radius: 10px;
-        padding: 10px;
-        margin: 5px;
-    }
-    .highest_scores{
-        display: inline-block;
-        border: 1px solid #087cfc;
-        border-radius: 10px;
-        padding: 10px;
-        margin: 5px;
-    }
-    .today_highest_scores{
-        display: inline-block;
-        border: 1px solid #087cfc;
-        border-radius: 10px;
-        padding: 10px;
-        margin: 5px;
-    }
-    .last_quiz_takers{
-        display: inline-block;
-        border: 1px solid #087cfc;
-        border-radius: 10px;
-        padding: 10px;
-        margin: 5px;
-    }
-    .test_start_button{
-        background-color: #087cfc;
-        border: none;
-        margin-top: 10px;
-        padding: 10px 15px;
-        color: white;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-</style>
+<link rel="stylesheet" href = "style.css">
 <body>
 <div class  = header>
     <header style = "color: white">
@@ -83,7 +38,7 @@
 </div>
 
 <div>
-    <p>Quiz Creator: <a href = "./userProfile.jsp?id=%d"><%=user.getUsername()%></a></p>
+    <p>Quiz Creator: <a href = "../userProfile.jsp?id=%d"><%=user.getUsername()%></a></p>
 </div>
 
 <div class = best_performances>
@@ -141,9 +96,13 @@
         <% } %>
     </ul>
 </div>
-<div>
-    <button class="test_start_button">Start</button>
-    <button class="test_start_button">Test</button>
+<div class="flex-container">
+    <form action = "./quiz" method = "GET">
+        <button class="test_start_button">Start</button>
+     </form>
+    <form action = "./quizPractice" method = "GET">
+        <button class="test_start_button">Test</button>
+    </form>
 </div>
 </body>
 </html>
