@@ -97,12 +97,12 @@ CREATE TABLE achievements (
     icon VARCHAR(1000)
 );
 
-INSERT INTO achievements (achievement, to_earn, icon) 
-VALUES ('Amateur Author', 'Create your first quiz', 'https://cdn-icons-png.flaticon.com/512/3601/3601002.png'), 
-	   ('Prolific Author', 'Create 5 quizzes', 'https://cdn-icons-png.flaticon.com/128/3601/3601646.png'), 
-       ('Prodigious Author', 'Create 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/7601/7601746.png'), 
-       ('Quiz Machine', 'Take 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/5289/5289226.png'), 
-       ('I am the Greatest', 'Get the highest score on a quiz', 'https://cdn-icons-png.flaticon.com/128/744/744922.png'), 
+INSERT INTO achievements (achievement, to_earn, icon)
+VALUES ('Amateur Author', 'Create your first quiz', 'https://cdn-icons-png.flaticon.com/512/3601/3601002.png'),
+	   ('Prolific Author', 'Create 5 quizzes', 'https://cdn-icons-png.flaticon.com/128/3601/3601646.png'),
+       ('Prodigious Author', 'Create 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/7601/7601746.png'),
+       ('Quiz Machine', 'Take 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/5289/5289226.png'),
+       ('I am the Greatest', 'Get the highest score on a quiz', 'https://cdn-icons-png.flaticon.com/128/744/744922.png'),
        ('Practice Makes Perfect', 'Take your first practice quiz', 'https://cdn-icons-png.flaticon.com/128/1330/1330208.png');
 
 CREATE TABLE user_achievements (
@@ -114,6 +114,26 @@ CREATE TABLE user_achievements (
 );
 
 -- TEST DATA:
+
+INSERT INTO questions(  question_num, quiz_id, question_type, question)
+VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
+       (2,1,0,'tavisufali universiteti kleoba xo araa?'),
+       (3,1,0,'ra aris veqtoruli velis potenciali?'),
+       (4,1,1,'jandrieri magari .... .'),
+       (5,1,2,'koleidoskopu magra adidebs.'),
+       (6,1,4,'chamotvalet top kanonieri qurdebi'),
+       (6,1,5,'shemoxaset top kanonieri qurdebi');
+
+INSERT INTO answers( question_id, answer, is_correct)
+VALUES (5,'TRUE',false),
+       (5,'FALSE',true),
+       (6,'tornike ramishvili',TRUE);
+        (6,'giorgi lekva lekveishvili',TRUE),
+        (7,'tornike ramishvili',TRUE),
+        (7,'nika tarkashvili',TRUE),
+        (7,'giorgi javakhishvili',TRUE),
+        (7,'mariam gamrekelashvili',TRUE),
+        (7,'vakhtang jandieri',FALSE);
 
 INSERT INTO users (username, password_hash)
 VALUES ('John Deer', '1234'),
@@ -131,7 +151,10 @@ VALUES (1, 2, 'note', 'Hello'),
 INSERT INTO quizzes(  creator_id, quiz_name, description, is_single_page, can_be_practiced)
 VALUES  (1,'dinozavrebi','Dinosaurs are a diverse group of reptiles of the clade Dinosauria. They first appeared during the Triassic period, between 245 and 233.23 million years ago (mya), although the exact origin and timing of the evolution of dinosaurs is a subject of active research. They became the dominant terrestrial vertebrates after the Triassic–Jurassic extinction event 201.3 mya and their dominance continued throughout the Jurassic and Cretaceous periods. The fossil record shows that birds are feathered dinosaurs, having evolved from earlier theropods during the Late Jurassic epoch, and are the only dinosaur lineage known to have survived the Cretaceous–Paleogene extinction event approximately 66 mya. Dinosaurs can therefore be divided into avian dinosaurs—birds—and the extinct non-avian dinosaurs, which are all dinosaurs other than birds.',
          true,false);
-       
+
+
+
+
 INSERT INTO user_achievements(user_id, achievement_id)
 VALUES (1,1),
        (1,2),
