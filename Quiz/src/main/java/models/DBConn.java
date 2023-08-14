@@ -93,7 +93,7 @@ public class DBConn{
         if(u == null)
             throw new RuntimeException("Provided UserAchievement is null");
 
-        String q = String.format("INSERT INTO users (username, password_hash)  VALUES(%s, %s)", u.getUsername(), u.getPasswordHash());
+        String q = String.format("INSERT INTO users (username, password_hash, role)  VALUES('%s', '%s', '%s')", u.getUsername(), u.getPasswordHash(), u.getRole());
         executeUpdate(q);
     }
 
@@ -249,7 +249,28 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                user.setPfpLink(rs.getString("pfp"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return selection;
+    }
+
+    public ArrayList<User> getUsersByUsername(String username) {
+        String query = "SELECT * FROM users";
+            query = String.format("SELECT * FROM users u where u.username = '%s'", username);
+
+        ArrayList<User> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
                 user.setPfpLink(rs.getString("pfp"));
                 selection.add(user);
             }

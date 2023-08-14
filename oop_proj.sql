@@ -20,8 +20,12 @@ CREATE TABLE users (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255),
     password_hash VARCHAR(255),
+    role VARCHAR(255),
     pfp VARCHAR(1000)
 );
+
+INSERT INTO users (username, password_hash, role)
+VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin');
 
 CREATE TABLE friends (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

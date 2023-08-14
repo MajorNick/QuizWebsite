@@ -17,8 +17,13 @@
   <!-- get userId from context !!! -->
   <% 
     DBConn dbConn=new DBConn();
-    int userId=1;
-    String TargetId=request.getParameter("id");
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        response.sendRedirect(request.getContextPath() + "/loginPage.jsp");
+        return;
+    }
+    int userId= user.getId();
+    String TargetId = request.getParameter("id");
     TargetId = TargetId == null ? ""+userId : TargetId;
     int targetId=Integer.parseInt(TargetId);
 
