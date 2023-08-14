@@ -44,5 +44,7 @@ public class Note extends HttpServlet {
         String redirectUrl = String.format("./userProfile.jsp?id=%d&notephtext=Note sent", targetId);
 
         response.sendRedirect(redirectUrl);
+
+
     }
 }

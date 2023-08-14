@@ -323,6 +323,7 @@ public class DBConn{
                               "q.quiz_name,\n" +
                               "q.is_single_page,\n" +
                               "q.can_be_practiced,\n" +
+                              "q.description,\n" +
                               "u.username\n" +
                        "FROM quiz_history qh JOIN quizzes q ON(qh.quiz_id = q.id) JOIN users u ON(q.creator_id = u.id)";
         if(user_id != -1){
@@ -336,7 +337,7 @@ public class DBConn{
 
             while (rs.next()) {
                 QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("creator_id"), rs.getInt("time_taken"));
-                Quiz q = new Quiz(qh.getQuiz_id(), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                Quiz q = new Quiz(qh.getQuiz_id(), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
                 q.creatorName = rs.getString("username");
                 qh.setQuiz(q);
                 quizHistory.add(qh);

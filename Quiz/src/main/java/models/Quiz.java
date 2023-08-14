@@ -9,7 +9,7 @@ public class Quiz{
     public boolean can_be_practiced;
     public String creatorName;
 
-    public Quiz(int id, int creator_id, String quiz_name,String description, boolean is_single_page, boolean can_be_practiced) {
+    public Quiz(int id, int creator_id, String quiz_name, String description, boolean is_single_page, boolean can_be_practiced) {
         this.id = id;
         this.creator_id = creator_id;
         this.quiz_name = quiz_name;
