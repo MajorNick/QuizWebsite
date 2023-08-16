@@ -10,8 +10,24 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<style>
+    body {
+        font-family: Courier, monospace;
+    }
+
+    .submit_button{
+        background-color: #087cfc;
+        border: none;
+        margin-top: 10px;
+        padding: 10px 15px;
+
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+</style>
 <html>
-<link rel="stylesheet" href = "style.css">
 <style>
     .header{
         background-color: #087cfc;

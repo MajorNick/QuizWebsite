@@ -7,8 +7,79 @@
 <title>
     Quiz summary
 </title>
-<link rel="stylesheet" href = "style.css">
+<style>
+    .header{
+        background-color: #087cfc;
+    }
+    header {
+        color: white;
+        font-size: 24px;
+        font-family: Courier, monospace;
+    }
+    body {
+        font-family: Courier, monospace;
+    }
+
+    .best_performances{
+        display: inline-block;
+        border: 1px solid #087cfc;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+    }
+    .highest_scores{
+        display: inline-block;
+        border: 1px solid #087cfc;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+    }
+    .today_highest_scores{
+        display: inline-block;
+        border: 1px solid #087cfc;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+    }
+    .last_quiz_takers{
+        display: inline-block;
+        border: 1px solid #087cfc;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+    }
+    .test_start_button{
+        background-color: #087cfc;
+        border: none;
+        margin-top: 10px;
+        padding: 10px 15px;
+
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .flex-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkbox = document.getElementById('singlePageCheckbox');
+        const quizForm = document.getElementById('quizForm');
+        const quizPracticeForm = document.getElementById('quizPracticeForm');
+        checkbox.addEventListener('change', function () {
+            const isChecked = checkbox.checked;
+            quizForm.action = isChecked ? '/quizSinglePage.jsp' : '/quiz.jsp';
+            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage' : '/quizPractice';
+        });
+
+    });
+</script>
 <body>
+
 <div class  = header>
     <header style = "color: white">
         Quiz Summary
@@ -22,7 +93,8 @@
     Quiz quiz = con.getQuiz(id);
     ArrayList<User> u = con.getUsers(id);
     if (u.size() == 0){
-        //handle
+
+        return;
     }
     User user = u.get(0);
 
@@ -97,12 +169,18 @@
     </ul>
 </div>
 <div class="flex-container">
-    <form action = "/quiz" method = "GET">
+    <form id="quizForm" action="/quiz/index.jsp" method="GET">
         <button class="test_start_button">Start</button>
-     </form>
-    <form action = "/quizPractice" method = "GET">
+    </form>
+
+    <form id="quizPracticeForm" action="./quizPractice/index.jsp" method="GET">
         <button class="test_start_button">Test</button>
     </form>
+
+    <label>
+        <input type="checkbox" id="singlePageCheckbox" name="quizType" value="singlePage"> Single Page
+    </label>
 </div>
+
 </body>
 </html>
