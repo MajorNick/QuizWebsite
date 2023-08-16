@@ -260,6 +260,7 @@ public class DBConn{
         return selection;
     }
 
+
     public ArrayList<User> getUsers(int id) {
         String query = "SELECT * FROM users";
         if(id != -1){
@@ -281,6 +282,32 @@ public class DBConn{
             e.printStackTrace();
         }
         return selection;
+    }
+
+    public boolean isAdmin(int id) {
+        String query = "SELECT * FROM users";
+        if(id != -1){
+            query = String.format("SELECT * FROM users u where u.id = %d", id);
+        }
+
+        ArrayList<User> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                user.setPfpLink(rs.getString("pfp"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        if (selection.isEmpty()){
+            return false;
+        }
+        return selection.get(0).isAdmin();
     }
 
     public ArrayList<User> getUsersByUsername(String username) {
@@ -324,6 +351,102 @@ public class DBConn{
             e.printStackTrace();
         }
         return friends;
+    }
+
+    public void removeUser(int user_id){
+        String q = String.format("DELETE FROM users u WHERE (u.id = %d)", user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void makeUserAdmin(int user_id){
+        String q = String.format("UPDATE users SET role = 'admin' WHERE id = %d;", user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeUserQuizes(int user_id){
+        String q = String.format("DELETE FROM quizzes q WHERE (q.creator_id = %d)", user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeUserNotifications(int user_id){
+        String q = String.format("DELETE FROM notifications n WHERE (n.receiver_id = %d) OR (n.sender_id = %d)", user_id, user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeUserAchievements(int user_id){
+        String q = String.format("DELETE FROM user_achievements a WHERE (a.user_id = %d)", user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeQuizQuestions(int quiz_id){
+        String q = String.format("DELETE FROM questions q WHERE (q.quiz_id = %d)", quiz_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeQuizAnswers(int quiz_id){
+        String q = String.format("DELETE FROM answers q WHERE (q.question_id = %d)", quiz_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeQuizHistory(int quiz_id){
+        String q = String.format("DELETE FROM quiz_history q WHERE (q.quiz_id = %d)", quiz_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void removeFriend(int user_id, int friend_id){

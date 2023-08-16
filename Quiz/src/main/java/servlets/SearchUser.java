@@ -32,13 +32,13 @@ public class SearchUser extends HttpServlet {
         int userId = 1;
 
         ArrayList<User> users = dbConn.getUsers(-1);
+
         for(User u : users){
             if (u.getUsername().toLowerCase(Locale.ROOT).equals(search_text)){
                 userId = u.getId();
             }
         }
 
-        dbConn.closeDBConn();
 
         String redirectUrl = String.format("./userProfile.jsp?id=%d", userId);
 

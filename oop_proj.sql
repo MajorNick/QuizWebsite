@@ -31,8 +31,8 @@ CREATE TABLE friends (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	user_id INT,
     friend_id INT,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (friend_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE quizzes (
@@ -42,7 +42,7 @@ CREATE TABLE quizzes (
     description VARCHAR(2000),
     is_single_page bool,
     can_be_practiced bool,
-    FOREIGN KEY (creator_id) REFERENCES users(id)
+    FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE question_types (
@@ -56,8 +56,8 @@ CREATE TABLE questions (
     quiz_id INT,
     question_type INT,
     question VARCHAR(2000),
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
-    FOREIGN KEY (question_type) REFERENCES question_types(id)
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_type) REFERENCES question_types(id) ON DELETE CASCADE
 );
 
 CREATE TABLE answers (
@@ -65,7 +65,7 @@ CREATE TABLE answers (
     question_id INT,
     answer VARCHAR(2000),
     is_correct bool,
-    FOREIGN KEY (question_id) REFERENCES questions(id)
+    FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
 
 CREATE TABLE quiz_history (
@@ -75,8 +75,8 @@ CREATE TABLE quiz_history (
     user_id INT,
     time_taken INT,
     take_date TIMESTAMP,
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE notifications (
@@ -113,16 +113,16 @@ CREATE TABLE user_achievements (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     user_id INT,
     achievement_id INT,
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
 
 -- TEST DATA:
 
-INSERT INTO users (username, password_hash)
-VALUES ('John Deer', '1234'),
-	   ('Serena Anderson', '5678'),
-       ('Xavier Patel', '4321');
+INSERT INTO users (username, password_hash, role)
+VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user'),
+	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user'),
+       ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user');
 
 INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body) 
 VALUES (1, 2, 'note', 'Hello'),

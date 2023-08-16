@@ -5,10 +5,7 @@ import Quiz.src.main.java.models.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 
 import static Quiz.src.main.java.HelperMethods.PassHasher.hashPassword;
@@ -43,7 +40,10 @@ public class CreationServlet extends HttpServlet {
             session.setAttribute("user", user);
             session.setAttribute("username", user.getUsername());
 
-            httpServletRequest.getRequestDispatcher("userProfile.jsp").forward(httpServletRequest, httpServletResponse);
+            Cookie sessionCookie = new Cookie("username", name);
+            sessionCookie.setMaxAge(Integer.MAX_VALUE);
+            httpServletResponse.addCookie(sessionCookie);
+            httpServletRequest.getRequestDispatcher("home.jsp").forward(httpServletRequest, httpServletResponse);
         }
     }
 }

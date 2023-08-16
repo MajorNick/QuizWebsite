@@ -1,4 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="Quiz.src.main.java.models.Achievement" %>
+<%@ page import="Quiz.src.main.java.models.User" %>
+<%@ page import="Quiz.src.main.java.models.Notification" %>
+<%@ page import="Quiz.src.main.java.models.QuizHistory" %>
+<%@ page import="Quiz.src.main.java.models.Quiz" %>
+<%@ page import="Quiz.src.main.java.models.DBConn" %>
+<%@ page import="java.util.ArrayList" %>
 <html>
 <head>
     <title>Welcome</title>
@@ -64,6 +71,13 @@
     </style>
 </head>
 <body>
+    <%
+    User user = (User) session.getAttribute("user");
+    if (user != null) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
+    %>
     <h1>Welcome To Our Quiz Site</h1>
     <p>Please log in</p>
     <form action="/Task1Servlet" method="post">

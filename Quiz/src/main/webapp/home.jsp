@@ -11,7 +11,30 @@
     <style>
         .navbar {
             background-color: #007bff;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 18px;
+        }
+        .navbar {
+            background-color: #007bff;
             overflow: hidden;
+        }
+
+        .link {
+            color: black;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .navbar a {
@@ -152,12 +175,25 @@
             display: flex;
             gap: 20px;
         }
+        .profile-button {
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
     </style>
     <body>
       <%
         DBConn dbConn=new DBConn();
-        int userId=1;
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+            return;
+        }
+        int userId=user.getId();
         String TargetId=request.getParameter("id");
         TargetId = TargetId == null ? ""+userId : TargetId;
         int targetId=Integer.parseInt(TargetId);
@@ -166,7 +202,12 @@
         String userName = u.getUsername();
       %>
         <div class="navbar">
-            <a>Logged in as <%= userName %></a>
+            <a class = "link" href="<%= request.getContextPath() %>/userProfile.jsp">Logged in as <%= userName %></a>
+            <form class="navbarItem" action="./SearchUser" method="post">
+              <input class="navbarSubItem" name="search_text" rows="1" cols="30" placeholder="Look up user"/>
+              <button class="action-button">Search User</button>
+            </form>
+            <a href="<%= request.getContextPath() %>/LogoutServlet">Log Out</a>
         </div>
 
         <div class = "announcements">
