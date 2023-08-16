@@ -44,7 +44,7 @@ public class DBConn{
             System.out.println(String.format("Executing querry: %s", q));
             rs = stmt.executeQuery(q);
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("query: " + q + " " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -54,7 +54,7 @@ public class DBConn{
             System.out.println(String.format("Executing update: %s", u));
             stmt.executeUpdate(u);
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("update: " + u + " " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -112,6 +112,30 @@ public class DBConn{
             throw new RuntimeException("Provided Quiz History is null");
 
         String q = String.format("INSERT INTO quiz_history (score, quiz_id, user_id, time_taken)  VALUES(%f, %d, %d, %d)", qh.getScore(), qh.getQuiz_id(), qh.getUser_id(), qh.getTime_taken());
+        executeUpdate(q);
+    }
+
+    public void insertQuiz(Quiz qz){
+        if(qz == null)
+            throw new RuntimeException("Provided Quiz is null");
+
+        String q = String.format("INSERT INTO quizzes(creator_id, quiz_name, description, is_single_page, can_be_practiced, rand_question_order) VALUES(%d, '%s', '%s', %b, %b, %b)", qz.creator_id, qz.quiz_name, qz.description, qz.is_single_page, qz.can_be_practiced, qz.rand_question_order);
+        executeUpdate(q);
+    }
+
+    public void insertQuestion(Question qu){
+        if(qu == null)
+            throw new RuntimeException("Provided Question is null");
+
+        String q = String.format("INSERT INTO questions(question_num, quiz_id, question_type, question) VALUES(%d, %d, %d, '%s')", qu.num, qu.quiz_id, qu.type.value, qu.question);
+        executeUpdate(q);
+    }
+
+    public void insertAnswer(Answer ans){
+        if(ans == null)
+            throw new RuntimeException("Provided Question is null");
+
+        String q = String.format("INSERT INTO answers(question_id, answer, is_correct) VALUES(%d, '%s', %b)", ans.question_id, ans.answer, ans.isCorrect);
         executeUpdate(q);
     }
 
@@ -380,7 +404,7 @@ public class DBConn{
 
             while (rs.next()) {
                 QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("creator_id"), rs.getInt("time_taken"));
-                Quiz q = new Quiz(qh.getQuiz_id(), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                Quiz q = new Quiz(qh.getQuiz_id(), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"), rs.getBoolean("rand_question_order"));
                 q.creatorName = rs.getString("username");
                 qh.setQuiz(q);
                 quizHistory.add(qh);
@@ -409,7 +433,8 @@ public class DBConn{
                         rs.getString("quiz_name"),
                         rs.getString("description"),
                         rs.getBoolean("is_single_page"),
-                        rs.getBoolean("can_be_practiced")
+                        rs.getBoolean("can_be_practiced"),
+                        rs.getBoolean("rand_question_order")
                 );
                 selection.add(quiz);
             }
@@ -439,7 +464,8 @@ public class DBConn{
                     rs.getString("quiz_name"),
                     rs.getString("description"),
                     rs.getBoolean("is_single_page"),
-                    rs.getBoolean("can_be_practiced")
+                    rs.getBoolean("can_be_practiced"),
+                     rs.getBoolean("rand_question_order")
                 );
 
             rs.close();
@@ -470,7 +496,7 @@ public class DBConn{
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                int result = rs.getInt("user_id");;
+                int result = rs.getInt("score");;
                 scores.add(result);
             }
             rs.close();
@@ -569,7 +595,8 @@ public class DBConn{
                 Question question  = new Question(rs.getInt("id"),
                         rs.getInt("quiz_id"),
                         rs.getString("question"),
-                        rs.getInt("question_type")
+                        rs.getInt("question_type"),
+                        rs.getInt("question_num")
                 );
                 selection.add(question);
             }
@@ -622,7 +649,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"), rs.getBoolean("rand_question_order"));
                 createdQuizzes.add(q);
             }
 
@@ -641,7 +668,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"), rs.getBoolean("rand_question_order"));
             }
 
         } catch (Exception e){
@@ -662,7 +689,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"));
+                Quiz q = new Quiz(rs.getInt("id"), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"), rs.getBoolean("rand_question_order"));
                 rq.add(q);
             }
 
@@ -696,5 +723,33 @@ public class DBConn{
             e.printStackTrace();
         }
         return popularQuizzes;
+    }
+
+    public int getNextQuizId(){
+        String q = "SELECT MAX(id) + 1 as next_id FROM quizzes";
+        try{
+            executeQuery(q);
+            rs.next();
+            int nextId = rs.getInt("next_id");
+            return  nextId;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public int getNexQuestionId(){
+        String q = "SELECT MAX(id) + 1 as next_id FROM questions";
+        try{
+            executeQuery(q);
+            rs.next();
+            int nextId = rs.getInt("next_id");
+            return  nextId;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

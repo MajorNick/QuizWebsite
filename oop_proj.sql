@@ -3,13 +3,13 @@
 -- CREATE DATABASE oop_proj;
 
 use oop_proj;
+SET GLOBAL information_schema_stats_expiry = 0;
 
 DROP TABLE IF EXISTS announcements;
 DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS quiz_history;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
-DROP TABLE IF EXISTS question_types;
 DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS user_achievements;
@@ -42,12 +42,8 @@ CREATE TABLE quizzes (
     description VARCHAR(2000),
     is_single_page bool,
     can_be_practiced bool,
+    rand_question_order bool,
     FOREIGN KEY (creator_id) REFERENCES users(id)
-);
-
-CREATE TABLE question_types (
-	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    q_type VARCHAR(100)
 );
 
 CREATE TABLE questions (
@@ -56,8 +52,7 @@ CREATE TABLE questions (
     quiz_id INT,
     question_type INT,
     question VARCHAR(2000),
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
-    FOREIGN KEY (question_type) REFERENCES question_types(id)
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
 );
 
 CREATE TABLE answers (
@@ -132,9 +127,9 @@ VALUES (1, 2, 'note', 'Hello'),
        (3, 2, 'note', 'qwer'),
 	   (3, 1, 'note', 'tyui');
 
-INSERT INTO quizzes(  creator_id, quiz_name, description, is_single_page, can_be_practiced)
+INSERT INTO quizzes(creator_id, quiz_name, description, is_single_page, can_be_practiced, rand_question_order)
 VALUES  (1,'dinozavrebi','Dinosaurs are a diverse group of reptiles of the clade Dinosauria. They first appeared during the Triassic period, between 245 and 233.23 million years ago (mya), although the exact origin and timing of the evolution of dinosaurs is a subject of active research. They became the dominant terrestrial vertebrates after the Triassic–Jurassic extinction event 201.3 mya and their dominance continued throughout the Jurassic and Cretaceous periods. The fossil record shows that birds are feathered dinosaurs, having evolved from earlier theropods during the Late Jurassic epoch, and are the only dinosaur lineage known to have survived the Cretaceous–Paleogene extinction event approximately 66 mya. Dinosaurs can therefore be divided into avian dinosaurs—birds—and the extinct non-avian dinosaurs, which are all dinosaurs other than birds.',
-         true,false);
+         true, false, false);
 
 INSERT INTO user_achievements(user_id, achievement_id)
 VALUES (1,1),
@@ -170,22 +165,22 @@ VALUES (80.6,1,1),
       (95.2,1,2),
       (12.4,3,1);
 
--- INSERT INTO questions(  question_num, quiz_id, question_type, question)
--- VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
---        (2,1,0,'tavisufali universiteti kleoba xo araa?'),
---        (3,1,0,'ra aris veqtoruli velis potenciali?'),
---        (4,1,1,'jandrieri magari .... .'),
---        (5,1,2,'koleidoskopu magra adidebs.'),
---        (6,1,4,'chamotvalet top kanonieri qurdebi'),
---        (6,1,5,'shemoxaset top kanonieri qurdebi');
+INSERT INTO questions(question_num, quiz_id, question_type, question)
+VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
+       (2,1,0,'tavisufali universiteti kleoba xo araa?'),
+       (3,1,0,'ra aris veqtoruli velis potenciali?'),
+       (4,1,1,'jandrieri magari .... .'),
+       (5,1,2,'koleidoskopu magra adidebs.'),
+       (6,1,4,'chamotvalet top kanonieri qurdebi'),
+       (6,1,5,'shemoxaset top kanonieri qurdebi');
 
--- INSERT INTO answers( question_id, answer, is_correct)
--- VALUES (5,'TRUE',false),
---        (5,'FALSE',true),
---        (6,'tornike ramishvili',TRUE),
---         (6,'giorgi lekva lekveishvili',TRUE),
---         (7,'tornike ramishvili',TRUE),
---         (7,'nika tarkashvili',TRUE),
---         (7,'giorgi javakhishvili',TRUE),
---         (7,'mariam gamrekelashvili',TRUE),
---         (7,'vakhtang jandieri',FALSE);
+INSERT INTO answers( question_id, answer, is_correct)
+VALUES (5,'TRUE',false),
+       (5,'FALSE',true),
+       (6,'tornike ramishvili',TRUE),
+        (6,'giorgi lekva lekveishvili',TRUE),
+        (7,'tornike ramishvili',TRUE),
+        (7,'nika tarkashvili',TRUE),
+        (7,'giorgi javakhishvili',TRUE),
+        (7,'mariam gamrekelashvili',TRUE),
+        (7,'vakhtang jandieri',FALSE);

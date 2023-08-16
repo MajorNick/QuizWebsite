@@ -69,3 +69,7 @@ select.question-form {
 .hidden {
     display: none;
 }
+
+.sampleQuiz {
+    width: min(100%, 600px);
+}
