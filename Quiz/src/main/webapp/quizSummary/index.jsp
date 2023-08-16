@@ -8,6 +8,7 @@
     Quiz summary
 </title>
 <link rel="stylesheet" href = "style.css">
+<script src="script.js"></script>
 <body>
 <div class  = header>
     <header style = "color: white">
@@ -22,7 +23,8 @@
     Quiz quiz = con.getQuiz(id);
     ArrayList<User> u = con.getUsers(id);
     if (u.size() == 0){
-        //handle
+
+        return;
     }
     User user = u.get(0);
 
@@ -97,12 +99,18 @@
     </ul>
 </div>
 <div class="flex-container">
-    <form action = "/quiz" method = "GET">
+    <form id="quizForm" action="/quiz" method="GET">
         <button class="test_start_button">Start</button>
-     </form>
-    <form action = "/quizPractice" method = "GET">
+    </form>
+
+    <form id="quizPracticeForm" action="/quizPractice" method="GET">
         <button class="test_start_button">Test</button>
     </form>
+
+    <label>
+        <input type="checkbox" id="singlePageCheckbox" name="quizType" value="singlePage"> Single Page
+    </label>
 </div>
+
 </body>
 </html>
