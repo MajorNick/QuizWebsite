@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Results</title>
     <style>
-        /* Your CSS styles for the Quiz Results Page go here */
-        /* Feel free to adjust and customize the styles according to your design */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
