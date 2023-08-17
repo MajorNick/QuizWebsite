@@ -116,7 +116,7 @@
         checkbox.addEventListener('change', function () {
             const isChecked = checkbox.checked;
             quizForm.action = isChecked ? '/quizSinglePage.jsp' : '/quiz.jsp';
-            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage' : '/quizPractice';
+            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage.jsp' : '/quizPractice.jsp';
         });
 
     });
@@ -129,6 +129,12 @@
         return;
     }
 
+</div>
+<%
+
+    HttpSession ses = request.getSession();
+    Integer userID = (Integer) ses.getAttribute("userId");
+    Integer quizId = Integer.parseInt(request.getParameter("quizId"));
     int id = 1;
     int userid=1;
     DBConn con = new DBConn();
