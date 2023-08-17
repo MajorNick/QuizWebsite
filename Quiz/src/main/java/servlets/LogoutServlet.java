@@ -2,23 +2,27 @@ package Quiz.src.main.java.servlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 
 @WebServlet(name = "LogoutServlet", value = "/LogoutServlet")
 public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+        HttpSession session = httpServletRequest.getSession(false);
+        if (session != null) {
+            session.setAttribute("user", null);
+            session.setAttribute("username", null);
+        }
+
+        Cookie cookie = new Cookie("username", "");
+        cookie.setMaxAge(0);
+        httpServletResponse.addCookie(cookie);
+
+        httpServletRequest.getRequestDispatcher("loginPage.jsp").forward(httpServletRequest, httpServletResponse);
     }
 
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        HttpSession session = httpServletRequest.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        httpServletRequest.getRequestDispatcher("loginPage.jsp").forward(httpServletRequest, httpServletResponse);
+        doGet(httpServletRequest, httpServletResponse);
     }
 }
 

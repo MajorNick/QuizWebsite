@@ -4,11 +4,11 @@ package Quiz.src.main.java.servlets;
 import Quiz.src.main.java.models.DBConn;
 import Quiz.src.main.java.models.User;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.*;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 @WebListener
 public class ContextListener implements ServletContextListener, HttpSessionListener {
@@ -25,8 +25,7 @@ public class ContextListener implements ServletContextListener, HttpSessionListe
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-        httpSessionEvent.getSession().setAttribute("user", null);
-        httpSessionEvent.getSession().setAttribute("username", null);
+
     }
 
     @Override

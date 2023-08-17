@@ -20,6 +20,25 @@
     display: flex;
 }
 
+.navbar {
+    background-color: #007bff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.left-side1 {
+    display: flex;
+    align-items: center;
+}
+
+.right-side1 {
+    display: flex;
+    align-items: center;
+}
+
+
 .navbarItem {
     padding: 5px;
 }
@@ -122,6 +141,24 @@ button.navbarItem {
     /* Change to the color you want on hover */
 }
 
+.admin-button {
+    margin-left: auto;
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#id {
+    margin-left: 0px;
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .note_text {
     margin-top: 10px;
     margin-bottom: 0px;
@@ -132,13 +169,42 @@ button.navbarItem {
 .achievement-icon {
     width: 30px;
     height: 30px;
-}</style>
+}
+
+#main-block {
+    display: flex;
+    justify-content: space-between;
+}
+
+#left {
+    display:flex;
+}
+
+
+
+#id {
+    background-color:red;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+#id1 {
+    background-color:#FFD700;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+
+
+
+
+</style>
   <!-- get userId from context !!! -->
-  <% 
+  <%
     DBConn dbConn=new DBConn();
     User user = (User) session.getAttribute("user");
     if (user == null) {
-        response.sendRedirect(request.getContextPath() + "/loginPage.jsp");
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
         return;
     }
     int userId= user.getId();
@@ -171,48 +237,111 @@ button.navbarItem {
     String PfpLink = u.getPfpLink();
     PfpLink = PfpLink == null || PfpLink == "" ? "https://via.placeholder.com/200x200" : PfpLink;
   %>
-  <div class="navbar">
-    <a href="./home.jsp">
-      <button class="navbarItem">Home</button>
-    </a>
-    <form class="navbarItem" action="./SearchUser" method="post">
-      <input class="navbarSubItem" name="search_text" rows="1" cols="30" placeholder="Look up user"/>
-      <button class="action-button">Search User</button>
-    </form>
 
-  </div>
-  <div class="block-container">
-    <div class="left-side">
-      <img class="profile-image" src="<%= PfpLink %>" alt="Profile Image">
-      <div class="username">
-        <%= userName%>
-      </div>
-      <div class="user-id">User Id: <%= targetId %>
-      </div>
+  <style>
+
+  <% if (!(user.isAdmin() && userId == targetId)) { %>
+       #right {
+          display: none;
+         }
+  <% } %>
+
+  </style>
+
+  <div class="navbar">
+    <div class="left-side1">
+        <a href="./home.jsp">
+          <button class="navbarItem">Home</button>
+        </a>
+        <form class="navbarItem" action="./SearchUser" method="post">
+          <input class="navbarSubItem" name="search_text" rows="1" cols="30" placeholder="Look up user"/>
+          <button class="action-button">Search User</button>
+        </form>
+        <a href="<%= request.getContextPath() %>/LogoutServlet">Log Out</a>
     </div>
-    <div class="right-side">
-      <form action="./AddFriend" method="post">
-        <button class="<%= friendButtonClass %>"><%= AddFriendText%></button>
-        <input type="hidden" name="userId" value="<%= userId %>">
-        <input type="hidden" name="targetId" value="<%= targetId %>">
-        <input type="hidden" name="removeFriend" value="<%= removeParam %>">
-      </form>
-      <form action="./Challenge" method="post">
-        <input name="quizId" class="note_text" placeholder="<%= ChallengeText%>" type="number" step="1"></input>
-        <br>
-        <button class="action-button">Challenge</button>
-        <input type="hidden" name="userId" value="<%= userId %>">
-        <input type="hidden" name="targetId" value="<%= targetId %>">
-      </form>
-      <form action="./Note" method="post">
-        <textarea name="note_text" class="note_text" placeholder="<%= NotePHText %>" rows="4" cols="50"></textarea>
-        <br>
-        <button class="action-button">Send Note</button>
-        <input type="hidden" name="userId" value="<%= userId %>">
-        <input type="hidden" name="targetId" value="<%= targetId %>">
-      </form>
+    <div class="right-side1">
+        <% if (user.isAdmin() && userId != targetId) { %>
+        <form class="navbarItem" action="./RemoveAccount" method="post">
+          <button id = "id" class="action-button">Remove Account</button>
+          <input type="hidden" name="userId" value="<%= userId %>">
+          <input type="hidden" name="targetId" value="<%= targetId %>">
+        </form>
+        <% } %>
+
+        <% if (user.isAdmin() && userId == targetId) { %>
+           <a href="<%= request.getContextPath() %>/adminPage.jsp" class="admin-button">Admin</a>
+        <% } %>
+       <% if (user.isAdmin() && userId != targetId && !dbConn.isAdmin(targetId)) { %>
+       <form class="navbarItem" action="./MakeAdmin" method="post">
+          <button id = "id1" class="action-button">Make Admin</button>
+          <input type="hidden" name="userId" value="<%= userId %>">
+          <input type="hidden" name="targetId" value="<%= targetId %>">
+       </form>
+       <% } %>
+
     </div>
   </div>
+
+
+
+
+
+
+
+
+
+    <div class="block-container" id="main-block">
+          <div id="left">
+            <div class="left-side">
+              <img class="profile-image" src="<%= PfpLink %>" alt="Profile Image">
+              <div class="username">
+                <%= userName%>
+              </div>
+              <div class="user-id">User Id: <%= targetId %>
+              </div>
+            </div>
+            <div class="right-side">
+              <form action="./AddFriend" method="post">
+                <button class="<%= friendButtonClass %>"><%= AddFriendText%></button>
+                <input type="hidden" name="userId" value="<%= userId %>">
+                <input type="hidden" name="targetId" value="<%= targetId %>">
+                <input type="hidden" name="removeFriend" value="<%= removeParam %>">
+              </form>
+              <form action="./Challenge" method="post">
+                <input name="quizId" class="note_text" placeholder="<%= ChallengeText%>" type="number" step="1"></input>
+                <br>
+                <button class="action-button">Challenge</button>
+                <input type="hidden" name="userId" value="<%= userId %>">
+                <input type="hidden" name="targetId" value="<%= targetId %>">
+              </form>
+              <form action="./Note" method="post">
+                <textarea name="note_text" class="note_text" placeholder="<%= NotePHText %>" rows="4" cols="50"></textarea>
+                <br>
+                <button class="action-button">Send Note</button>
+                <input type="hidden" name="userId" value="<%= userId %>">
+                <input type="hidden" name="targetId" value="<%= targetId %>">
+              </form>
+            </div>
+            </div>
+
+
+              <div id="right">
+                  <h1> Create Announcement </h1>
+                  <form action="./CreateAnnouncement" method="post">
+                      <textarea name="createann" class="note_text" placeholder="Create Announcement" rows="4" cols="50"></textarea>
+                      <br>
+                      <button class="action-button">Create</button>
+                    </form>
+                  <h1>Site Statistics</h1>
+                 <ul style="none; padding: 0px;">
+                     <li style="list-style-type: none">  Number of users: <%= dbConn.getUsers(-1).size() %> </li>
+                     <li style="list-style-type: none;"> Number of quizzes: <%= dbConn.getQuizzes().size() %> </li>
+                 </ul>
+              </div>
+      </div>
+
+
+
   <div class="block-container">
     <div class="block-contents">
       <div class="block-title">History</div>
@@ -249,5 +378,6 @@ button.navbarItem {
     </div>
   </div>
   <% dbConn.closeDBConn(); %>
+
 </body>
 </html>

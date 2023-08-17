@@ -10,11 +10,15 @@ DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS quiz_history;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
-DROP TABLE IF EXISTS quizzes;
+DROP TABLE IF EXISTS question_types;
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
+DROP TABLE IF EXISTS quiz_categories;
+DROP TABLE IF EXISTS quiz_tags;
+DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS users;
+
 
 CREATE TABLE users (
 	id INT PRIMARY KEY AUTO_INCREMENT,
@@ -31,8 +35,18 @@ CREATE TABLE friends (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	user_id INT,
     friend_id INT,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (friend_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE quiz_categories (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    category VARCHAR(2000)
+);
+
+CREATE TABLE quiz_tags (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    tag VARCHAR(2000)
 );
 
 CREATE TABLE quizzes (
@@ -43,7 +57,22 @@ CREATE TABLE quizzes (
     is_single_page bool,
     can_be_practiced bool,
     rand_question_order bool,
-    FOREIGN KEY (creator_id) REFERENCES users(id)
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES quiz_categories(id),
+    FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE tag_quiz (
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    quiz_id INT,
+    tag_id INT,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES quiz_tags(id) ON DELETE CASCADE
+);
+
+CREATE TABLE question_types (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    q_type VARCHAR(100)
 );
 
 CREATE TABLE questions (
@@ -52,7 +81,8 @@ CREATE TABLE questions (
     quiz_id INT,
     question_type INT,
     question VARCHAR(2000),
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_type) REFERENCES question_types(id)
 );
 
 CREATE TABLE answers (
@@ -60,7 +90,7 @@ CREATE TABLE answers (
     question_id INT,
     answer VARCHAR(2000),
     is_correct bool,
-    FOREIGN KEY (question_id) REFERENCES questions(id)
+    FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
 
 CREATE TABLE quiz_history (
@@ -70,16 +100,16 @@ CREATE TABLE quiz_history (
     user_id INT,
     time_taken INT,
     take_date TIMESTAMP,
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE notifications (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	receiver_id INT,
     sender_id INT,
-    FOREIGN KEY (receiver_id) REFERENCES users(id),
-    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
     notif_type VARCHAR(20),
     notif_body VARCHAR(2000)
 );
@@ -108,16 +138,17 @@ CREATE TABLE user_achievements (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     user_id INT,
     achievement_id INT,
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
 
+
 -- TEST DATA:
 
-INSERT INTO users (username, password_hash)
-VALUES ('John Deer', '1234'),
-	   ('Serena Anderson', '5678'),
-       ('Xavier Patel', '4321');
+INSERT INTO users (username, password_hash, role)
+VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user'),
+	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user'),
+       ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user');
 
 INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body) 
 VALUES (1, 2, 'note', 'Hello'),
@@ -154,26 +185,28 @@ VALUES (1,2),
        (1,3),
        (3,1);
 
-INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced)
-VALUES (1, 'History', true, false),
-	   (1, 'Geography', true, false),
-       (2, 'Physics', true, false),
-       (3, 'Chemistry', true, false);
+INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced, rand_question_order)
+VALUES (1, 'History', true, false, false),
+	   (1, 'Geography', true, false, false),
+       (2, 'Physics', true, false, false),
+       (3, 'Chemistry', true, false, false);
 
 INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
       (95.2,1,2),
       (12.4,3,1);
+INSERT INTO question_types(q_type)
+VALUE ('type1');
 
 INSERT INTO questions(question_num, quiz_id, question_type, question)
-VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
-       (2,1,0,'tavisufali universiteti kleoba xo araa?'),
-       (3,1,0,'ra aris veqtoruli velis potenciali?'),
+VALUES (1,1,1,'saqartvelos dedaqalaqia raari'),
+       (2,1,1,'tavisufali universiteti kleoba xo araa?'),
+       (3,1,1,'ra aris veqtoruli velis potenciali?'),
        (4,1,1,'jandrieri magari .... .'),
-       (5,1,2,'koleidoskopu magra adidebs.'),
-       (6,1,4,'chamotvalet top kanonieri qurdebi'),
-       (6,1,5,'shemoxaset top kanonieri qurdebi');
-
+       (5,1,1,'koleidoskopu magra adidebs.'),
+       (6,1,1,'chamotvalet top kanonieri qurdebi'),
+       (6,1,1,'shemoxaset top kanonieri qurdebi');
+--
 INSERT INTO answers( question_id, answer, is_correct)
 VALUES (5,'TRUE',false),
        (5,'FALSE',true),
