@@ -14,9 +14,10 @@ DROP TABLE IF EXISTS question_types;
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
-DROP TABLE IF EXISTS quiz_categories;
+DROP TABLE IF EXISTS tag_quiz;
 DROP TABLE IF EXISTS quiz_tags;
 DROP TABLE IF EXISTS quizzes;
+DROP TABLE IF EXISTS quiz_categories;
 DROP TABLE IF EXISTS users;
 
 
@@ -195,6 +196,7 @@ INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
       (95.2,1,2),
       (12.4,3,1);
+
 INSERT INTO question_types(q_type)
 VALUE ('type1');
 
