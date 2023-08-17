@@ -28,8 +28,28 @@
             <form action="/CreateQuiz" method="get" id="quiz-contents">
                 <input name="userId" type="hidden" value="<%= userId%>"></input>
                 <input name="quiz_name" class="note_text" placeholder="Quiz name" type="text"></input>
+                <select name="quiz_category" id="quiz_category" class="question-form">
+                    <option value="0">No Category</option>
+                    <%
+                        //ArrayList<QuizCategory> categories = dbconn.getCategories();
+                        //for(QuizCategory category : categories){
+                        //
+                        //}
+                    %>
+                    <option value="1">Category A</option>
+                    <option value="2">Category B</option>
+                    <option value="3">Category C</option>
+                    <option value="4">Category D</option>
+                    <option value="5">Category E</option>
+                </select>
                 <br>
                 <textarea name="description" class="note_text" placeholder="Quiz description" rows="4" cols="50"></textarea>
+                <br>
+                <ul id="quizTags" class="question-form">
+                </ul>
+                <input id="quiz_new_tag" class="note_text" placeholder="Tag" type="text"></input>
+                <button class="action-button" id="addQuizTag">Add Tag</button>
+                <input name="quiz_tag_max_index" id="quiz_tag_max_index" type="hidden" value="0"></input>
                 <br>
                 <input type="checkbox" name="isSinglePageCB" value="1">
                 <label for="isSinglePageCB"> Is single page</label>

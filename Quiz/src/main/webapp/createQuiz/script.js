@@ -1,14 +1,16 @@
+let globalDivCount = 0;
+let questionsDeleted = 0;
+const questionAnswerCounts = new Map();
+let quizTagCount = 0;
+
 document.addEventListener("DOMContentLoaded", function () {
-    var globalDivCount = 0;
-    var questionsDeleted = 0;
 
     document.getElementById("addQuestion").addEventListener("click", function (event) {
         event.preventDefault();
-        var questionAnswerCount = 0;
-        var selectedVal = 0;
 
         globalDivCount++;
         var divNum = globalDivCount - questionsDeleted;
+        questionAnswerCounts.set(divNum, 0);
 
         var newQuestion = document.createElement("div");
         newQuestion.className = "block-container";
@@ -24,44 +26,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.getElementById("maxQuestionIndex").value = globalDivCount;
 
-        document.getElementById(`select${divNum}`).addEventListener("change", function () {
-            var addAnswerButton = document.getElementById(`addAnswer${divNum}`);
-            addAnswerButton.classList.remove("hidden");
-            selectedVal = this.selectedIndex - 1;
-            var ansContainer = document.getElementById(`answerList${divNum}`);
-            ansContainer.innerHTML = "";
+        addSelectEventListener(divNum);
 
-            questionAnswerCount = 1;
-            addAnswerBox(selectedVal, divNum, questionAnswerCount, newQuestion, addAnswerButton);
-        });
+        addAddAnswerEventListener(divNum);
 
-        document.getElementById(`addAnswer${divNum}`).addEventListener("click", function (event) {
-            event.preventDefault();
+        addDeleteQuestionListener(divNum);
+    });
 
-            questionAnswerCount++;
-            addAnswerBox(selectedVal, divNum, questionAnswerCount, newQuestion, null);
-        });
+    document.getElementById("addQuizTag").addEventListener("click", function (event) {
+        event.preventDefault();
 
-        document.getElementById(`deleteQuestion${divNum}`).addEventListener("click", function (event) {
-            event.preventDefault();
+        let quizTags = document.getElementById("quizTags");
+        let tagName = document.getElementById("quiz_new_tag").value;
+        if (tagName == "") {
+            return;
+        }
 
-            var questionBlock = document.getElementById(`questionBlock${divNum}`);
-            questionBlock.remove();
+        quizTagCount++;
 
-            for (let i = divNum + 1; i <= globalDivCount; i++) {
-                var nextQuestionBody = document.getElementById(`question${i}`);
-                if (nextQuestionBody === null) {
-                    continue;
-                }
-                nextQuestionBody.innerHTML = `Question ${i - 1}`;
-            }
-            questionsDeleted++;
-        });
+        let newTag = document.createElement("li");
+        newTag.id = `quiz_tag_item${quizTagCount}`;
+
+        let newTagName = document.createElement("span");
+        newTagName.innerHTML = tagName;
+
+        document.getElementById("quiz_tag_max_index").value = quizTagCount;
+
+        let removeButton = document.createElement("button");
+        removeButton.classList.add("action-button");
+        removeButton.id = `removeTag${quizTagCount}`;
+        removeButton.innerHTML = "x";
+
+        let tagNameInput = document.createElement("input");
+        tagNameInput.type = "hidden";
+        tagNameInput.value = tagName;
+        tagNameInput.name = `quiz_tag${quizTagCount}`;
+
+        newTag.appendChild(removeButton);
+        newTag.appendChild(newTagName);
+        newTag.appendChild(tagNameInput);
+
+        quizTags.appendChild(newTag);
+        document.getElementById("quiz_new_tag").value = "";
+
+        addRemoveTagListener(quizTagCount);
     });
 });
 
-function addAnswerBox(selectedVal, divNum, answerNum, newQuestion, addAnswerButton) {
-    var newAnswer = document.createElement("div");
+function addRemoveTagListener(tagNum) {
+    document.getElementById(`removeTag${tagNum}`).addEventListener("click", function (event) {
+        event.preventDefault();
+
+        let curTagNum = parseInt(this.id.replace("removeTag", ""));
+
+        document.getElementById(`quiz_tag_item${curTagNum}`).remove();
+    })
+}
+
+function addAnswerBox(selectedVal, divNum, answerNum, addAnswerButton) {
+    let newAnswer = document.createElement("div");
     newAnswer.className = "block-items";
 
     if (selectedVal == 0 || selectedVal == 3) {
@@ -69,12 +92,12 @@ function addAnswerBox(selectedVal, divNum, answerNum, newQuestion, addAnswerButt
             <textarea name="q${divNum}" class="note_text" placeholder="Answer" type="text" rows="1" cols="50"></textarea>
         `;
         if (selectedVal == 3) {
-            var questionTextCont = document.getElementById(`question-text${divNum}`);
+            let questionTextCont = document.getElementById(`question-text${divNum}`);
             questionTextCont.placeholder = "Image URL";
         }
         addAnswerButton.classList.add("hidden");
     } else if (selectedVal == 2) {
-        var rbParams = "";
+        let rbParams = "";
         if (answerNum == 1) {
             rbParams = " checked=\"checked\"";
         }
@@ -97,10 +120,10 @@ function addAnswerBox(selectedVal, divNum, answerNum, newQuestion, addAnswerButt
             <input name="q${divNum}-ans${answerNum}" class="note_text" placeholder="Blank ${answerNum}" type="text"></input>
         `;
     }
-    var answerCountInput = document.getElementById(`answerCount${divNum}`);
+    let answerCountInput = document.getElementById(`answerCount${divNum}`);
     answerCountInput.value = answerNum;
 
-    var ansContainer = document.getElementById(`answerList${divNum}`);
+    let ansContainer = document.getElementById(`answerList${divNum}`);
     ansContainer.appendChild(newAnswer);
 }
 
@@ -130,4 +153,52 @@ function addQuestionDiv(divNum, newQuestion) {
             </div>
         </div>
     `;
+}
+
+function addSelectEventListener(divNum) {
+    document.getElementById(`select${divNum}`).addEventListener("change", function () {
+        let curDivNum = parseInt(this.id.replace("select", ""));
+
+        let addAnswerButton = document.getElementById(`addAnswer${divNum}`);
+        addAnswerButton.classList.remove("hidden");
+        let selectedVal = this.value;
+        let ansContainer = document.getElementById(`answerList${divNum}`);
+        ansContainer.innerHTML = "";
+
+        questionAnswerCounts.set(curDivNum, 1);
+        addAnswerBox(selectedVal, divNum, questionAnswerCounts.get(curDivNum), addAnswerButton);
+    });
+}
+
+function addAddAnswerEventListener(divNum) {
+    document.getElementById(`addAnswer${divNum}`).addEventListener("click", function (event) {
+        event.preventDefault();
+
+        let curDivNum = parseInt(this.id.replace("addAnswer", ""));
+
+        questionAnswerCounts.set(curDivNum, questionAnswerCounts.get(curDivNum) + 1);
+        let selectedVal = document.getElementById(`select${curDivNum}`).value;
+
+        addAnswerBox(selectedVal, curDivNum, questionAnswerCounts.get(curDivNum), null);
+    });
+}
+
+function addDeleteQuestionListener(divNum) {
+    document.getElementById(`deleteQuestion${divNum}`).addEventListener("click", function (event) {
+        event.preventDefault();
+
+        let curDivNum = parseInt(this.id.replace("deleteQuestion", ""));
+
+        let questionBlock = document.getElementById(`questionBlock${curDivNum}`);
+        questionBlock.remove();
+
+        for (let i = curDivNum + 1; i <= globalDivCount; i++) {
+            let nextQuestionBody = document.getElementById(`question${i}`);
+            if (nextQuestionBody === null) {
+                continue;
+            }
+            nextQuestionBody.innerHTML = `Question ${i - 1}`;
+        }
+        questionsDeleted++;
+    });
 }

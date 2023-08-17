@@ -421,11 +421,7 @@ public class DBConn{
         String quizzesQuery = "SELECT * FROM quizzes;";
         ArrayList<Quiz> selection = new ArrayList<>();
         try{
-            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("USE " + database);
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(quizzesQuery);
+            executeQuery(quizzesQuery);
 
             while (rs.next()) {
                 Quiz quiz = new Quiz(rs.getInt("id"),
@@ -438,9 +434,6 @@ public class DBConn{
                 );
                 selection.add(quiz);
             }
-            rs.close();
-            stmt.close();
-            conn.close();
 
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -453,11 +446,7 @@ public class DBConn{
         String quizzesQuery = String.format("SELECT * FROM quizzes WHERE id = %d",id);
         Quiz result = null;
         try{
-            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("USE " + database);
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(quizzesQuery);
+            executeQuery(quizzesQuery);
             rs.next();
              result = new Quiz(rs.getInt("id"),
                     rs.getInt("creator_id"),
@@ -467,10 +456,6 @@ public class DBConn{
                     rs.getBoolean("can_be_practiced"),
                      rs.getBoolean("rand_question_order")
                 );
-
-            rs.close();
-            stmt.close();
-            conn.close();
 
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -489,19 +474,12 @@ public class DBConn{
 
         ArrayList<Integer> scores = new ArrayList<>();
         try{
-            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("USE " + database);
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            executeQuery(query);
 
             while (rs.next()) {
                 int result = rs.getInt("score");;
                 scores.add(result);
             }
-            rs.close();
-            stmt.close();
-            conn.close();
 
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -518,19 +496,12 @@ public class DBConn{
 
         ArrayList<Integer> users = new ArrayList<>();
         try{
-            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("USE " + database);
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            executeQuery(query);
 
             while (rs.next()) {
                 int result = rs.getInt("user_id");;
                 users.add(result);
             }
-            rs.close();
-            stmt.close();
-            conn.close();
 
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -560,19 +531,12 @@ public class DBConn{
 
         ArrayList<Integer> users = new ArrayList<>();
         try{
-            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("USE " + database);
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            executeQuery(query);
 
             while (rs.next()) {
                 int result = rs.getInt("user_id");;
                 users.add(result);
             }
-            rs.close();
-            stmt.close();
-            conn.close();
 
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -585,11 +549,7 @@ public class DBConn{
         String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d",quiz_id);
         ArrayList<Question> selection = new ArrayList<>();
         try{
-            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("USE " + database);
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(questionQuery);
+            executeQuery(questionQuery);
 
             while (rs.next()) {
                 Question question  = new Question(rs.getInt("id"),
@@ -600,10 +560,6 @@ public class DBConn{
                 );
                 selection.add(question);
             }
-            rs.close();
-            stmt.close();
-            conn.close();
-
         } catch (Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -615,11 +571,7 @@ public class DBConn{
         String questionQuery = String.format("SELECT * FROM answers where question_id = %d",question_id);
         ArrayList<Answer> selection = new ArrayList<>();
         try{
-            Connection conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("USE " + database);
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(questionQuery);
+            executeQuery(questionQuery);
 
             while (rs.next()) {
                 Answer answer  = new Answer(rs.getInt("id"),
@@ -629,10 +581,6 @@ public class DBConn{
                 );
                 selection.add(answer);
             }
-            rs.close();
-            stmt.close();
-            conn.close();
-
         } catch (Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -739,8 +687,8 @@ public class DBConn{
         return -1;
     }
 
-    public int getNexQuestionId(){
-        String q = "SELECT MAX(id) + 1 as next_id FROM questions";
+    public int getLastQuestionId(){
+        String q = "SELECT MAX(id) as next_id FROM questions";
         try{
             executeQuery(q);
             rs.next();
@@ -751,5 +699,24 @@ public class DBConn{
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public void updateQuiz(Quiz qu){
+        String q = "UPDATE quizzes q\n" +
+                   String.format("SET q.quiz_name = '%s', q.description = '%s', q.is_single_page = %b, q.can_be_practiced = %b, q.rand_question_order = %b\n", qu.quiz_name, qu.description, qu.is_single_page, qu.can_be_practiced, qu.rand_question_order) +
+                   "WHERE q.id = 3;";
+    }
+
+    public void trimQuiz(Quiz qu){
+        String delete_answers = String.format("DELETE FROM answers WHERE question_id IN (SELECT id FROM questions WHERE quiz_id = %d)", qu.id);
+        String delete_questions = String.format("DELETE FROM questions WHERE quiz_id = %d", qu.id);
+
+        try {
+            executeUpdate(delete_answers);
+            executeUpdate(delete_questions);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

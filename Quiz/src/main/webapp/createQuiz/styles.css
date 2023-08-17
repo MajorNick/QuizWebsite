@@ -58,12 +58,9 @@
     font-size: 18px;
 }
 
-p.question-form {
+.question-form {
     font-size: 18px;
-}
-
-select.question-form {
-    font-size: 18px;
+    list-style-type: none;
 }
 
 .hidden {

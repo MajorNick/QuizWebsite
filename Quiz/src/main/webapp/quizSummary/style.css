@@ -1,39 +1,45 @@
-.header{
+.header {
     background-color: #087cfc;
 }
+
 header {
     color: white;
     font-size: 24px;
 }
-.best_performances{
+
+.best_performances {
     display: inline-block;
     border: 1px solid #087cfc;
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
 }
-.highest_scores{
+
+.highest_scores {
     display: inline-block;
     border: 1px solid #087cfc;
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
 }
-.today_highest_scores{
+
+.today_highest_scores {
     display: inline-block;
     border: 1px solid #087cfc;
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
 }
-.last_quiz_takers{
+
+.last_quiz_takers {
     display: inline-block;
     border: 1px solid #087cfc;
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
 }
-.test_start_button{
+
+.test_start_button {
     background-color: #087cfc;
     border: none;
     margin-top: 10px;
@@ -43,6 +49,7 @@ header {
     cursor: pointer;
     border-radius: 5px;
 }
+
 .flex-container {
     display: flex;
     align-items: center;
