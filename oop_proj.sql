@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS quiz_history;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
-DROP TABLE IF EXISTS question_types;
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
@@ -71,19 +70,13 @@ CREATE TABLE tag_quiz (
     FOREIGN KEY (tag_id) REFERENCES quiz_tags(id) ON DELETE CASCADE
 );
 
-CREATE TABLE question_types (
-	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    q_type VARCHAR(100)
-);
-
 CREATE TABLE questions (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     question_num INT,
     quiz_id INT,
     question_type INT,
     question VARCHAR(2000),
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
-    FOREIGN KEY (question_type) REFERENCES question_types(id)
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE answers (
@@ -196,9 +189,6 @@ INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
       (95.2,1,2),
       (12.4,3,1);
-
-INSERT INTO question_types(q_type)
-VALUE ('type1');
 
 INSERT INTO questions(question_num, quiz_id, question_type, question)
 VALUES (1,1,1,'saqartvelos dedaqalaqia raari'),
