@@ -73,7 +73,7 @@
         checkbox.addEventListener('change', function () {
             const isChecked = checkbox.checked;
             quizForm.action = isChecked ? '/quizSinglePage.jsp' : '/quiz.jsp';
-            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage' : '/quizPractice';
+            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage.jsp' : '/quizPractice.jsp';
         });
 
     });
@@ -173,11 +173,11 @@
     </ul>
 </div>
 <div class="flex-container">
-    <form id="quizForm" action="/quiz/index.jsp" method="GET">
+    <form id="quizForm" action="/quiz.jsp" method="GET">
         <button class="test_start_button">Start</button>
     </form>
 
-    <form id="quizPracticeForm" action="./quizPractice/index.jsp" method="GET">
+    <form id="quizPracticeForm" action="./quizPractice.jsp" method="GET">
         <button class="test_start_button">Test</button>
     </form>
 
