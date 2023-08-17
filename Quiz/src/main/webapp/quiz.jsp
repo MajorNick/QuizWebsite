@@ -46,7 +46,7 @@
 
 <form action="ProcessAnswers" method="post">
     <%
-        int quizID = 1;
+        int quizID = Integer.parseInt( request.getParameter("id"));
         DBConn con = new DBConn();
 
         // Assuming you have an ArrayList of Question objects named 'questions'

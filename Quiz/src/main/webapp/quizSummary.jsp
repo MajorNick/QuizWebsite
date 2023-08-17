@@ -108,19 +108,7 @@
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const checkbox = document.getElementById('singlePageCheckbox');
-        const quizForm = document.getElementById('quizForm');
-        const quizPracticeForm = document.getElementById('quizPracticeForm');
-        checkbox.addEventListener('change', function () {
-            const isChecked = checkbox.checked;
-            quizForm.action = isChecked ? '/quizSinglePage.jsp' : '/quiz.jsp';
-            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage.jsp' : '/quizPractice.jsp';
-        });
 
-    });
-</script>
 <body>
 <%
     User user1 = (User) session.getAttribute("user");
@@ -129,26 +117,27 @@
         return;
     }
 %>
+
 </div>
 <%
 
-    HttpSession ses = request.getSession();
-    Integer userID = (Integer) ses.getAttribute("userId");
-    Integer quizId = Integer.parseInt(request.getParameter("id"));
-    int id = 1;
-    int userid=1;
+
+    int userId = user1.getId();
+    int id = Integer.parseInt(request.getParameter("id"));
+
+    //int id = 1;
+    //int userid=1;
     DBConn con = new DBConn();
     Quiz quiz = con.getQuiz(id);
-    ArrayList<User> u = con.getUsers(id);
-    if (u.size() == 0){
+    ArrayList<User> u = con.getUsers(userId);
 
-        return;
-    }
     User user = u.get(0);
 
     int quizid = quiz.id;
 
 %>
+
+
 
 <div class  = header>
     <div class= "lft" >
@@ -166,7 +155,7 @@
               <input type="hidden" name="quizid" value="<%= quizid %>">
             </form>
             <form class="navbarItem" action="./RemoveQuiz" method="post">
-              <button id = "id" class="action-button">Remove Quiz</button>
+              <button id = "id1" class="action-button">Remove Quiz</button>
               <input type="hidden" name="quizid" value="<%= quizid %>">
             </form>
         <% } %>
@@ -193,7 +182,7 @@
         // look at history
     %>
     <%
-        ArrayList<Integer> best = con.getYourBestPerformance(id,userid);
+        ArrayList<Integer> best = con.getYourBestPerformance(id,userId);
     %>
     <ul>
         <% for(int i : best){
@@ -242,12 +231,13 @@
         <% } %>
     </ul>
 </div>
+
 <div class="flex-container">
-    <form id="quizForm" action="/quiz.jsp" method="GET">
+    <form id="quizForm" action=<%="/quiz.jsp?id="+quizid%> method="POST">
         <button class="test_start_button">Start</button>
     </form>
 
-    <form id="quizPracticeForm" action="./quizPractice.jsp" method="GET">
+    <form id="quizPracticeForm" action="./quizPractice.jsp" method="POST">
         <button class="test_start_button">Test</button>
     </form>
 
@@ -255,6 +245,19 @@
         <input type="checkbox" id="singlePageCheckbox" name="quizType" value="singlePage"> Single Page
     </label>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkbox = document.getElementById('singlePageCheckbox');
+        const quizForm = document.getElementById('quizForm');
+        const quizPracticeForm = document.getElementById('quizPracticeForm');
+        checkbox.addEventListener('change', function () {
+            const isChecked = checkbox.checked;
+            quizForm.action = isChecked ? '/quizSinglePage.jsp?id='+<%=quizid%> : '/quiz.jsp?id='+<%=quizid%>;
+            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage.jsp' : '/quizPractice.jsp';
+        });
+
+    });
+</script>
 
 </body>
 </html>
