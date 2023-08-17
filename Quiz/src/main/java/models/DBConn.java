@@ -1,5 +1,7 @@
 package Quiz.src.main.java.models;
 
+import jdk.jfr.Category;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +66,29 @@ public class DBConn{
             throw new RuntimeException("Provided Notification is null");
 
         String q = String.format("INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body)  VALUES(%d, %d, '%s', '%s')", n.getReceiverId(), n.getSenderId(), n.getNotifType(), n.getNotifBody());
+        executeUpdate(q);
+    }
+
+    public void insertCategory(Categorya c){
+        if(c == null)
+            throw new RuntimeException("Provided Category is null");
+
+        String q = String.format("INSERT INTO Category (category)  VALUES('%s')", c.category);
+        executeUpdate(q);
+    }
+    public void insertTag(Tag t){
+        if(t == null)
+            throw new RuntimeException("Provided Tag is null");
+
+        String q = String.format("INSERT INTO quiz_tags (tag)  VALUES('%s')", t.tag);
+        executeUpdate(q);
+    }
+
+    public void insertTagQuiz(TagQuiz t){
+        if(t == null)
+            throw new RuntimeException("Provided TagQuiz is null");
+
+        String q = String.format("INSERT INTO tag_quiz (quiz_id, tag_id)  VALUES(%d, %d)", t.quiz_id, t.tag_id);
         executeUpdate(q);
     }
 
@@ -379,6 +404,17 @@ public class DBConn{
 
     public void removeUser(int user_id){
         String q = String.format("DELETE FROM users u WHERE (u.id = %d)", user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public void removeQuiz(int quiz_id){
+        String q = String.format("DELETE FROM quizzes q WHERE (q.id = %d)", quiz_id);
 
         try{
             executeUpdate(q);
@@ -861,6 +897,7 @@ public class DBConn{
         }
         return -1;
     }
+
 
     public int getNexQuestionId(){
         String q = "SELECT MAX(id) + 1 as next_id FROM questions";

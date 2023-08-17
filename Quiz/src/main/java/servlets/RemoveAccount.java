@@ -1,6 +1,5 @@
 package Quiz.src.main.java.servlets;
 
-import Quiz.src.main.java.models.Announcement;
 import Quiz.src.main.java.models.DBConn;
 
 import javax.servlet.ServletException;

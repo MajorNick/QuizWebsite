@@ -8,9 +8,49 @@
     Quiz summary
 </title>
 <style>
-    .header{
+    .header {
         background-color: #087cfc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
     }
+
+    .lft {
+        flex: 1;
+    }
+
+    .rgt {
+        display:flex;
+        margin-left: 10px;
+    }
+    .center {
+        flex: 2;
+        text-align: center;
+    }
+
+    .user-link {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+
+    .action-button {
+        background-color: #e74c3c;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        display: inline-block;
+        font-size: 15px;
+        border-radius: 5px;
+    }
+
+    .action-button:hover {
+        background-color: #c0392b;
+    }
+
     header {
         color: white;
         font-size: 24px;
@@ -18,6 +58,9 @@
     }
     body {
         font-family: Courier, monospace;
+    }
+    .navbarItem {
+        padding: 5px;
     }
 
     .best_performances{
@@ -79,14 +122,13 @@
     });
 </script>
 <body>
-
-<div class  = header>
-    <header style = "color: white">
-        Quiz Summary
-    </header>
-
-</div>
 <%
+    User user1 = (User) session.getAttribute("user");
+    if (user1 == null) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
+
     int id = 1;
     int userid=1;
     DBConn con = new DBConn();
@@ -98,7 +140,33 @@
     }
     User user = u.get(0);
 
+    int quizid = quiz.id;
+
 %>
+
+<div class  = header>
+    <div class= "lft" >
+    <header style = "color: white">
+        Quiz Summary
+    </header>
+    </div>
+    <div class="center">
+        <a href="/userProfile.jsp" class="user-link">Logged in as <%= user1.getUsername() %></a>
+    </div>
+    <div class= "rgt">
+        <% if ((user1.isAdmin())) { %>
+            <form class="navbarItem" action="./RemoveQuizHistory" method="post">
+              <button id = "id" class="action-button">Remove QuizHistory</button>
+              <input type="hidden" name="quizid" value="<%= quizid %>">
+            </form>
+            <form class="navbarItem" action="./RemoveQuiz" method="post">
+              <button id = "id" class="action-button">Remove Quiz</button>
+              <input type="hidden" name="quizid" value="<%= quizid %>">
+            </form>
+        <% } %>
+    </div>
+
+</div>
 <div>
     <h2>
         Quiz Description
@@ -169,11 +237,11 @@
     </ul>
 </div>
 <div class="flex-container">
-    <form id="quizForm" action="/quiz/index.jsp" method="GET">
+    <form id="quizForm" action="/quiz.jsp" method="GET">
         <button class="test_start_button">Start</button>
     </form>
 
-    <form id="quizPracticeForm" action="./quizPractice/index.jsp" method="GET">
+    <form id="quizPracticeForm" action="./quizPractice.jsp" method="GET">
         <button class="test_start_button">Test</button>
     </form>
 

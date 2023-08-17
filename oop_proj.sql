@@ -11,11 +11,14 @@ DROP TABLE IF EXISTS quiz_history;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS question_types;
-DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
+DROP TABLE IF EXISTS quiz_categories;
+DROP TABLE IF EXISTS quiz_tags;
+DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS users;
+
 
 CREATE TABLE users (
 	id INT PRIMARY KEY AUTO_INCREMENT,
@@ -36,6 +39,16 @@ CREATE TABLE friends (
     FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE quiz_categories (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    category VARCHAR(2000)
+);
+
+CREATE TABLE quiz_tags (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    tag VARCHAR(2000)
+);
+
 CREATE TABLE quizzes (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     creator_id INT,
@@ -44,7 +57,17 @@ CREATE TABLE quizzes (
     is_single_page bool,
     can_be_practiced bool,
     rand_question_order bool,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES quiz_categories(id),
     FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE tag_quiz (
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    quiz_id INT,
+    tag_id INT,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES quiz_tags(id) ON DELETE CASCADE
 );
 
 CREATE TABLE question_types (
@@ -119,6 +142,7 @@ CREATE TABLE user_achievements (
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
 
+
 -- TEST DATA:
 
 INSERT INTO users (username, password_hash, role)
@@ -161,26 +185,28 @@ VALUES (1,2),
        (1,3),
        (3,1);
 
-INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced)
-VALUES (1, 'History', true, false),
-	   (1, 'Geography', true, false),
-       (2, 'Physics', true, false),
-       (3, 'Chemistry', true, false);
+INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced, rand_question_order)
+VALUES (1, 'History', true, false, false),
+	   (1, 'Geography', true, false, false),
+       (2, 'Physics', true, false, false),
+       (3, 'Chemistry', true, false, false);
 
 INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
       (95.2,1,2),
       (12.4,3,1);
+INSERT INTO question_types(q_type)
+VALUE ('type1');
 
 INSERT INTO questions(question_num, quiz_id, question_type, question)
-VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
-       (2,1,0,'tavisufali universiteti kleoba xo araa?'),
-       (3,1,0,'ra aris veqtoruli velis potenciali?'),
+VALUES (1,1,1,'saqartvelos dedaqalaqia raari'),
+       (2,1,1,'tavisufali universiteti kleoba xo araa?'),
+       (3,1,1,'ra aris veqtoruli velis potenciali?'),
        (4,1,1,'jandrieri magari .... .'),
-       (5,1,2,'koleidoskopu magra adidebs.'),
-       (6,1,4,'chamotvalet top kanonieri qurdebi'),
-       (6,1,5,'shemoxaset top kanonieri qurdebi');
-
+       (5,1,1,'koleidoskopu magra adidebs.'),
+       (6,1,1,'chamotvalet top kanonieri qurdebi'),
+       (6,1,1,'shemoxaset top kanonieri qurdebi');
+--
 INSERT INTO answers( question_id, answer, is_correct)
 VALUES (5,'TRUE',false),
        (5,'FALSE',true),

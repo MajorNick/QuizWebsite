@@ -12,14 +12,39 @@
 <style>
     .navbar {
         background-color: #007bff;
-        align-items: center;
+        color: white;
         display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
     }
 
     .navbar a {
-        background-color: transparent;
-        border: none;
-        color: #ffffff;
+        color: white;
+        text-decoration: none;
+        margin-left: 20px;
+        font-size: 18px;
+    }
+    .navbar {
+        background-color: #007bff;
+        overflow: hidden;
+    }
+
+    .link {
+        color: black;
+        text-decoration: none;
+        margin-left: 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .navbar a {
+        float: right;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 15px 16px;
+        text-decoration: none;
         font-size: 20px;
         font-weight: bold;
     }
@@ -114,7 +139,7 @@
     <%  DBConn dbConn=new DBConn();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/loginPage.jsp");
+            response.sendRedirect(request.getContextPath() + "/MainPageServlet");
             return;
         }
         int userId= user.getId();
@@ -125,15 +150,17 @@
         String userName = user.getUsername();
         %>
 
-        <div class="navbar">
-            <a href="./home.jsp">
-              <button class="navbarItem">Home</button>
-            </a>
+         <div class="navbar">
+            <a class = "link" href="<%= request.getContextPath() %>/userProfile.jsp">Logged in as <%= userName %></a>
             <form class="navbarItem" action="./SearchUser" method="post">
               <input class="navbarSubItem" name="search_text" rows="1" cols="30" placeholder="Look up user"/>
               <button class="action-button">Search User</button>
             </form>
-            <a>Logged in as <%= userName %></a>
+            <form class="navbarItem" action="./AddCategory" method="post">
+              <input class="navbarSubItem" name="add_text" rows="1" cols="30" placeholder="Add quiz category"/>
+              <button class="action-button">Add Category</button>
+            </form>
+            <a href="<%= request.getContextPath() %>/LogoutServlet">Log Out</a>
         </div>
 
         <div class="announcements">
@@ -157,7 +184,7 @@
                         <% ArrayList<Quiz> qs = dbConn.getPopularQuizzes();
                             for(Quiz q : qs) {
                             %>
-                            <li> <a href="<%= " quiz/index.jsp?id=" + q.id %>">
+                            <li> <a href="<%= " quizSummary.jsp?id=" + q.id %>">
                                     <button class="quizButton">
                                         <%= q.quiz_name %>
                                     </button>
@@ -173,7 +200,7 @@
                         <% ArrayList<Quiz> rcqs = dbConn.getRecentlyCreatedQuizzes(-1);
                             for(Quiz q : rcqs) {
                             %>
-                            <li> <a href="<%= " quiz/index.jsp?id=" + q.id %>">
+                            <li> <a href="<%= " quizSummary.jsp?id=" + q.id %>">
                                      <button class="quizButton">
                                          <%= q.quiz_name %>
                                      </button>
@@ -189,7 +216,7 @@
                         <% ArrayList<QuizHistory> tqs = dbConn.getUserRecentQuizHistory(targetId);
                             for(QuizHistory tq : tqs) {
                             %>
-                            <li> <a href="<%= " quiz/index.jsp?id=" + tq.getQuiz_id() %>">
+                            <li> <a href="<%= " quizSummary.jsp?id=" + tq.getQuiz_id() %>">
                                      <button class="quizButton">
                                          <%= dbConn.getQuizById(tq.getQuiz_id()).quiz_name %>
                                      </button>
@@ -205,7 +232,7 @@
                         <% ArrayList<Quiz> mqs = dbConn.getRecentlyCreatedQuizzes(targetId);
                             for(Quiz mq : mqs) {
                             %>
-                            <li> <a href="<%= " quiz/index.jsp?id=" + mq.id %>">
+                            <li> <a href="<%= " quizSummary.jsp?id=" + mq.id %>">
                                      <button class="quizButton">
                                          <%= mq.quiz_name %>
                                      </button>
@@ -277,7 +304,7 @@
                                         <% ArrayList<Quiz> cqs = dbConn.getRecentlyCreatedQuizzes(friendId);
                                             for(Quiz cq : cqs) {
                                             %>
-                                            <li> <a href="<%= " quiz/index.jsp?id=" + cq.id %>">
+                                            <li> <a href="<%= " quizSummary.jsp?id=" + cq.id %>">
                                                      <button class="quizButton">
                                                          <%= cq.quiz_name %>
                                                      </button>
