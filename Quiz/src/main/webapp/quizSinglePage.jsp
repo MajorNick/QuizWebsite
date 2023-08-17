@@ -16,6 +16,7 @@
         header {
             color: white;
             font-size: 24px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -53,6 +54,13 @@
         iterator++;
     } else if ("Prev".equals(action)) {
         iterator--;
+    }else if (action != null) {
+        try {
+            int selected = Integer.parseInt(action);
+            iterator = selected - 1;
+        } catch (NumberFormatException e) {
+            %> <h1> erroooooooor while parsing request</h1> <%
+        }
     }
     session.setAttribute("iterator", iterator);
 
@@ -115,6 +123,15 @@
         <input class="submit_button" type="submit" name="action" value="Prev">
         <input class="submit_button" type="submit" name="action" value="Next">
     </div>
+    <div>
+        <%
+            for(int i=0;i<questions.size();i++){ %>
+        <input class="submit_button" type="submit" name="action" value=<%=Integer.toString(i+1)%>>
+        <%
+            }
+        %>
+    </div>
+
 </form>
 <%
 } else {

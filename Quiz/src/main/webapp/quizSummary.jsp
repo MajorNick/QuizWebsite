@@ -87,6 +87,10 @@
 
 </div>
 <%
+
+    HttpSession ses = request.getSession();
+    Integer userID = (Integer) ses.getAttribute("userId");
+    Integer quizId = Integer.parseInt(request.getParameter("quizId"));
     int id = 1;
     int userid=1;
     DBConn con = new DBConn();
