@@ -4,6 +4,7 @@
 <%@ page import="Quiz.src.main.java.models.Notification" %>
 <%@ page import="Quiz.src.main.java.models.QuizHistory" %>
 <%@ page import="Quiz.src.main.java.models.Quiz" %>
+<%@ page import="Quiz.src.main.java.models.Categorya" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
@@ -31,16 +32,13 @@
                 <select name="quiz_category" id="quiz_category" class="question-form">
                     <option value="0">No Category</option>
                     <%
-                        //ArrayList<QuizCategory> categories = dbconn.getCategories();
-                        //for(QuizCategory category : categories){
-                        //
-                        //}
+                        DBConn dbconn = new DBConn();
+                        ArrayList<Categorya> categories = dbconn.getCategories();
+                        for(Categorya category : categories){
+                            %><option value="<%= category.id%>"><%= category.category %></option><%
+                        }
+                        dbconn.closeDBConn();
                     %>
-                    <option value="1">Category A</option>
-                    <option value="2">Category B</option>
-                    <option value="3">Category C</option>
-                    <option value="4">Category D</option>
-                    <option value="5">Category E</option>
                 </select>
                 <br>
                 <textarea name="description" class="note_text" placeholder="Quiz description" rows="4" cols="50"></textarea>
@@ -72,9 +70,10 @@
             <div class="block-title">Create from json file</div>
             <br>
             <form action="/CreateQuizJson" method="post" enctype="multipart/form-data">
-                <input class="action-button" type="file" id="fileId" name="filename">
+                <input class="action-button" type="file" name="jsonFile">
                 <br>
                 <input class="action-button" type="submit">
+                <input name="userId" type="hidden" value="<%= userId%>"></input>
             </form>
             <br>
             <div class="block-items"> sample quiz json:</div>

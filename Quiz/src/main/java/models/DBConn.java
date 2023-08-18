@@ -71,7 +71,7 @@ public class DBConn{
         if(c == null)
             throw new RuntimeException("Provided Category is null");
 
-        String q = String.format("INSERT INTO Category (category)  VALUES('%s')", c.category);
+        String q = String.format("INSERT INTO quiz_categories (category)  VALUES('%s')", c.category);
         executeUpdate(q);
     }
     public void insertTag(Tag t){
@@ -845,12 +845,12 @@ public class DBConn{
     }
 
     public int getLastQuestionId(){
-        String q = "SELECT MAX(id) as next_id FROM questions";
+        String q = "SELECT MAX(id) as cur_id FROM questions";
         try{
             executeQuery(q);
             rs.next();
-            int nextId = rs.getInt("next_id");
-            return  nextId;
+            int cur_id = rs.getInt("cur_id");
+            return  cur_id;
         } catch (Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -867,15 +867,111 @@ public class DBConn{
     public void trimQuiz(Quiz qu){
         String delete_answers = String.format("DELETE FROM answers WHERE question_id IN (SELECT id FROM questions WHERE quiz_id = %d)", qu.id);
         String delete_questions = String.format("DELETE FROM questions WHERE quiz_id = %d", qu.id);
-
-        // tags and history
+        String delete_tags = String.format("DELETE FROM tag_quiz WHERE quiz_id = %d", qu.id);
 
         try {
             executeUpdate(delete_answers);
             executeUpdate(delete_questions);
+            executeUpdate(delete_tags);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
+    }
+    public ArrayList<Categorya> getCategories(){
+        ArrayList<Categorya> categories = new ArrayList<>();
+        String q = "SELECT * FROM quiz_categories";
+        try{
+            executeQuery(q);
+
+            while (rs.next()) {
+                Categorya categorya = new Categorya(rs.getInt("id"), rs.getString("category"));
+                categories.add(categorya);
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return categories;
+    }
+    public int getTagId(String tag){
+        String q = String.format("SELECT * FROM quiz_tags qt WHERE qt.tag = '%s'", tag);
+        try{
+            executeQuery(q);
+
+            while(rs.next()){
+                int id = rs.getInt("id");
+                return id;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    public int getLastTagId(){
+        String q = "SELECT MAX(id) as cur_id FROM quiz_tags";
+        try{
+            executeQuery(q);
+            rs.next();
+            int cur_id = rs.getInt("cur_id");
+            return  cur_id;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    public void updateQuizCategory(int quiz_id, int category_id){
+        String u = String.format("UPDATE quizzes q SET q.category_id = %d WHERE q.id = %d", category_id, quiz_id);
+        if(category_id == 0){
+            u = String.format("UPDATE quizzes q SET q.category_id = null WHERE q.id = %d", quiz_id);
+        }
+        executeUpdate(u);
+    }
+    public int getQuizCategory(int quiz_id){
+        String q = String.format("select category_id from quizzes q where q.id=%d", quiz_id);
+        try{
+            executeQuery(q);
+            rs.next();
+            int category_id = rs.getInt("category_id");
+            System.out.println("quiz category ID: " + category_id);
+            return category_id;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    public ArrayList<Tag> getTags(){
+        String q = "SELECT * FROM quiz_tags";
+        ArrayList<Tag> tags = new ArrayList<>();
+        try{
+            executeQuery(q);
+
+            while (rs.next()) {
+                Tag tag = new Tag(rs.getInt("id"), rs.getString("tag"));
+                tags.add(tag);
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return tags;
+    }
+    public ArrayList<String> getQuizTags(int quiz_id){
+        String q = String.format("SELECT tag FROM tag_quiz tq JOIN quiz_tags qt ON(tq.tag_id = qt.id) WHERE tq.quiz_id = %d", quiz_id);
+        ArrayList<String> tags = new ArrayList<>();
+        try{
+            executeQuery(q);
+            while(rs.next()){
+                String tag = rs.getString("tag");
+                tags.add(tag);
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return tags;
     }
 }
