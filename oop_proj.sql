@@ -195,14 +195,14 @@ VALUES (80.6,1,1),
 
 
 INSERT INTO questions(question_num, quiz_id, question_type, question)
-VALUES (1,1,1,'saqartvelos dedaqalaqia raari'),
-       (2,1,2,'tavisufali universiteti kleoba xo araa?'),
-       (3,1,3,'ra aris veqtoruli velis potenciali?'),
-       (4,1,4,'jandrieri magari .... .'),
-       (5,1,5,'koleidoskopu magra adidebs.'),
-       (6,1,6,'chamotvalet top kanonieri qurdebi'),
-       (7,1,7,'shemoxaset top kanonieri qurdebi');
---
+     VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
+        (2,1,0,'tavisufali universiteti  sauketesoa?'),
+        (3,1,0,'ra aris veqtoruli velis potenciali?'),
+        (4,1,1,'GO yvelaze  magari .... .'),
+        (5,1,2,'koleidoskopu magra adidebs.'),
+        (6,1,4,'chamotvalet top kanonieri qurdebi'),
+        (6,1,5,'shemoxaset top kanonieri qurdebi');
+
 INSERT INTO answers( question_id, answer, is_correct)
 VALUES (5,'TRUE',false),
        (5,'FALSE',true),

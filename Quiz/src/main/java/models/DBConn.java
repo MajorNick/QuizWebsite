@@ -703,7 +703,7 @@ public class DBConn{
         return users;
     }
     public ArrayList<Question> getQuestions(int quiz_id){
-        String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d",quiz_id);
+        String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d  ORDER BY question_num;",quiz_id);
         ArrayList<Question> selection = new ArrayList<>();
         try{
             executeQuery(questionQuery);
