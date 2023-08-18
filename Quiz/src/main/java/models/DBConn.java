@@ -974,4 +974,18 @@ public class DBConn{
         }
         return tags;
     }
+    public int getQuizNumCreatedByUser(int user_id){
+        String q = String.format("SELECT COUNT(*) AS num FROM quizzes q WHERE q.creator_id = %d", user_id);
+        try{
+            executeQuery(q);
+            while(rs.next()){
+                int num = rs.getInt("num");
+                return num;
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

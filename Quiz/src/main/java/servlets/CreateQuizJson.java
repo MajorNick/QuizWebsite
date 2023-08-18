@@ -85,6 +85,20 @@ public class CreateQuizJson extends HttpServlet {
                 System.out.println(tag_str);
             }
 
+            int quizNum = dbConn.getQuizNumCreatedByUser(creator_id);
+            if(quizNum == 1){
+                UserAchievement userAchievement = new UserAchievement(-1, creator_id, 1);
+                dbConn.insertUserAchievement(userAchievement);
+            } else if(quizNum == 5){
+                UserAchievement userAchievement = new UserAchievement(-1, creator_id, 2);
+                dbConn.insertUserAchievement(userAchievement);
+            } else if(quizNum == 10){
+                UserAchievement userAchievement = new UserAchievement(-1, creator_id, 3);
+                dbConn.insertUserAchievement(userAchievement);
+            }
+
+            dbConn.closeDBConn();
+
             response.sendRedirect("./quizSummary.jsp?id=" + quiz.id);
             return;
 
