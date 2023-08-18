@@ -262,6 +262,28 @@ public class DBConn{
         }
         return quizHistory;
     }
+    public ArrayList<QuizHistory> getUserQuizHistory(int user_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(user_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.user_id = %d", user_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
     public ArrayList<Achievement> getAchievements(int id) {
         String q = "SELECT * FROM achievements";
         if(id != -1){
