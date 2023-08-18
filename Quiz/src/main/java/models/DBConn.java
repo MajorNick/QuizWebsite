@@ -646,10 +646,10 @@ public class DBConn{
         return scores;
     }
     public ArrayList<Integer> getLastQuizPerformers(int quiz_id){
-        String query="SELECT  user_id " +
-                "FROM quiz_history " +
+        String query = String.format("SELECT user_id " +
+                "FROM quiz_history WHERE quiz_id = %d " +
                 "ORDER BY take_date DESC " +
-                "LIMIT 3;";
+                "LIMIT 3;", quiz_id);
 
         ArrayList<Integer> users = new ArrayList<>();
         try{
