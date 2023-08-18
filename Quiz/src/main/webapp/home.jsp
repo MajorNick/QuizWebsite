@@ -142,6 +142,11 @@
             response.sendRedirect(request.getContextPath() + "/MainPageServlet");
             return;
         }
+        ArrayList<User> users = dbConn.getUsersByUsername(user.getUsername());
+        if(users.isEmpty()){
+            response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+            return;
+        }
         int userId= user.getId();
         String TargetId = request.getParameter("id");
         TargetId = TargetId == null ? ""+userId : TargetId;

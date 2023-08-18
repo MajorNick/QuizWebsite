@@ -134,6 +134,11 @@
 </head>
 
 <%  DBConn dbConn=new DBConn();
+    User user = (User) session.getAttribute("user");
+    if (user != null) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
 
         %>
 <body>

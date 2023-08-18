@@ -112,27 +112,39 @@
 <body>
 <%
     User user1 = (User) session.getAttribute("user");
-    if (user1 == null) {
-        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
-        return;
+    //if (user1 == null) {
+    //    response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+    //    return;
+    //}
+
+    DBConn con = new DBConn();
+    if(user1!= null){
+        ArrayList<User> users = con.getUsersByUsername(user1.getUsername());
+        if(users.isEmpty()){
+            response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+            return;
+        }
     }
 %>
 
 </div>
 <%
 
-
-    int userId = user1.getId();
+    int userId = 1;
+    if (user1 != null) {
+    userId = user1.getId();
+    }
     int id = Integer.parseInt(request.getParameter("id"));
 
     //int id = 1;
     //int userid=1;
-    DBConn con = new DBConn();
     Quiz quiz = con.getQuiz(id);
+    User user = user1;
+    if (user1 != null) {
     ArrayList<User> u = con.getUsers(userId);
 
-    User user = u.get(0);
-
+    user = u.get(0);
+    }
     int quizid = quiz.id;
 
 %>
@@ -145,10 +157,13 @@
         Quiz Summary
     </header>
     </div>
+    <% if (user1 != null) { %>
     <div class="center">
         <a href="/userProfile.jsp" class="user-link">Logged in as <%= user1.getUsername() %></a>
     </div>
+    <% } %>
     <div class= "rgt">
+        <% if (user1 != null) { %>
         <% if ((user1.isAdmin())) { %>
             <form class="navbarItem" action="./RemoveQuizHistory" method="post">
               <button id = "id" class="action-button">Remove QuizHistory</button>
@@ -159,6 +174,7 @@
               <input type="hidden" name="quizid" value="<%= quizid %>">
             </form>
         <% } %>
+     <% } %>
     </div>
 
 </div>
@@ -171,11 +187,14 @@
     </p>
 
 </div>
-
+<% if (user1 != null) { %>
 <div>
     <p>Quiz Creator: <a href = "../userProfile.jsp?id=%d"><%=user.getUsername()%></a></p>
 </div>
+<% } %>
 
+
+<% if (user1 != null) { %>
 <div class = best_performances>
     <h3>Best Performances</h3>
     <%
@@ -191,6 +210,8 @@
         <% } %>
     </ul>
 </div>
+
+<% } %>
 <div class="highest_scores">
     <h3>Highest Scores</h3>
 
