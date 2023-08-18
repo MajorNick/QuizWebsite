@@ -252,9 +252,9 @@
         <% } %>
     </ul>
 </div>
-
 <div class="flex-container">
-    <form id="quizForm" action=<%="/quiz.jsp?id="+quizid%> method="POST">
+
+    <form id="quizForm" action=<%=!quiz.is_single_page?"/quiz.jsp?id=" +quizid:"/quizSinglePage.jsp?id="+quizid%> method="POST">
         <button class="test_start_button">Start</button>
     </form>
 
@@ -262,23 +262,9 @@
         <button class="test_start_button">Test</button>
     </form>
 
-    <label>
-        <input type="checkbox" id="singlePageCheckbox" name="quizType" value="singlePage"> Single Page
-    </label>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const checkbox = document.getElementById('singlePageCheckbox');
-        const quizForm = document.getElementById('quizForm');
-        const quizPracticeForm = document.getElementById('quizPracticeForm');
-        checkbox.addEventListener('change', function () {
-            const isChecked = checkbox.checked;
-            quizForm.action = isChecked ? '/quizSinglePage.jsp?id='+<%=quizid%> : '/quiz.jsp?id='+<%=quizid%>;
-            quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage.jsp' : '/quizPractice.jsp';
-        });
 
-    });
-</script>
+</div>
+
 
 </body>
 </html>

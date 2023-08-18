@@ -3,7 +3,9 @@
 <%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
-<%@ page import="Quiz.src.main.java.models.Answer" %><%--
+<%@ page import="Quiz.src.main.java.models.Answer" %>
+<%@ page import="Quiz.src.main.java.models.Quiz" %>
+<%@ page import="java.util.Collections" %><%--
   Created by IntelliJ IDEA.
   User: majornick
   Date: 11.08.23
@@ -55,8 +57,12 @@
             return;
         }
 
-        // Assuming you have an ArrayList of Question objects named 'questions'
+
         ArrayList<Question> questions = con.getQuestions(quizID);
+        Quiz quiz = con.getQuiz(quizID);
+        if (!quiz.rand_question_order){
+            Collections.shuffle(questions);
+        }
         %> <p>length is :  <%=questions.size() %></p>
     <%
         for (int i = 0; i < questions.size(); i++) {
