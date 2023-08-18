@@ -71,19 +71,9 @@ public class CreateQuiz extends HttpServlet {
             return;
         }
 
-        System.out.println("quizCategory: " + quizCategory);
-
         int quizTagMax = 0;
         if(quizTagMaxIndex != null){
             quizTagMax = Integer.parseInt(quizTagMaxIndex);
-        }
-
-        for(int i = 1; i <= quizTagMax; i++){
-            String quizTag = request.getParameter("quiz_tag" + i);
-            if(quizTag == null){
-                continue;
-            }
-            System.out.println(quizTag);
         }
 
         boolean isSinglePageCB_BOOL = parseBooleanFromReq(isSinglePageCB);
@@ -182,9 +172,31 @@ public class CreateQuiz extends HttpServlet {
         for(Answer answer : answersToInsert){
             dbConn.insertAnswer(answer);
         }
+        for(int i = 1; i <= quizTagMax; i++){
+            String quizTag = request.getParameter("quiz_tag" + i);
+            if(quizTag == null){
+                continue;
+            }
+            int tag_id = dbConn.getTagId(quizTag);
+            if(tag_id == -1){
+                Tag tag = new Tag(-1, quizTag);
+                dbConn.insertTag(tag);
+                tag_id = dbConn.getLastTagId();
+                if(tag_id == -1){
+                    continue;
+                }
+            }
+            TagQuiz tagQuiz = new TagQuiz(-1, tag_id, quiz.id);
+            dbConn.insertTagQuiz(tagQuiz);
+            System.out.println(quizTag);
+        }
+        if(quizCategory != null){
+            int quizCat = Integer.parseInt(quizCategory);
+            dbConn.updateQuizCategory(quiz.id, quizCat);
+        }
 
         dbConn.closeDBConn();
 
-//        response.sendRedirect(redirectUrl);
+        response.sendRedirect("./quizSummary.jsp?id=" + quiz.id);
     }
 }
