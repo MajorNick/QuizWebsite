@@ -64,7 +64,7 @@
     }
     session.setAttribute("iterator", iterator);
 
-    int quizID = 1;
+    int quizID = Integer.parseInt(request.getParameter("id"));;
     DBConn con = new DBConn();
 
     ArrayList<Question> questions = con.getQuestions(quizID);
@@ -74,7 +74,7 @@
         QuestionType questionType = question.type;
 %>
 
-<form action="quizSinglePage.jsp" method="post">
+<form action=<%="quizSinglePage.jsp?id="+quizID%> method="post">
     <p>Question <%= iterator + 1 %>: <%= question.question %></p>
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) { %>
@@ -135,7 +135,9 @@
 </form>
 <%
 } else {
+        ses.setAttribute("iterator",null);
 %>
+
 <p>Quiz completed.</p>
 <%
     }

@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS quiz_history;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
-DROP TABLE IF EXISTS question_types;
+
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
@@ -71,10 +71,6 @@ CREATE TABLE tag_quiz (
     FOREIGN KEY (tag_id) REFERENCES quiz_tags(id) ON DELETE CASCADE
 );
 
-CREATE TABLE question_types (
-	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    q_type VARCHAR(100)
-);
 
 CREATE TABLE questions (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -129,7 +125,7 @@ CREATE TABLE achievements (
 
 INSERT INTO achievements (achievement, to_earn, icon)
 VALUES ('Amateur Author', 'Create your first quiz', 'https://cdn-icons-png.flaticon.com/512/3601/3601002.png'),
-	   ('Prolific Author', 'Create 5 quizzes', 'https://cdn-icons-png.flaticon.com/128/3601/3601646.png'),
+       ('Prolific Author', 'Create 5 quizzes', 'https://cdn-icons-png.flaticon.com/128/3601/3601646.png'),
        ('Prodigious Author', 'Create 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/7601/7601746.png'),
        ('Quiz Machine', 'Take 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/5289/5289226.png'),
        ('I am the Greatest', 'Get the highest score on a quiz', 'https://cdn-icons-png.flaticon.com/128/744/744922.png'),
@@ -194,28 +190,27 @@ VALUES (1, 'History', true, false, false),
 
 INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
-      (95.2,1,2),
-      (12.4,3,1);
+       (95.2,1,2),
+       (12.4,3,1);
 
-INSERT INTO question_types(q_type)
-VALUE ('type1');
+
 
 INSERT INTO questions(question_num, quiz_id, question_type, question)
-VALUES (1,1,1,'saqartvelos dedaqalaqia raari'),
-       (2,1,1,'tavisufali universiteti kleoba xo araa?'),
-       (3,1,1,'ra aris veqtoruli velis potenciali?'),
-       (4,1,1,'jandrieri magari .... .'),
-       (5,1,1,'koleidoskopu magra adidebs.'),
-       (6,1,1,'chamotvalet top kanonieri qurdebi'),
-       (6,1,1,'shemoxaset top kanonieri qurdebi');
---
+     VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
+        (2,1,0,'tavisufali universiteti  sauketesoa?'),
+        (3,1,0,'ra aris veqtoruli velis potenciali?'),
+        (4,1,1,'GO yvelaze  magari .... .'),
+        (5,1,2,'koleidoskopu magra adidebs.'),
+        (6,1,4,'chamotvalet top kanonieri qurdebi'),
+        (6,1,5,'shemoxaset top kanonieri qurdebi');
+
 INSERT INTO answers( question_id, answer, is_correct)
 VALUES (5,'TRUE',false),
        (5,'FALSE',true),
        (6,'tornike ramishvili',TRUE),
-        (6,'giorgi lekva lekveishvili',TRUE),
-        (7,'tornike ramishvili',TRUE),
-        (7,'nika tarkashvili',TRUE),
-        (7,'giorgi javakhishvili',TRUE),
-        (7,'mariam gamrekelashvili',TRUE),
-        (7,'vakhtang jandieri',FALSE);
+       (6,'giorgi lekva lekveishvili',TRUE),
+       (7,'tornike ramishvili',TRUE),
+       (7,'nika tarkashvili',TRUE),
+       (7,'giorgi javakhishvili',TRUE),
+       (7,'mariam gamrekelashvili',TRUE),
+       (7,'vakhtang jandieri',FALSE);
