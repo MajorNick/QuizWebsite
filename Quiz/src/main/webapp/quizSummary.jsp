@@ -206,7 +206,7 @@
 <div class = best_performances>
     <h3>Best Performances</h3>
     <%
-        // look at history
+
     %>
     <%
         ArrayList<Integer> best = con.getYourBestPerformance(id,userId);
@@ -266,7 +266,7 @@
         <button class="test_start_button">Start</button>
     </form>
     <% if (quiz.can_be_practiced) { %>
-    <form id="quizPracticeForm" action="/quizPractice.jsp" method="POST">
+    <form id="quizPracticeForm" action=<%="/preparePractice?id="+quiz.id%> method="POST">
         <button class="test_start_button">Test</button>
     </form>
     <% } %>
@@ -285,7 +285,7 @@
             checkbox.addEventListener('change', function () {
                 const isChecked = checkbox.checked;
                 quizForm.action = isChecked ? '<%="/quizSinglePage.jsp?id="+quiz.id+"&correction=true"%>' :'<%="/quizSinglePage.jsp?id="+quiz.id%>';
-                quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage.jsp' : '/quizPractice.jsp';
+                quizPracticeForm.action = isChecked ? '/preparePractice' : '/preparePractice';
             });
         });
 
