@@ -14,7 +14,6 @@ public class AnswerChecker {
             switch(quest.type){
                 case QUESTION_RESPONSE :
                     return answer.equalsIgnoreCase(answers.get(0).answer)?1.0:0;
-
             }
             return 0;
         }
