@@ -932,7 +932,7 @@ public class DBConn{
     }
 
     public ArrayList<Quiz> getRecentlyCreatedQuizzes(int creator_id){
-        String query = String.format("SELECT * FROM quizzes ORDER BY id DESC LIMIT 5");
+        String query = String.format("SELECT * FROM quizzes ORDER BY id DESC");
         if(creator_id != -1) {
             query = String.format("SELECT * FROM quizzes WHERE creator_id = %d ORDER BY id DESC LIMIT 5", creator_id);
         }
@@ -954,7 +954,7 @@ public class DBConn{
     }
 
     public ArrayList<Quiz> getPopularQuizzes(){
-        String query = String.format("SELECT quiz_id, COUNT(*) AS frequency FROM quiz_history GROUP BY quiz_id ORDER BY frequency DESC LIMIT 5");
+        String query = String.format("SELECT quiz_id, COUNT(*) AS frequency FROM quiz_history GROUP BY quiz_id ORDER BY frequency DESC");
         Map<Integer, Integer> quizFrequencyMap = new HashMap<>();
         ArrayList<Quiz> popularQuizzes = new ArrayList<>();
         try{
