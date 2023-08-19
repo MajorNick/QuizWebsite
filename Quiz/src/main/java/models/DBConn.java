@@ -67,6 +67,14 @@ public class DBConn{
         executeUpdate(q);
     }
 
+    public void insertRateAndReview(rateAndReview r){
+        if(r == null)
+            throw new RuntimeException("Provided insertRateAndReview is null");
+
+        String q = String.format("INSERT INTO rateAndReview (quiz_id, rating, user_id, review)  VALUES(%d, %d, %d, '%s')", r.quizId, r.rating, r.userId, r.review);
+        executeUpdate(q);
+    }
+
     public void insertCategory(Categorya c){
         if(c == null)
             throw new RuntimeException("Provided Category is null");
@@ -118,7 +126,7 @@ public class DBConn{
         if(u == null)
             throw new RuntimeException("Provided UserAchievement is null");
 
-        String q = String.format("INSERT INTO users (username, password_hash, role)  VALUES('%s', '%s', '%s')", u.getUsername(), u.getPasswordHash(), u.getRole());
+        String q = String.format("INSERT INTO users (username, password_hash, role, isPrivate)  VALUES('%s', '%s', '%s', %b)", u.getUsername(), u.getPasswordHash(), u.getRole(), false);
         executeUpdate(q);
     }
 
@@ -175,6 +183,8 @@ public class DBConn{
         executeUpdate(q);
     }
 
+
+
     public ArrayList<Notification> getNotifications(int receiverId, int senderId, String notifType) {
         String q = "SELECT * FROM notifications n";
 
@@ -221,6 +231,27 @@ public class DBConn{
             e.printStackTrace();
         }
         return selection;
+    }
+
+    public ArrayList<Notification> containsNotification(Notification n) {
+        String q = String.format("SELECT * FROM notifications n where receiver_id = %d &&" +
+                "sender_id = %d && notif_type = '%s' && notif_body = '%s'", n.getReceiverId(), n.getSenderId(), n.getNotifType(),n.getNotifBody());
+
+        ArrayList<Notification> notifications = new ArrayList<>();
+        try{
+            executeQuery(q);
+
+            while (rs.next()) {
+                Notification qh = new Notification(rs.getInt("id"), rs.getInt("receiver_id"), rs.getInt("sender_id"), rs.getString("notif_type"), rs.getString("notif_body"));
+                notifications.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return notifications;
     }
 
     public ArrayList<Announcement> getAnnouncements() {
@@ -329,6 +360,26 @@ public class DBConn{
         return selection;
     }
 
+    public ArrayList<User> getAllAdmins() {
+        String query = "SELECT * FROM users u where u.role = 'admin'";
+
+        ArrayList<User> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
+                user.setPfpLink(rs.getString("pfp"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return selection;
+    }
+
 
     public ArrayList<User> getUsers(int id) {
         String query = "SELECT * FROM users";
@@ -341,7 +392,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
                 user.setPfpLink(rs.getString("pfp"));
                 selection.add(user);
             }
@@ -364,7 +415,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
                 user.setPfpLink(rs.getString("pfp"));
                 selection.add(user);
             }
@@ -388,7 +439,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
                 user.setPfpLink(rs.getString("pfp"));
                 selection.add(user);
             }
@@ -433,6 +484,30 @@ public class DBConn{
             e.printStackTrace();
         }
     }
+
+    public void removeRateAndReview(int revId){
+        String q = String.format("DELETE FROM rateAndReview r WHERE (r.id = %d)", revId);
+
+        try{
+            executeUpdate(q);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeExactReview(rateAndReview review){
+        String q = String.format("DELETE FROM rateAndReview r WHERE (r.user_id = %d) &&" +
+                                    "(r.quiz_id = %d) && (r.rating = %d) && (r.review = '%s')",
+                                    review.userId, review.quizId, review.rating, review.review);
+        try{
+            executeUpdate(q);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public void removeQuiz(int quiz_id){
         String q = String.format("DELETE FROM quizzes q WHERE (q.id = %d)", quiz_id);
 
@@ -447,6 +522,30 @@ public class DBConn{
 
     public void makeUserAdmin(int user_id){
         String q = String.format("UPDATE users SET role = 'admin' WHERE id = %d;", user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void makeUserPrivate(int user_id, boolean priv){
+        String q = String.format("UPDATE users SET isPrivate = %b WHERE id = %d;", priv, user_id);
+
+        try{
+            executeUpdate(q);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void updateUserPicture(int user_id, String pfp){
+        String q = String.format("UPDATE users SET pfp = '%s' WHERE id = %d;", pfp, user_id);
 
         try{
             executeUpdate(q);
@@ -569,6 +668,7 @@ public class DBConn{
                               "q.quiz_name,\n" +
                               "q.is_single_page,\n" +
                               "q.can_be_practiced,\n" +
+                              "q.rand_question_order,\n" +
                               "q.description,\n" +
                               "u.username\n" +
                        "FROM quiz_history qh JOIN quizzes q ON(qh.quiz_id = q.id) JOIN users u ON(q.creator_id = u.id)";

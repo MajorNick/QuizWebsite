@@ -53,6 +53,24 @@
         padding: 5px;
     }
 
+    .middle-button {
+        color: white;
+        text-align: center;
+        padding: 10px 20px;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #000000;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .middle-button:hover {
+        background-color: #ff0000;
+    }
+
+
     input.navbarSubItem {
         border: 2px solid #ccc;
         resize: none;
@@ -161,6 +179,7 @@
               <input class="navbarSubItem" name="search_text" rows="1" cols="30" placeholder="Look up user"/>
               <button class="action-button">Search User</button>
             </form>
+            <a href="<%= request.getContextPath() %>/createQuiz/index.jsp" class="middle-button"> Create Quiz </a>
             <form class="navbarItem" action="./AddCategory" method="post">
               <input class="navbarSubItem" name="add_text" rows="1" cols="30" placeholder="Add quiz category"/>
               <button class="action-button">Add Category</button>

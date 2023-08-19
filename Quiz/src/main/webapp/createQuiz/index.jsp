@@ -14,6 +14,25 @@
   <title>Create Quiz</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
+<style>
+
+.back-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 30px 60px
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+</style>
 <body>
     <%
         User user = (User) session.getAttribute("user");
@@ -63,6 +82,9 @@
                 <input class="action-button" type="submit">
                 <input type="hidden" id="maxQuestionIndex" name="maxQuestionIndex" value="0">
             </form>
+        </div>
+        <div>
+        <a class="back-button" href="<%= request.getContextPath() %>/userProfile.jsp?id=<%= userId %>">Profile</a>
         </div>
     </div>
     <div class="block-container">

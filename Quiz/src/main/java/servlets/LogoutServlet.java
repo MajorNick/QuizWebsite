@@ -17,7 +17,7 @@ public class LogoutServlet extends HttpServlet {
         Cookie cookie = new Cookie("username", "");
         cookie.setMaxAge(0);
         httpServletResponse.addCookie(cookie);
-
+        session.setAttribute("daloginda", true);
         httpServletRequest.getRequestDispatcher("loginPage.jsp").forward(httpServletRequest, httpServletResponse);
     }
 

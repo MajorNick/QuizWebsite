@@ -32,7 +32,7 @@ public class CreationServlet extends HttpServlet {
         if(!acc.getUsersByUsername(name).isEmpty()){
             httpServletRequest.getRequestDispatcher("alreadycreated.jsp").forward(httpServletRequest, httpServletResponse);
         } else{
-            acc.insertUser(new User(1, name, pass, "user"));
+            acc.insertUser(new User(1, name, pass, "user", false));
             User user = acc.getUsersByUsername(name).get(0);
             HttpSession session = httpServletRequest.getSession();
 

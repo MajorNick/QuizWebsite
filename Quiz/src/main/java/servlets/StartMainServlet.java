@@ -34,7 +34,7 @@ public class StartMainServlet extends HttpServlet {
         }
 
         if (session == null || session.getAttribute("user") == null) {
-            httpServletRequest.getRequestDispatcher("/loginPage.jsp").forward(httpServletRequest, httpServletResponse);
+            httpServletRequest.getRequestDispatcher("/nreg.jsp").forward(httpServletRequest, httpServletResponse);
             return;
         }
 

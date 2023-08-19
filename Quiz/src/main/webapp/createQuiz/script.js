@@ -140,10 +140,10 @@ function addQuestionDiv(divNum, newQuestion) {
                 <option value="" disabled selected>Select Question Type</option>
                 <option value="0">Question Response</option>
                 <option value="1">Fill in the Blank</option>
-                <option value="2">Multiple Choise</option>
+                <option value="2">Multiple Choice</option>
                 <option value="3">Picture Response</option>
                 <option value="4">Multiple Answer</option>
-                <option value="5">Multiple Choise & Answer</option>
+                <option value="5">Multiple Choice & Answer</option>
             </select>
             <textarea id="question-text${divNum}" name="question${divNum}" class="note_text" placeholder="Question" rows="4" cols="50"></textarea>
             <div id="answerList${divNum}" class="answer-list">

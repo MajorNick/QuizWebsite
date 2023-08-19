@@ -140,6 +140,23 @@
         return;
     }
 
+    Cookie[] cookies = request.getCookies();
+
+    boolean usernameCookieExists = false;
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("username")) {
+                usernameCookieExists = true;
+                break;
+            }
+        }
+    }
+
+    if (usernameCookieExists) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
+
         %>
 <body>
     <div class="navbar">

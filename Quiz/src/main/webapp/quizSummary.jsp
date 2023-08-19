@@ -25,7 +25,7 @@
         margin-left: 10px;
     }
     .center {
-        flex: 2;
+        flex: 5;
         text-align: center;
     }
 
@@ -173,6 +173,12 @@
               <button id = "id1" class="action-button">Remove Quiz</button>
               <input type="hidden" name="quizid" value="<%= quizid %>">
             </form>
+        <% } else {%>
+            <form class="navbarItem" action="./markAsBad" method="post">
+              <button id = "id2" class="action-button">Inappropriate Quiz</button>
+              <input type="hidden" name="quizid" value="<%= quizid %>">
+              <input type="hidden" name="userId" value="<%= userId %>">
+            </form>
         <% } %>
      <% } %>
     </div>
@@ -260,6 +266,10 @@
 
     <form id="quizPracticeForm" action="./quizPractice.jsp" method="POST">
         <button class="test_start_button">Test</button>
+    </form>
+
+    <form id="quizPracticeForm" action="./editQuiz.jsp" method="POST">
+        <button class="test_start_button">Edit Quiz</button>
     </form>
 
 

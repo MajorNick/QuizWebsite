@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
 DROP TABLE IF EXISTS tag_quiz;
 DROP TABLE IF EXISTS quiz_tags;
+DROP TABLE IF EXISTS rateAndReview;
 DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS quiz_categories;
 DROP TABLE IF EXISTS users;
@@ -25,11 +26,12 @@ CREATE TABLE users (
     username VARCHAR(255),
     password_hash VARCHAR(255),
     role VARCHAR(255),
-    pfp VARCHAR(1000)
+    pfp VARCHAR(1000),
+    isPrivate bool
 );
 
-INSERT INTO users (username, password_hash, role)
-VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin');
+INSERT INTO users (username, password_hash, role, isPrivate)
+VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin', false);
 
 CREATE TABLE friends (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -60,6 +62,16 @@ CREATE TABLE quizzes (
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES quiz_categories(id),
     FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE rateAndReview (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	quiz_id INT,
+    rating INT,
+    user_id INT,
+    review VARCHAR(2000),
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tag_quiz (
@@ -139,10 +151,10 @@ CREATE TABLE user_achievements (
 
 -- TEST DATA:
 
-INSERT INTO users (username, password_hash, role)
-VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user'),
-	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user'),
-       ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user');
+INSERT INTO users (username, password_hash, role, isPrivate)
+VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user', false),
+	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user', false),
+       ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user', false);
 
 INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body) 
 VALUES (1, 2, 'note', 'Hello'),

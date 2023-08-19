@@ -332,10 +332,10 @@ class HTMLCodeBlocks{
             "                <option value=\"\" disabled selected>Select Question Type</option>\n" +
             "                <option value=\"0\">Question Response</option>\n" +
             "                <option value=\"1\">Fill in the Blank</option>\n" +
-            "                <option value=\"2\">Multiple Choise</option>\n" +
+            "                <option value=\"2\">Multiple Choice</option>\n" +
             "                <option value=\"3\">Picture Response</option>\n" +
             "                <option value=\"4\">Multiple Answer</option>\n" +
-            "                <option value=\"5\">Multiple Choise & Answer</option>\n" +
+            "                <option value=\"5\">Multiple Choice & Answer</option>\n" +
             "            </select>\n" +
             "            <textarea id=\"question-text${divNum}\" name=\"question${divNum}\" class=\"note_text\" placeholder=\"Question\" rows=\"4\" cols=\"50\"></textarea>\n" +
             "            <div id=\"answerList${divNum}\" class=\"answer-list\">\n" +
