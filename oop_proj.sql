@@ -156,7 +156,7 @@ VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user', false),
 	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user', false),
        ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user', false);
 
-INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body) 
+INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body)
 VALUES (1, 2, 'note', 'Hello'),
 	   (2, 1, 'note', 'Hi'),
 	   (1, 2, 'note', 'Test1'),
