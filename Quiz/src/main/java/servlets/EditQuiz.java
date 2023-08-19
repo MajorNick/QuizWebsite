@@ -373,7 +373,7 @@ public class EditQuiz extends HttpServlet {
             ArrayList<ArrayList<Answer>> allAnswers = new ArrayList<>();
 
             for(Question question : questions) {
-                ArrayList<Answer> answers = dbConn.getAnswers(question.id);
+                ArrayList<Answer> answers = dbConn.getAnswers(question.id,false);
                 allAnswers.add(answers);
             }
 
