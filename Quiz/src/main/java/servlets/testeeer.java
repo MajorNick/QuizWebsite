@@ -12,11 +12,16 @@ import java.util.ArrayList;
 import static Quiz.src.main.java.HelperMethods.PassHasher.hashPassword;
 
 
-@WebServlet(name = "tester", value = "/tester")
+@WebServlet(name = "quizResult", value = "/quizResult")
 public class testeeer extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
+        DBConn con = new DBConn();
         System.out.println("mze");
+        int quizID = Integer.parseInt(request.getParameter("id"));
+        for(int i = 0; quizID ...){
+        }
+        String tmp =  httpServletRequest.getParameter("fill_in_the_blank_q<%= i %>");
     }
 
     @Override
