@@ -145,6 +145,7 @@
 
     user = u.get(0);
     }
+    User creator = con.getUsers(quiz.creator_id).get(0);
     int quizid = quiz.id;
 
 %>
@@ -184,6 +185,7 @@
     </div>
 
 </div>
+<% if (quiz.description != null){ %>
 <div>
     <h2>
         Quiz Description
@@ -191,11 +193,11 @@
     <p>
         <%=quiz.description%>
     </p>
-
+<%}%>
 </div>
 <% if (user1 != null) { %>
 <div>
-    <p>Quiz Creator: <a href = "../userProfile.jsp?id=%d"><%=user.getUsername()%></a></p>
+    <p>Quiz Creator: <a href = <%="../userProfile.jsp?id="+quiz.creator_id%>><%=creator.getUsername()%></a></p>
 </div>
 <% } %>
 
@@ -263,16 +265,35 @@
     <form id="quizForm" action=<%=!quiz.is_single_page?"/quiz.jsp?id=" +quizid:"/quizSinglePage.jsp?id="+quizid%> method="POST">
         <button class="test_start_button">Start</button>
     </form>
-
-    <form id="quizPracticeForm" action="./quizPractice.jsp" method="POST">
+    <% if (quiz.can_be_practiced) { %>
+    <form id="quizPracticeForm" action="/quizPractice.jsp" method="POST">
         <button class="test_start_button">Test</button>
     </form>
+    <% } %>
+    <% if (quiz.is_single_page) { %>
+    <label>
+        <input type="checkbox" id="immediateCorrection" name="checkType" value="immediateCorrection"> Immediate Correction
+    </label>
+    <% }
+    if (quiz.is_single_page){
+    %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('immediateCorrection');
+            const quizForm = document.getElementById('quizForm');
+            const quizPracticeForm = document.getElementById('quizPracticeForm');
+            checkbox.addEventListener('change', function () {
+                const isChecked = checkbox.checked;
+                quizForm.action = isChecked ? '<%="/quizSinglePage.jsp?id="+quiz.id+"&correction=true"%>' :'<%="/quizSinglePage.jsp?id="+quiz.id%>';
+                quizPracticeForm.action = isChecked ? '/quizPracticeSinglePage.jsp' : '/quizPractice.jsp';
+            });
+        });
 
+    </script>
+    <% } %>
     <form id="quizPracticeForm" action="./editQuiz.jsp" method="POST">
-        <button class="test_start_button">Edit Quiz</button>
-    </form>
-
-
+            <button class="test_start_button">Edit Quiz</button>
+        </form>
 </div>
 
 

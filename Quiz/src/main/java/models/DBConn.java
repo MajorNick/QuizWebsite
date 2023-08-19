@@ -846,8 +846,33 @@ public class DBConn{
         }
         return selection;
     }
-    public ArrayList<Answer> getAnswers( int question_id){
-        String questionQuery = String.format("SELECT * FROM answers where question_id = %d",question_id);
+    public Question getQuestion(int question_id){
+        String questionQuery = String.format("SELECT * FROM questions where id = %d ;",question_id);
+        Question selection;
+        try{
+            executeQuery(questionQuery);
+                rs.next();
+                Question question  = new Question(rs.getInt("id"),
+                        rs.getInt("quiz_id"),
+                        rs.getString("question"),
+                        rs.getInt("question_type"),
+                        rs.getInt("question_num"));
+                selection = question;
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+    public ArrayList<Answer> getAnswers( int question_id,boolean onlyCorrect){
+        String questionQuery;
+        if(onlyCorrect){
+             questionQuery = String.format("SELECT * FROM answers where question_id = %d AND is_correct = TRUE;",question_id);
+        }else{
+            questionQuery = String.format("SELECT * FROM answers where question_id = %d",question_id);
+        }
+
         ArrayList<Answer> selection = new ArrayList<>();
         try{
             executeQuery(questionQuery);
@@ -867,6 +892,7 @@ public class DBConn{
         }
         return selection;
     }
+
 
     public ArrayList<Quiz> getQuizzesByCreator(int creator_id){
         String query = String.format("SELECT * FROM quizzes q where q.creator_id = %d", creator_id);

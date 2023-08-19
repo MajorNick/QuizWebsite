@@ -82,7 +82,7 @@
     <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
     <%
-        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id);
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
         for(int j=0;j<answers.size();j++){
             %>
             <input type="radio" name="multiple_choice_q<%= i %>" value=<%=answers.get(j).answer%>> <%=answers.get(j).answer%><br>
@@ -96,7 +96,7 @@
     <% } else if (questionType == QuestionType.MULTI_ANSWER) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
     <%
-        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id);
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
         for(int j=0;j<answers.size();j++){
     %>
     <input type="text" name="multi_answer_q<%= j %>_1">
@@ -106,7 +106,7 @@
         } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
     <%
-        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id);
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
         for(int j=0;j<answers.size();j++){
     %>
     <input type="checkbox" name="multi_choice_q<%= i %>_a" value="<%= answers.get(j).answer %>"> <%= answers.get(j).answer %><br>
