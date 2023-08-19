@@ -18,6 +18,10 @@
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
           header {
               background-color: #007bff;
@@ -74,6 +78,7 @@
           }
           .tables-row {
               display: flex;
+              align-items: center;
           }
           .table-container {
               flex: 1;

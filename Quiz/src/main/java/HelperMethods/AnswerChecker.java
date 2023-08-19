@@ -11,10 +11,10 @@ public class AnswerChecker {
             DBConn con = new DBConn();
             Question quest = con.getQuestion(questionId);
             List<Answer> answers = con.getAnswers(questionId,true);
+
             switch(quest.type){
                 case QUESTION_RESPONSE :
                     return answer.equalsIgnoreCase(answers.get(0).answer)?1.0:0;
-
             }
             return 0;
         }
