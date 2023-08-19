@@ -46,7 +46,7 @@
     </header>
 </div>
 
-<form action="ProcessAnswers" method="post">
+<form action="ProcessAnswers" method="POST">
     <%
         int quizID = Integer.parseInt( request.getParameter("id"));
         DBConn con = new DBConn();
@@ -54,9 +54,11 @@
 
         ArrayList<Question> questions = con.getQuestions(quizID);
         Quiz quiz = con.getQuiz(quizID);
-        if (!quiz.rand_question_order){
+        if (quiz.rand_question_order){
             Collections.shuffle(questions);
         }
+        HttpSession ses = request.getSession();
+        ses.setAttribute("shuffledQuestions",questions);
         %> <p>length is :  <%=questions.size() %></p>
     <%
         for (int i = 0; i < questions.size(); i++) {
@@ -79,7 +81,7 @@
         ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
         for(int j=0;j<answers.size();j++){
             %>
-            <input type="radio" name="multiple_choice_q<%= i %>" value=<%=answers.get(j).answer%>> <%=answers.get(j).answer%><br>
+            <input type="radio" name="multiple_choice_q<%=i%>" value=<%=answers.get(j).answer%>> <%=answers.get(j).answer%><br>
 
   <%
      }
@@ -94,7 +96,6 @@
         for(int j=0;j<answers.size();j++){
     %>
     <input type="text" name="multi_answer_q<%= j %>_1">
-
 
     <% }
         } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>

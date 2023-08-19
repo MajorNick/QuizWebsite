@@ -51,7 +51,6 @@
     ArrayList<Question> questions = con.getQuestions(quizID);
 
     if(iterator == null) {
-
         iterator = 0;
     }
 
