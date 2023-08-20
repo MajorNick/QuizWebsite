@@ -2,6 +2,8 @@ package Quiz.src.main.java.models;
 
 import Quiz.src.main.java.models.enums.QuestionType;
 
+import java.util.Objects;
+
 public class Question{
     public int id;
     public int quiz_id;
@@ -15,5 +17,20 @@ public class Question{
         this.type = QuestionType.fromInt(type);
         this.num = num;
     }
+    public  boolean isMultiAnswerType(){
+        return type == QuestionType.MULTI_ANSWER || type == QuestionType.MULTI_AN_CHOICE;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return id == question.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

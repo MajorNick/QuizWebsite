@@ -44,15 +44,24 @@
     HttpSession ses = request.getSession();
     Integer iterator = (Integer) ses.getAttribute("iterator");
 
-    Boolean correction  = Boolean.valueOf(request.getParameter("correction"));
+    boolean correction  = Boolean.valueOf(request.getParameter("correction"));
     int quizID = Integer.parseInt(request.getParameter("id"));;
     DBConn con = new DBConn();
 
     ArrayList<Question> questions = con.getQuestions(quizID);
 
     if(iterator == null) {
-
         iterator = 0;
+    }else{
+        Question quest = questions.get(iterator);
+        if(quest.isMultiAnswerType()){
+
+        }else{
+
+            ArrayList<String> tmp =new ArrayList<String>();
+            tmp.add(request.getParameter("question"+iterator));
+            ses.setAttribute("question"+iterator,tmp);
+        }
     }
 
     String action = request.getParameter("action");
@@ -67,7 +76,10 @@
                 String responseAnswer = request.getParameter("response_answer");
                 double score = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
             }
-    }else if( action != null){
+    }else if("End Quiz".equals(action)){
+        ses.setAttribute("iterator",null);
+        response.sendRedirect("ProcessAnswers");
+        }else if( action != null){
         try {
             int selected = Integer.parseInt(action);
             iterator = selected - 1;
@@ -75,9 +87,7 @@
             %> <h1> erroooooooor while parsing request</h1> <%
         }
     }
-    session.setAttribute("iterator", iterator);
-
-
+    ses.setAttribute("iterator", iterator);
 
     if (iterator >= 0 && iterator < questions.size()) {
         Question question = questions.get(iterator);
@@ -88,31 +98,31 @@
     <p>Question <%= iterator + 1 %>: <%= question.question %></p>
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) { %>
-    <input type="text" name="response_answer">
+    <input type="text" name=<%="question"+iterator%>>
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) { %>
-    <input type="text" name="fill_in_the_blank_answer">
+    <input type="text" name=<%="question"+iterator%>>
 
     <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
     <%
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
         for (int j = 0; j < answers.size(); j++) {
     %>
-    <input type="radio" name="multiple_choice_answer" value="<%= answers.get(j).answer %>">
+    <input type="radio" name=<%="question"+iterator%> value="<%= answers.get(j).answer %>">
     <%= answers.get(j).answer %><br>
     <%
         }
     %>
 
     <% } else if (questionType == QuestionType.PICTURE_RESPONSE) { %>
-    <input type="text" name="picture_response_answer">
+    <input type="text" name=<%="question"+iterator%>>
 
     <% } else if (questionType == QuestionType.MULTI_ANSWER) { %>
     <%
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
         for (int j = 0; j < answers.size(); j++) {
     %>
-    <input type="text" name="multi_answer<%= j %>_1">
+    <input type="text" name=<%="question"+iterator+"_"+j%>>
     <%
         }
     %>
@@ -122,7 +132,7 @@
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
         for (int j = 0; j < answers.size(); j++) {
     %>
-    <input type="checkbox" name="multi_choice_answer" value="<%= answers.get(j).answer %>">
+    <input type="checkbox" name=<%="question"+iterator+"_"+j%> value="<%= answers.get(j).answer %>">
     <%= answers.get(j).answer %><br>
     <%
         }
@@ -135,6 +145,7 @@
         <% if (correction) { %>
         <input class="submit_button" type="submit" name="action" value="submit">
         <%}%>
+        <input class="submit_button" type="submit" name="action" value="End Quiz">
     </div>
     <div>
         <%

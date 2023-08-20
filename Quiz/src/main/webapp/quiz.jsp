@@ -46,7 +46,7 @@
     </header>
 </div>
 
-<form action="ProcessAnswers" method="post">
+<form action="ProcessAnswers" method="POST">
     <%
         int quizID = Integer.parseInt( request.getParameter("id"));
         DBConn con = new DBConn();
@@ -54,9 +54,11 @@
 
         ArrayList<Question> questions = con.getQuestions(quizID);
         Quiz quiz = con.getQuiz(quizID);
-        if (!quiz.rand_question_order){
+        if (quiz.rand_question_order){
             Collections.shuffle(questions);
         }
+        HttpSession ses = request.getSession();
+        ses.setAttribute("shuffledQuestions",questions);
         %> <p>length is :  <%=questions.size() %></p>
     <%
         for (int i = 0; i < questions.size(); i++) {
@@ -67,11 +69,11 @@
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
-    <input type="text" name="respons_q<%= i %>">
+    <input type="text" name=<%="question"+i %>">
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
-    <input type="text" name="fill_in_the_blank_q<%= i %>">
+        <input type="text" name=<%="question"+i%>>
 
     <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
@@ -79,13 +81,13 @@
         ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
         for(int j=0;j<answers.size();j++){
             %>
-            <input type="radio" name="multiple_choice_q<%= i %>" value=<%=answers.get(j).answer%>> <%=answers.get(j).answer%><br>
+            <input type="radio" name=<%="question"+i%> value=<%=answers.get(j).answer%>> <%=answers.get(j).answer%><br>
 
   <%
      }
   }else if (questionType == QuestionType.PICTURE_RESPONSE) { %>
 
-    <input type="text" name="picture_response_q<%= i %>">
+    <input type="text" name=<%="question"+i %>>
 
     <% } else if (questionType == QuestionType.MULTI_ANSWER) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
@@ -93,8 +95,7 @@
         ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
         for(int j=0;j<answers.size();j++){
     %>
-    <input type="text" name="multi_answer_q<%= j %>_1">
-
+    <input type="text" name=<%="question"+i+"_"+j%>>
 
     <% }
         } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>
@@ -103,7 +104,7 @@
         ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
         for(int j=0;j<answers.size();j++){
     %>
-    <input type="checkbox" name="multi_choice_q<%= i %>_a" value="<%= answers.get(j).answer %>"> <%= answers.get(j).answer %><br>
+    <input type="checkbox" name=<%="question"+i+"_"+j%> value="<%= answers.get(j).answer %>"> <%= answers.get(j).answer %><br>
 
 
     <% }} }%>
