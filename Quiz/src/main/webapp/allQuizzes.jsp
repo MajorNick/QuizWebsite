@@ -148,6 +148,10 @@
     String type = request.getParameter("type");
     ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
 
+    String filed1 = request.getParameter("search_text1");
+    String filed = request.getParameter("search_text");
+    String name = request.getParameter("search_name");
+
     if ("All Quizzes".equals(type)) {
         quizzes = dbConn.getQuizzes();
     } else if ("Popular Quizzes".equals(type)) {
@@ -161,6 +165,12 @@
         }
     } else if ("My Recently Created Quizzes".equals(type)) {
         quizzes = dbConn.getRecentlyCreatedQuizzes(targetId);
+    } else if("Search By Category".equals(type)){
+        quizzes = dbConn.getQuizzesByCategory(filed);
+    } else if("Search By Tag".equals(type)){
+        quizzes = dbConn.getQuizzesByTag(filed1);
+    } else if("Search By Name".equals(type)){
+        quizzes = dbConn.getQuizzesByName(name);
     }
 %>
 
@@ -172,13 +182,17 @@
     <div class="container">
          <div class="left">
             <div class="search">
-                <form class="searchItem" action="./SearchByTag" method="post">
-                  <input class="searchSubItem" name="search_text" rows="1" cols="30" placeholder="Tag"/>
-                  <button class="action-button">Search By Tag</button>
+                <form class="searchItem" action="./allQuizzes.jsp" method="post">
+                  <input class="searchSubItem" name="search_text1" rows="1" cols="30" placeholder="Tag"/>
+                  <button class="action-button" name="type" value = "Search By Tag">Search By Tag</button>
                 </form>
-                <form class="searchItem" action="./SearchByCategory" method="post">
+                <form class="searchItem" action="./allQuizzes.jsp" method="post">
                   <input class="searchSubItem" name="search_text" rows="1" cols="30" placeholder="Category"/>
-                  <button class="action-button">Search By Category</button>
+                  <button class="action-button" name="type" value = "Search By Category">Search By Category</button>
+                </form>
+                <form class="searchItem" action="./allQuizzes.jsp" method="post">
+                  <input class="searchSubItem" name="search_name" rows="1" cols="30" placeholder="Quiz Name"/>
+                  <button class="action-button" name="type" value = "Search By Name">Search By Name</button>
                 </form>
             </div>
 

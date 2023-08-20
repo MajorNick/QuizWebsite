@@ -1,5 +1,6 @@
 package Quiz;
 
+import Quiz.src.main.java.HelperMethods.PassHasher;
 import Quiz.src.main.java.models.*;
 import Quiz.src.main.java.servlets.CreateQuizJson;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,8 +65,21 @@ public class Tests extends TestCase{
         assertEquals(lastAnn.getId(), annAfter.size());
 //        assertEquals(lastNot.getId(), notsAfter.size());
 
+        User user = new User(1555555,"mefe", "eacd2617f105704f51c912099316c7aece2df8ef","user",false);
+        dbConn.insertUser(user);
+        dbConn.getUsersByUsername("mefe").get(0);
+        User user1 = dbConn.getUsersByUsername("mefe").get(0);
+        assertTrue(dbConn.getUsers(user1.getId()).get(0).getUsername().equals(user1.getUsername()));
+        dbConn.removeUser(user1.getId());
+
         dbConn.closeDBConn();
 
+    }
+
+    public void testPasHasher(){
+        PassHasher passHasher = new PassHasher();
+        assertTrue(PassHasher.hashPassword("giorgi").equals(PassHasher.hashPassword("giorgi")));
+        assertTrue(!PassHasher.hashPassword("giorgi").equals(PassHasher.hashPassword("giorgi ")));
     }
     public void testDBExceptions(){
         DBConn dbConn = new DBConn();
@@ -78,6 +92,12 @@ public class Tests extends TestCase{
 
         try{
             dbConn.insertAnnouncement(null);
+        } catch (Exception e) {
+            assertTrue(e.getMessage().equals("Provided Announcement is null"));
+        }
+
+        try{
+
         } catch (Exception e) {
             assertTrue(e.getMessage().equals("Provided Announcement is null"));
         }

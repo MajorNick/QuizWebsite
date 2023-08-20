@@ -62,9 +62,11 @@ public class CreateQuiz extends HttpServlet {
         if(quiz_id == null){
             quizId = dbConn.getNextQuizId();
         } else {
+            System.out.println("dkslajf;klasjkfl;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             editingQuiz = true;
             quizId = Integer.parseInt(quiz_id);
         }
+        System.out.println("dkslajf;klasjkfl;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + editingQuiz);
 
         if(maxQuestionIndex == null){
             System.out.println("maxQuestionIndex is null");

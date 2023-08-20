@@ -64,6 +64,14 @@ CREATE TABLE quizzes (
     FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE tag_quiz (
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    quiz_id INT,
+    tag_id INT,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES quiz_tags(id) ON DELETE CASCADE
+);
+
 CREATE TABLE rateAndReview (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	quiz_id INT,
@@ -72,14 +80,6 @@ CREATE TABLE rateAndReview (
     review VARCHAR(2000),
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE tag_quiz (
-    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    quiz_id INT,
-    tag_id INT,
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES quiz_tags(id) ON DELETE CASCADE
 );
 
 CREATE TABLE questions (
@@ -201,6 +201,12 @@ INSERT INTO quiz_history(score, quiz_id, user_id)
 VALUES (80.6,1,1),
        (95.2,1,2),
        (12.4,3,1);
+
+INSERT INTO rateAndReview (quiz_id, rating, user_id, review)
+VALUES (1, 5, 1, 'kargia xoici'),
+       (1, 5, 1, 'kargia?'),
+       (1, 5, 1, 'mgoni ki'),
+       (1, 5, 1, 'naah');
 
 INSERT INTO questions(question_num, quiz_id, question_type, question)
      VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),

@@ -3,6 +3,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="Quiz.src.main.java.models.Question" %>
 <%@ page import="Quiz.src.main.java.models.User" %>
+<%@ page import="Quiz.src.main.java.models.*" %>
+<%@ page import="Quiz.src.main.java.HelperMethods.CreateLittleStarRatings" %>
 <html>
 <title>
     Quiz summary
@@ -105,6 +107,59 @@
         display: flex;
         align-items: center;
         gap: 10px;
+    }
+    .hidden {
+        display: none;
+    }
+    .reviewSection {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+    .review {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .rating {
+        color: #ffd700;
+    }
+    .review-container {
+        position: relative;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .edit-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        color: #ccc;
+    }
+
+    .edit-form {
+        display: none;
+        margin-top: 10px;
+    }
+    .edit-rating-form {
+        display: block;
+        margin-top: 10px;
+    }
+    .delete-button {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
     }
 </style>
 
@@ -291,9 +346,94 @@
 
     </script>
     <% } %>
-    <form id="quizPracticeForm" action="./editQuiz.jsp" method="POST">
+    <%if(user1 != null) {%>
+        <form id="quizPracticeForm" action="./EditQuiz?userId=<%=userId%>&&quizId=<%=quizid%>" method="POST">
             <button class="test_start_button">Edit Quiz</button>
         </form>
+    <%}%>
+</div>
+
+
+
+<%
+    boolean showReviewSection = false;
+    String action = request.getParameter("action");
+    if ("Hide All".equals(action)) {
+        showReviewSection = true;
+    }
+%>
+
+<script>
+    function toggleEditForm(formId) {
+        var editForm = document.getElementById(formId);
+        editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var editIcons = document.querySelectorAll('.edit-icon');
+        editIcons.forEach(function(icon) {
+            icon.addEventListener('click', function(event) {
+                event.preventDefault();
+                var formId = icon.getAttribute('data-form-id');
+                toggleEditForm(formId);
+
+                var ratingFormId = 'editRatingForm' + formId.substring(8);
+                toggleEditForm(ratingFormId);
+            });
+        });
+    });
+</script>
+
+<div>
+    <h2>Rate and Review</h2>
+    <% if (showReviewSection) { %>
+    <div class="reviewSection">
+        <% ArrayList<rateAndReview> rateAndReviews = con.getRateAndReview(quizid); %>
+        <% if (!rateAndReviews.isEmpty()) { %>
+            <ul>
+                <% for (rateAndReview rateAndReviewer : rateAndReviews) { %>
+                <li>
+                    <div class="review-container">
+                        <p><strong>User:</strong> <%= con.getUsers(rateAndReviewer.userId).get(0).getUsername() %>
+                            <% if(rateAndReviewer.userId == userId) { %>
+                                <a href="#" class="edit-icon edit-review-icon" data-form-id="editForm<%= rateAndReviewer.id %>">&#9998;</a>
+                            <% } %>
+                        </p>
+                        <p><strong>Rating:</strong> <%= CreateLittleStarRatings.generateRatingStars(rateAndReviewer.rating) %></p>
+                        <form action="/changeRatingServlet" id="editRatingForm<%= rateAndReviewer.id %>" method="post" class="edit-form" style="display: none;">
+                            <textarea name="editedRating" rows="1" cols="5"><%= rateAndReviewer.rating %></textarea>
+                            <input type="hidden" name="reviewId" value="<%= rateAndReviewer.id %>">
+                            <input type="hidden" name="quizId" value="<%= quizid %>">
+                            <button type="submit" name="action" value="Save">Save</button>
+                        </form>
+                        <p><strong>Review:</strong> <%= rateAndReviewer.review %></p>
+                        <form action="/changeReviewServlet" id="editForm<%= rateAndReviewer.id %>" method="post" class="edit-form" style="display: none;">
+                            <textarea name="editedReview" rows="4" cols="50"><%= rateAndReviewer.review %></textarea>
+                            <input type="hidden" name="reviewId" value="<%= rateAndReviewer.id %>">
+                            <input type="hidden" name="quizId" value="<%= quizid %>">
+                            <button type="submit" name="action" value="Save">Save</button>
+                        </form>
+                        <% if(rateAndReviewer.userId == userId) { %>
+                             <form action="/deleteRateAndReview" method="post">
+                                <input type="hidden" name="reviewId" value="<%= rateAndReviewer.id %>">
+                                <input type="hidden" name="quizId" value="<%= quizid %>">
+                                <button class="delete-button" type="submit" name="action" value="Delete">Delete</button>
+                            </form>
+                        <% } %>
+                    </div>
+                </li>
+                <% } %>
+            </ul>
+        <% } else { %>
+            <p>No ratings and reviews yet.</p>
+        <% } %>
+    </div>
+    <% } %>
+    <form method="post">
+        <% String whatToShow = (showReviewSection ? "Hide All" : "See Reviews");
+            String whatNotToShow = (!showReviewSection ? "Hide All" : "See Reviews");%>
+        <button type="submit" name="action" value="<%= whatNotToShow %>"><%= whatToShow %></button>
+    </form>
 </div>
 
 

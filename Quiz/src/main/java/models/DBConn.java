@@ -21,8 +21,6 @@ public class DBConn{
             stmt = conn.createStatement();
             executeUpdate("USE " + database);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         }
 
     }
@@ -34,8 +32,6 @@ public class DBConn{
             stmt.close();
             conn.close();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -451,6 +447,44 @@ public class DBConn{
         return selection;
     }
 
+    public ArrayList<rateAndReview> getRateAndReviewByID(int reviewId) {
+        String query = String.format("SELECT * FROM rateAndReview u where u.id = %d", reviewId);
+
+        ArrayList<rateAndReview> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                rateAndReview user = new rateAndReview(rs.getInt("id"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("rating"), rs.getString("review"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return selection;
+    }
+
+    public ArrayList<rateAndReview> getRateAndReview(int quizId) {
+        String query = String.format("SELECT * FROM rateAndReview u where u.quiz_id = %d", quizId);
+
+        ArrayList<rateAndReview> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                rateAndReview user = new rateAndReview(rs.getInt("id"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("rating"), rs.getString("review"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return selection;
+    }
+
     public ArrayList<Friend> getUserFriends(int user_id) {
         String query = "SELECT * FROM friends";
         if(user_id != -1){
@@ -475,169 +509,74 @@ public class DBConn{
 
     public void removeUser(int user_id){
         String q = String.format("DELETE FROM users u WHERE (u.id = %d)", user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeRateAndReview(int revId){
         String q = String.format("DELETE FROM rateAndReview r WHERE (r.id = %d)", revId);
-
-        try{
-            executeUpdate(q);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeExactReview(rateAndReview review){
         String q = String.format("DELETE FROM rateAndReview r WHERE (r.user_id = %d) &&" +
                                     "(r.quiz_id = %d) && (r.rating = %d) && (r.review = '%s')",
                                     review.userId, review.quizId, review.rating, review.review);
-        try{
-            executeUpdate(q);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeQuiz(int quiz_id){
         String q = String.format("DELETE FROM quizzes q WHERE (q.id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void makeUserAdmin(int user_id){
         String q = String.format("UPDATE users SET role = 'admin' WHERE id = %d;", user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void makeUserPrivate(int user_id, boolean priv){
         String q = String.format("UPDATE users SET isPrivate = %b WHERE id = %d;", priv, user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void updateUserPicture(int user_id, String pfp){
         String q = String.format("UPDATE users SET pfp = '%s' WHERE id = %d;", pfp, user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeUserQuizes(int user_id){
         String q = String.format("DELETE FROM quizzes q WHERE (q.creator_id = %d)", user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeUserNotifications(int user_id){
         String q = String.format("DELETE FROM notifications n WHERE (n.receiver_id = %d) OR (n.sender_id = %d)", user_id, user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeUserAchievements(int user_id){
         String q = String.format("DELETE FROM user_achievements a WHERE (a.user_id = %d)", user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeQuizQuestions(int quiz_id){
         String q = String.format("DELETE FROM questions q WHERE (q.quiz_id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeQuizAnswers(int quiz_id){
         String q = String.format("DELETE FROM answers q WHERE (q.question_id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeQuizHistory(int quiz_id){
         String q = String.format("DELETE FROM quiz_history q WHERE (q.quiz_id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeFriend(int user_id, int friend_id){
         String q = String.format("DELETE FROM friends WHERE (user_id = %d AND friend_id = %d) OR (user_id = %d AND friend_id = %d)", user_id, friend_id, friend_id, user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public boolean areFriends(int user_id, int friend_id){
@@ -698,6 +637,101 @@ public class DBConn{
 
     public ArrayList<Quiz> getQuizzes(){
         String quizzesQuery = "SELECT * FROM quizzes;";
+        ArrayList<Quiz> selection = new ArrayList<>();
+        try{
+            executeQuery(quizzesQuery);
+
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt("id"),
+                        rs.getInt("creator_id"),
+                        rs.getString("quiz_name"),
+                        rs.getString("description"),
+                        rs.getBoolean("is_single_page"),
+                        rs.getBoolean("can_be_practiced"),
+                        rs.getBoolean("rand_question_order")
+                );
+                selection.add(quiz);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+
+    public int getCategoryId(String category){
+        String quizzesQuery = String.format("SELECT * FROM quiz_categories where category = '%s';", category);
+        int id = -1;
+        try{
+            executeQuery(quizzesQuery);
+            rs.next();
+            id = rs.getInt("id");
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public ArrayList<Quiz> getQuizzesByCategory(String category){
+        int categoryId = getCategoryId(category);
+        String quizzesQuery = String.format("SELECT * FROM quizzes where category_id = %d;", categoryId);
+        ArrayList<Quiz> selection = new ArrayList<>();
+        try{
+            executeQuery(quizzesQuery);
+
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt("id"),
+                        rs.getInt("creator_id"),
+                        rs.getString("quiz_name"),
+                        rs.getString("description"),
+                        rs.getBoolean("is_single_page"),
+                        rs.getBoolean("can_be_practiced"),
+                        rs.getBoolean("rand_question_order")
+                );
+                selection.add(quiz);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+
+    public ArrayList<Quiz> getQuizzesByTag(String tag){
+        String quizzesQuery = String.format("SELECT q.* FROM quizzes q JOIN tag_quiz tq ON q.id = tq.quiz_id\n" +
+                "                JOIN quiz_tags qt ON tq.tag_id = qt.id\n" +
+                "                WHERE qt.tag = '%s';", tag);
+        ArrayList<Quiz> selection = new ArrayList<>();
+        try{
+            executeQuery(quizzesQuery);
+
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt("id"),
+                        rs.getInt("creator_id"),
+                        rs.getString("quiz_name"),
+                        rs.getString("description"),
+                        rs.getBoolean("is_single_page"),
+                        rs.getBoolean("can_be_practiced"),
+                        rs.getBoolean("rand_question_order")
+                );
+                selection.add(quiz);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+
+    public ArrayList<Quiz> getQuizzesByName(String quizName){
+        String quizzesQuery = String.format("SELECT * FROM quizzes q WHERE q.quiz_name = '%s';", quizName);
         ArrayList<Quiz> selection = new ArrayList<>();
         try{
             executeQuery(quizzesQuery);
@@ -1008,8 +1042,15 @@ public class DBConn{
 
     public void updateQuiz(Quiz qu){
         String q = "UPDATE quizzes q\n" +
-                   String.format("SET q.quiz_name = '%s', q.description = '%s', q.is_single_page = %b, q.can_be_practiced = %b, q.rand_question_order = %b\n", qu.quiz_name, qu.description, qu.is_single_page, qu.can_be_practiced, qu.rand_question_order) +
-                   "WHERE q.id = 3;";
+                   String.format("SET q.quiz_name = '%s', q.description = '%s', q.is_single_page = %b, q.can_be_practiced = %b, q.rand_question_order = %b WHERE q.id = %d;", qu.quiz_name, qu.description, qu.is_single_page, qu.can_be_practiced, qu.rand_question_order, qu.id);
+        executeUpdate(q);
+    }
+    public void updateRateAndReview(rateAndReview r){
+        if(r == null)
+            throw new RuntimeException("Provided insertRateAndReview is null");
+        String q = "UPDATE rateAndReview q\n" +
+                String.format("SET q.rating = %d, q.review = '%s' WHERE q.id = %d;", r.rating, r.review, r.id);
+        executeUpdate(q);
     }
 
     public void trimQuiz(Quiz qu){

@@ -7,7 +7,7 @@ public class rateAndReview {
     public int userId;
     public int quizId;
 
-    public rateAndReview(int id, int quizId, int userId, String review, int rating){
+    public rateAndReview(int id, int quizId, int userId, int rating, String review){
         this.id = id;
         this.rating = rating;
         this.review = review;
