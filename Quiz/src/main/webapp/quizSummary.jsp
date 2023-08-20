@@ -261,6 +261,7 @@
                 quizForm.action = isChecked ? '<%="/quizSinglePage.jsp?id="+quiz.id+"&correction=true"%>' :'<%="/quizSinglePage.jsp?id="+quiz.id%>';
                 quizPracticeForm.action = isChecked ? '/preparePractice' : '/preparePractice';
             });
+
         });
 
     </script>
