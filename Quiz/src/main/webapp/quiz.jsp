@@ -5,13 +5,10 @@
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Answer" %>
 <%@ page import="Quiz.src.main.java.models.Quiz" %>
-<%@ page import="java.util.Collections" %><%--
-  Created by IntelliJ IDEA.
-  User: majornick
-  Date: 11.08.23
-  Time: 16:04
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.lang.Object" %>
+<%@ page import="java.time.LocalTime" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <style>
@@ -64,9 +61,13 @@
             Collections.shuffle(questions);
         }
         HttpSession ses = request.getSession();
+
+        LocalTime quizStartTime = LocalTime.now();
+
+
+        ses.setAttribute("quizStartTime", quizStartTime);
         ses.setAttribute("shuffledQuestions",questions);
-        %> <p>length is :  <%=questions.size() %></p>
-    <%
+
         for (int i = 0; i < questions.size(); i++) {
             Question question = questions.get(i);
             QuestionType questionType = question.type;

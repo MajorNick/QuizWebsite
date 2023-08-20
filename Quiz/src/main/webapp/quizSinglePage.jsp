@@ -5,6 +5,7 @@
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Answer" %>
 <%@ page import="Quiz.src.main.java.HelperMethods.AnswerChecker" %>
+<%@ page import="java.time.LocalTime" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -58,11 +59,20 @@
     ArrayList<Question> questions = con.getQuestions(quizID);
 
     if(iterator == null) {
+        LocalTime quizStartTime = LocalTime.now();
+        ses.setAttribute("quizStartTime", quizStartTime);
         iterator = 0;
     }else{
         Question quest = questions.get(iterator);
         if(quest.isMultiAnswerType()){
 
+            ArrayList<Answer> arr = con.getAnswers(quest.id,true);
+            ArrayList<String> tmp =new ArrayList<String>();
+            for(int i=0;i<arr.size();i++){
+                String key = String.format("question%d_%d",iterator,i);
+                tmp.add(request.getParameter("question"+iterator));
+            }
+            ses.setAttribute("question"+iterator,tmp);
         }else{
 
             ArrayList<String> tmp =new ArrayList<String>();
