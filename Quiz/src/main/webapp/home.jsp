@@ -325,6 +325,7 @@
                             </li>
                             <% }} %>
                     </ul>
+                    <a href="notifications.jsp">See All</a>
                 </div>
                 <div class="box">
                     <h1>Achievements</h1>
