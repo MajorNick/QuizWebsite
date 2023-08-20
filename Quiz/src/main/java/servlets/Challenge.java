@@ -36,11 +36,11 @@ public class Challenge extends HttpServlet {
         // check if challenger completed quiz
         // get challenger score
 
-        String quizLink = String.format("<a href=\"./index.jsp?id=%d\">Quiz</a>", quizId);
-        String challengeText = String.format("User %d has Challenged you to %s", userId, quizLink);
-        System.out.println(challengeText);
-
         DBConn dbConn = new DBConn();
+
+        String quizLink = String.format("<a href=\"./quizSummary.jsp?id=%d\">%s</a>", quizId, dbConn.getQuizById(quizId).quiz_name);
+        String challengeText = String.format("%s has challenged you to %s", dbConn.getUsers(userId).get(0).getUsername(), quizLink);
+        System.out.println(challengeText);
 
         Notification notification = new Notification(-1, targetId, userId, "challenge", challengeText);
 

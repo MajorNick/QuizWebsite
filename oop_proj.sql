@@ -10,12 +10,12 @@ DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS quiz_history;
 DROP TABLE IF EXISTS answers;
 DROP TABLE IF EXISTS questions;
-
 DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
 DROP TABLE IF EXISTS tag_quiz;
 DROP TABLE IF EXISTS quiz_tags;
+DROP TABLE IF EXISTS rateAndReview;
 DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS quiz_categories;
 DROP TABLE IF EXISTS users;
@@ -26,11 +26,12 @@ CREATE TABLE users (
     username VARCHAR(255),
     password_hash VARCHAR(255),
     role VARCHAR(255),
-    pfp VARCHAR(1000)
+    pfp VARCHAR(1000),
+    isPrivate bool
 );
 
-INSERT INTO users (username, password_hash, role)
-VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin');
+INSERT INTO users (username, password_hash, role, isPrivate)
+VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin', false);
 
 CREATE TABLE friends (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -71,6 +72,15 @@ CREATE TABLE tag_quiz (
     FOREIGN KEY (tag_id) REFERENCES quiz_tags(id) ON DELETE CASCADE
 );
 
+CREATE TABLE rateAndReview (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	quiz_id INT,
+    rating INT,
+    user_id INT,
+    review VARCHAR(2000),
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 CREATE TABLE questions (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -78,8 +88,7 @@ CREATE TABLE questions (
     quiz_id INT,
     question_type INT,
     question VARCHAR(2000),
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
-    FOREIGN KEY (question_type) REFERENCES question_types(id)
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE answers (
@@ -125,7 +134,7 @@ CREATE TABLE achievements (
 
 INSERT INTO achievements (achievement, to_earn, icon)
 VALUES ('Amateur Author', 'Create your first quiz', 'https://cdn-icons-png.flaticon.com/512/3601/3601002.png'),
-       ('Prolific Author', 'Create 5 quizzes', 'https://cdn-icons-png.flaticon.com/128/3601/3601646.png'),
+	   ('Prolific Author', 'Create 5 quizzes', 'https://cdn-icons-png.flaticon.com/128/3601/3601646.png'),
        ('Prodigious Author', 'Create 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/7601/7601746.png'),
        ('Quiz Machine', 'Take 10 quizzes', 'https://cdn-icons-png.flaticon.com/128/5289/5289226.png'),
        ('I am the Greatest', 'Get the highest score on a quiz', 'https://cdn-icons-png.flaticon.com/128/744/744922.png'),
@@ -142,12 +151,12 @@ CREATE TABLE user_achievements (
 
 -- TEST DATA:
 
-INSERT INTO users (username, password_hash, role)
-VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user'),
-	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user'),
-       ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user');
+INSERT INTO users (username, password_hash, role, isPrivate)
+VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user', false),
+	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user', false),
+       ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user', false);
 
-INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body) 
+INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body)
 VALUES (1, 2, 'note', 'Hello'),
 	   (2, 1, 'note', 'Hi'),
 	   (1, 2, 'note', 'Test1'),
@@ -193,7 +202,11 @@ VALUES (80.6,1,1),
        (95.2,1,2),
        (12.4,3,1);
 
-
+INSERT INTO rateAndReview (quiz_id, rating, user_id, review)
+VALUES (1, 5, 1, 'kargia xoici'),
+       (1, 5, 1, 'kargia?'),
+       (1, 5, 1, 'mgoni ki'),
+       (1, 5, 1, 'naah');
 
 INSERT INTO questions(question_num, quiz_id, question_type, question)
      VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),

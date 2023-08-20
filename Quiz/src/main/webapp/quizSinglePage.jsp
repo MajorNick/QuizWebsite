@@ -1,5 +1,6 @@
 <%@ page import="Quiz.src.main.java.models.Question" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Answer" %>
@@ -43,6 +44,12 @@
 <%
     HttpSession ses = request.getSession();
     Integer iterator = (Integer) ses.getAttribute("iterator");
+
+    User user1 = (User) session.getAttribute("user");
+    if (user1 == null) {
+       response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+       return;
+    }
 
     boolean correction  = Boolean.valueOf(request.getParameter("correction"));
     int quizID = Integer.parseInt(request.getParameter("id"));;

@@ -1,5 +1,6 @@
 <%@ page import="Quiz.src.main.java.models.Question" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Answer" %>
@@ -50,6 +51,11 @@
     <%
         int quizID = Integer.parseInt( request.getParameter("id"));
         DBConn con = new DBConn();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+            return;
+        }
 
 
         ArrayList<Question> questions = con.getQuestions(quizID);

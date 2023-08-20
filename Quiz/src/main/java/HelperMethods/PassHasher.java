@@ -22,6 +22,7 @@ public class PassHasher {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        System.out.println(pass);
         return pass;
     }
 }

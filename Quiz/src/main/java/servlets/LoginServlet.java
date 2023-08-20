@@ -1,6 +1,7 @@
 package Quiz.src.main.java.servlets;
 
 
+import Quiz.src.main.java.HelperMethods.CreateLittleStarRatings;
 import Quiz.src.main.java.models.DBConn;
 import Quiz.src.main.java.models.User;
 
@@ -16,7 +17,7 @@ import static Quiz.src.main.java.HelperMethods.PassHasher.hashPassword;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
-
+        CreateLittleStarRatings.generateRatingStars(5);
     }
 
     @Override

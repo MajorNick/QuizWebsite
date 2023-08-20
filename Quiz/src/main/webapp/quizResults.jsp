@@ -1,3 +1,8 @@
+<%@ page import="Quiz.src.main.java.models.DBConn" %>
+<%@ page import="Quiz.src.main.java.models.Quiz" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="Quiz.src.main.java.models.Question" %>
+<%@ page import="Quiz.src.main.java.models.User" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,6 +168,26 @@
                 </table>
             </div>
         </div>
+    </div>
+    <div>
+        <h2>Rate and Review</h2>
+            <form action="./SaveReview" method="post">
+                <input type="hidden" name="quizId" value="<%= 1 %>">
+                <input type="hidden" name="userId" value="<%= 1 %>">
+                <label for="rating">Rating:</label>
+                <select id="rating" name="rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <br>
+                <label for="review">Review:</label>
+                <textarea id="review" name="review" rows="4" cols="50"></textarea>
+                <br>
+                <input type="submit" value="Submit">
+            </form>
     </div>
 </body>
 </html>

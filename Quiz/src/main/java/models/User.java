@@ -6,12 +6,14 @@ public class User {
     private String PasswordHash;
     private String PfpLink;
     private String Role;
+    private boolean isPrivate;
 
-    public User(int id, String username, String passwordHash, String role){
+    public User(int id, String username, String passwordHash, String role, boolean isPrivate){
         Id = id;
         Username = username;
         PasswordHash = passwordHash;
         Role = role;
+        this.isPrivate = isPrivate;
     }
 
     public int getId() { return Id; }
@@ -23,4 +25,5 @@ public class User {
     public String getPasswordHash() { return PasswordHash; }
     public String getPfpLink(){ return PfpLink; }
     public void setPfpLink(String pfpLink) { PfpLink = pfpLink; }
+    public boolean isPrivate() { return isPrivate; }
 }

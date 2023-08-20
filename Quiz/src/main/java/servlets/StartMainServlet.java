@@ -22,6 +22,10 @@ public class StartMainServlet extends HttpServlet {
                     if (username != null) {
                         DBConn acc = (DBConn) httpServletRequest.getServletContext().getAttribute("manacc");
                         ArrayList<User> users = acc.getUsersByUsername(username);
+                        if(users.isEmpty()) {
+                            httpServletRequest.getRequestDispatcher("/loginPage.jsp").forward(httpServletRequest, httpServletResponse);
+                            return;
+                        }
                         session.setAttribute("user", users.get(0));
                     }
                     break;
@@ -30,7 +34,7 @@ public class StartMainServlet extends HttpServlet {
         }
 
         if (session == null || session.getAttribute("user") == null) {
-            httpServletRequest.getRequestDispatcher("/loginPage.jsp").forward(httpServletRequest, httpServletResponse);
+            httpServletRequest.getRequestDispatcher("/nreg.jsp").forward(httpServletRequest, httpServletResponse);
             return;
         }
 
