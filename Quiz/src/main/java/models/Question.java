@@ -18,7 +18,7 @@ public class Question{
         this.num = num;
     }
     public  boolean isMultiAnswerType(){
-        return type == QuestionType.MULTI_ANSWER || type == QuestionType.MULTI_AN_CHOICE;
+        return type == QuestionType.MULTI_ANSWER || type == QuestionType.MULTI_AN_CHOICE || type == QuestionType.FILL_IN_THE_BLANK;
     }
 
     @Override

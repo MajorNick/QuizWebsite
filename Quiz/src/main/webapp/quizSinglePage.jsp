@@ -3,8 +3,11 @@
 <%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Answer" %>
+<%@ page import="Quiz.src.main.java.models.Quiz" %>
 <%@ page import="Quiz.src.main.java.HelperMethods.AnswerChecker" %>
 <%@ page import="java.time.LocalTime" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.Collection" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -48,8 +51,15 @@
     boolean correction  = Boolean.parseBoolean(request.getParameter("correction"));
     int quizID = Integer.parseInt(request.getParameter("id"));;
     DBConn con = new DBConn();
-
-    ArrayList<Question> questions = con.getQuestions(quizID);
+    Quiz quiz = con.getQuiz(quizID);
+    ArrayList<Question> questions = (ArrayList) ses.getAttribute("shuffledQuestions");
+    if(questions == null){
+        questions = con.getQuestions(quizID);
+        if(quiz.rand_question_order){
+            Collections.shuffle(questions);
+        }
+        ses.setAttribute("shuffledQuestions",questions);
+    }
 
     if(iterator == null) {
         LocalTime quizStartTime = LocalTime.now();
@@ -108,7 +118,7 @@
 %>
 
 <form action=<%="quizSinglePage.jsp?id="+quizID+(correction?"&correction=true":"")%> method="post">
-    <p>Question <%= iterator + 1 %>: <%= question.question %></p>
+    <p>Question <%= iterator + 1 %>: <%= questionType == QuestionType.PICTURE_RESPONSE?"":question.question %></p>
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) {
         ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+iterator);
@@ -120,12 +130,20 @@
     <input type="text" name=<%="question"+iterator%>  value=<%=v%> >
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) {
-    ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+iterator);
-    String v = "";
-    if(answ != null) {
-        v = answ.get(0) == null ? "" : answ.get(0);
-    } %>
-    <input type="text" name=<%="question"+iterator%> value=<%=v%>>
+        ArrayList<Answer> answers = con.getAnswers(question.id,true);
+        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator);
+
+        for (int j = 0; j < answers.size(); j++) {
+            String v = "";
+            if(definedAnswers != null) {
+
+                v = definedAnswers.get(j) == null ? "" : definedAnswers.get(j);
+
+            } %>
+    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value=<%=v%>>
+    <%
+        }
+    %>
 
     <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
     <%
@@ -148,10 +166,13 @@
         if(answ != null) {
             v = answ.get(0) == null ? "" : answ.get(0);
         } %>
+
+    <img src=<%=question.question%>  width="300" height="200" style="border: 2px solid black;">
+    <br>
     <input type="text" name=<%="question"+iterator%> value=<%=v%>>
 
-    <% } else if (questionType == QuestionType.MULTI_ANSWER) { %>
-    <%
+    <% } else if (questionType == QuestionType.MULTI_ANSWER) {
+
 
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
         ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator);
