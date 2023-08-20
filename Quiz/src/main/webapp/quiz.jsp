@@ -44,7 +44,7 @@
     </header>
 </div>
 
-<form action="ProcessAnswers" method="POST">
+<form action="ProcessAnswers?id=<%= request.getParameter("id") %>" method="POST">
     <%
         int quizID = Integer.parseInt( request.getParameter("id"));
         DBConn con = new DBConn();
@@ -76,7 +76,7 @@
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
-    <input type="text" name=<%="question"+i %>">
+    <input type="text" name=<%="question"+i %>>
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>

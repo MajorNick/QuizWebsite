@@ -1,8 +1,21 @@
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Quiz" %>
+<%@ page import="Quiz.src.main.java.models.*" %>
+<%@ page import="Quiz.src.main.java.models.enums.*" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="Quiz.src.main.java.models.Question" %>
 <%@ page import="Quiz.src.main.java.models.User" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.time.Duration" %>
+<%@ page import="javax.servlet.http.HttpSession" %>
+<%@ page import="Quiz.src.main.java.models.DBConn" %>
+<%@ page import="Quiz.src.main.java.models.Quiz" %>
+<%@ page import="Quiz.src.main.java.models.Question" %>
+<%@ page import="Quiz.src.main.java.models.Answer" %>
+<%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,15 +105,109 @@
       </style>
 </head>
 
+<%
+DBConn con = new DBConn();
+int quizID = Integer.parseInt(request.getParameter("id"));
+int totalScore = 0;
+User user = (User) session.getAttribute("user");
+if (user == null) {
+    response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+    return;
+}
+
+Quiz quiz = con.getQuiz(quizID);
+HttpSession ses = request.getSession();
+ArrayList<Question> questions = (ArrayList)ses.getAttribute("shuffledQuestions");
+List<Answer> correctAnswers1 = new ArrayList<Answer>();
+for(int i = 0; i < questions.size(); i++){
+    List<Answer> correctAnswers2 = con.getAnswers(questions.get(i).id,true);
+    correctAnswers1.addAll(correctAnswers2);
+}
+
+int esa = -1;
+
+for(int i = 0; i < questions.size(); i++){
+    Question question = questions.get(i);
+    QuestionType questionType = question.type;
+    List<Answer> correctAnswers = con.getAnswers(questions.get(i).id,true);
+
+
+    if (questionType == QuestionType.QUESTION_RESPONSE){
+        String answer =  request.getParameter("question" + i);
+        if(answer != null)
+        if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
+
+    } else if(questionType == QuestionType.FILL_IN_THE_BLANK){
+        String answer =  request.getParameter("question" + i);
+        if(answer != null)
+        if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
+
+    } else if(questionType == QuestionType.MULTIPLE_CHOICE){
+        String answer =  request.getParameter("question" + i);
+        if(answer != null)
+        if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
+
+    } else if(questionType == QuestionType.PICTURE_RESPONSE) {
+        String answer = request.getParameter("question" + i);
+        if(answer != null)
+        if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
+
+    } else if (questionType == QuestionType.MULTI_ANSWER){
+        ArrayList<String> userAnswers = new ArrayList<String>();
+        for(int j = 0; j < correctAnswers.size(); j++){
+            userAnswers.add(request.getParameter("question" + i +"_"+ j));
+        }
+        Map<String, Integer> correctFrequencyMap = new HashMap<String, Integer>();
+        for (Answer curAnswer : correctAnswers) {
+            correctFrequencyMap.put(curAnswer.answer, correctFrequencyMap.getOrDefault(curAnswer.answer, 0) + 1);
+        }
+
+        for (int k = 0; k < userAnswers.size(); k++) {
+            String userAnswer = userAnswers.get(k);
+
+            if(userAnswer != null)
+            if (correctFrequencyMap.containsKey(userAnswer) && correctFrequencyMap.get(userAnswer) > 0) {
+                correctFrequencyMap.put(userAnswer, correctFrequencyMap.get(userAnswer) - 1);
+                totalScore++;
+            }
+        }
+
+    } else if (questionType == QuestionType.MULTI_AN_CHOICE){
+        ArrayList<String> userAnswers = new ArrayList<String>();
+        for(int j = 0; j < correctAnswers.size(); j++){
+            userAnswers.add(request.getParameter("question" + i +"_"+j));
+        }
+
+        for(int k = 0; k < userAnswers.size(); k++){
+            for(int j = 0; j < correctAnswers.size(); j++){
+                if(userAnswers.get(k) != null)
+                if(userAnswers.get(k).equalsIgnoreCase(correctAnswers.get(j).answer)){
+                    totalScore++;
+                }
+            }
+        }
+    }
+}
+%>
+
+<%
+
+double time_taken = (double)(((Duration)session.getAttribute("time")).toSeconds() / 60.0);
+con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), time_taken));
+
+%>
+
+
+
 <body>
     <div class="container">
         <header>
             <h1>Quiz Results</h1>
         </header>
         <div class="score">
-            Your Score: 8 out of 10
+            Your Score: <%=totalScore%> out of <%=correctAnswers1.size()%>
              <br>
-            <span class="time-taken">Time taken: 12 minutes</span>
+            <span class="time-taken">Time taken: <%=time_taken%>> minutes</span>
         </div>
 
         <div class="tables-row">
@@ -109,14 +216,17 @@
                 <table class="answers-details">
                     <tr>
                         <th>Question #</th>
-                        <th>Your Answer</th>
+                        <th>Your Answer </th>
                         <th>Correct Answer</th>
                     </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Option B</td>
-                        <td>Option A</td>
-                    </tr>
+                    <%
+                    for(int i = 0; i < 1; i++) {%>
+                        <tr>
+                            <td>1</td>
+                            <td>Option B</td>
+                            <td>Option A</td>
+                        </tr>
+                    <% }%>
                 </table>
             </div>
             <div class="table-container">
@@ -130,8 +240,8 @@
                     </tr>
                     <tr>
                         <td>Attempt 1</td>
-                        <td>8/10</td>
-                        <td>12 minutes</td>
+                        <td><%=totalScore%>/<%=correctAnswers1.size()%></td>
+                        <td>12 minutes <%=esa%></td>
                     </tr>
                 </table>
             </div>
