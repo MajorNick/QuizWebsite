@@ -33,17 +33,10 @@
         font-weight: bold;
     }
 
-    .link {
-        color: black;
-        text-decoration: none;
-        margin-left: 20px;
-        font-size: 18px;
-        font-weight: bold;
-    }
-
     .center-text{
         text-align: center;
     }
+
     .container {
         display: flex;
         flex-wrap: wrap;

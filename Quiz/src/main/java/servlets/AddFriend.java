@@ -55,7 +55,7 @@ public class AddFriend extends HttpServlet {
         String userName = user.getUsername();
         String confirmLink = String.format("<a href=\"./ConfirmFriendRequest?userId=%d&targetId=%d\">Confirm</a>", userId, targetId);
 
-        Notification notification2 = new Notification(-1, targetId, userId, "friend request", String.format("%s has sent you a friend request! click here to %s", userName, confirmLink));
+        Notification notification2 = new Notification(-1, targetId, userId, "friend request", String.format("%s has sent you a friend request! Click here to %s", userName, confirmLink));
         dbConn.insertNotification(notification2);
 
         dbConn.closeDBConn();

@@ -49,7 +49,9 @@ public class Note extends HttpServlet {
 
         DBConn dbConn = new DBConn();
 
-        Notification notification = new Notification(-1, targetId, userId, "note", note_text);
+        String noteText = String.format("%s has sent you a note: %s", dbConn.getUsers(userId).get(0).getUsername(), note_text);
+
+        Notification notification = new Notification(-1, targetId, userId, "note", noteText);
         dbConn.insertNotification(notification);
 
         dbConn.closeDBConn();
