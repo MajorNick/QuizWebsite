@@ -17,6 +17,9 @@ public class Question{
         this.type = QuestionType.fromInt(type);
         this.num = num;
     }
+    public  boolean isMultiAnswerType(){
+        return type == QuestionType.MULTI_ANSWER || type == QuestionType.MULTI_AN_CHOICE;
+    }
 
     @Override
     public boolean equals(Object o) {
