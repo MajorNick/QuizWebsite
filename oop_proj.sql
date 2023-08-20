@@ -27,7 +27,8 @@ CREATE TABLE users (
     password_hash VARCHAR(255),
     role VARCHAR(255),
     pfp VARCHAR(1000),
-    isPrivate bool
+    isPrivate bool,
+    event_time TIMESTAMP
 );
 
 INSERT INTO users (username, password_hash, role, isPrivate)
