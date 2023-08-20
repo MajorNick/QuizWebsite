@@ -134,6 +134,8 @@
     User user = u.get(0);
     User creator = con.getUsers(quiz.creator_id).get(0);
     int quizid = quiz.id;
+    HttpSession ses = request.getSession();
+    ses.setAttribute("iterator",null);
 
 %>
 
