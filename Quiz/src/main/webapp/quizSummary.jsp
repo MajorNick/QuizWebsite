@@ -181,6 +181,8 @@
             return;
         }
     }
+
+
 %>
 
 </div>
@@ -208,6 +210,16 @@
 
     String ReportText = request.getParameter("reporttext");
     ReportText = ReportText == null ? "Inappropriate Quiz" : ReportText;
+    ArrayList<Integer> iyo = new ArrayList<Integer>();
+    iyo.add(0);
+    iyo.add(user.getId());
+    iyo.add(quizid);
+
+    session.setAttribute("xulignobs", iyo);
+    ArrayList<Question> questions = con.getQuestions(quizid);
+    for(int i = 0; i < questions.size(); i++){
+        session.setAttribute("question" + i+"quizId"+quizid, null);
+    }
 %>
 
 
@@ -407,7 +419,18 @@
                         </p>
                         <p><strong>Rating:</strong> <%= CreateLittleStarRatings.generateRatingStars(rateAndReviewer.rating) %></p>
                         <form action="/changeRatingServlet" id="editRatingForm<%= rateAndReviewer.id %>" method="post" class="edit-form" style="display: none;">
-                            <textarea name="editedRating" rows="1" cols="5"><%= rateAndReviewer.rating %></textarea>
+                            <select name="editedRating">
+                                                            <option value="1">1</option>
+                                                            <option value="2">2</option>
+                                                            <option value="3">3</option>
+                                                            <option value="4">4</option>
+                                                            <option value="5">5</option>
+                                                            <option value="6">6</option>
+                                                            <option value="7">7</option>
+                                                            <option value="8">8</option>
+                                                            <option value="9">9</option>
+                                                            <option value="10">10</option>
+                                                        </select>
                             <input type="hidden" name="reviewId" value="<%= rateAndReviewer.id %>">
                             <input type="hidden" name="quizId" value="<%= quizid %>">
                             <button type="submit" name="action" value="Save">Save</button>

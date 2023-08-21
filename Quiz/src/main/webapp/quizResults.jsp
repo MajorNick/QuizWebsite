@@ -17,6 +17,10 @@
 <%@ page import="Quiz.src.main.java.models.Answer" %>
 <%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
 <%@ page import="Quiz.src.main.java.HelperMethods.*" %>
+<%@ page import="java.time.Duration" %>
+<%@ page import="java.time.LocalTime" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.Comparator" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,18 +111,29 @@
 </head>
 
 <%
-DBConn con = new DBConn();
-int quizID = Integer.parseInt(request.getParameter("id"));
-int totalScore = 0;
 User user = (User) session.getAttribute("user");
 if (user == null) {
     response.sendRedirect(request.getContextPath() + "/MainPageServlet");
     return;
 }
+int quizID = Integer.parseInt(request.getParameter("id"));
+
+HttpSession ses = request.getSession();
+
+LocalTime startTime = (LocalTime) ses.getAttribute("quizStartTime"+quizID+"_"+user.getId());
+
+LocalTime endTime = LocalTime.now();
+
+Duration minutes = Duration.between(startTime, endTime);
+
+
+ses.setAttribute("time"+quizID+"_"+user.getId(), minutes);
+DBConn con = new DBConn();
+
+int totalScore = 0;
 
 Quiz quiz = con.getQuiz(quizID);
-HttpSession ses = request.getSession();
-ArrayList<Question> questions = (ArrayList)ses.getAttribute("shuffledQuestions");
+ArrayList<Question> questions = (ArrayList)ses.getAttribute("shuffledQuestions" + quizID + "_" + user.getId());
 List<Answer> correctAnswers1 = new ArrayList<Answer>();
 for(int i = 0; i < questions.size(); i++){
     List<Answer> correctAnswers2 = con.getAnswers(questions.get(i).id,true);
@@ -132,31 +147,54 @@ for(int i = 0; i < questions.size(); i++){
     QuestionType questionType = question.type;
     List<Answer> correctAnswers = con.getAnswers(questions.get(i).id,true);
 
+    ArrayList<String> userAnswersSingle = (ArrayList<String>)ses.getAttribute("question" + i +"_"+quizID+"_"+user.getId());
+
 
     if (questionType == QuestionType.QUESTION_RESPONSE){
         String answer =  request.getParameter("question" + i);
+        if(quiz.is_single_page) answer = userAnswersSingle.get(0);
         if(answer != null)
         if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
 
     } else if(questionType == QuestionType.FILL_IN_THE_BLANK){
-        String answer =  request.getParameter("question" + i);
-        if(answer != null)
-        if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
-
+        ArrayList<String> userAnswers = new ArrayList<String>();
+        if(quiz.is_single_page){
+        userAnswers = userAnswersSingle;
+        } else{
+        for(int j = 0; j < correctAnswers.size(); j++){
+            userAnswers.add(request.getParameter("question" + i +"_"+j));
+        }
+        }
+        Collections.sort(correctAnswers, new Comparator<Answer>() {
+            @Override
+            public int compare(Answer a1, Answer a2) {
+                return Integer.compare(a1.getId(), a2.getId());
+            }
+        });
+        for(int l = 0; l < correctAnswers.size(); l++){
+            if(userAnswers.get(l) != null)
+                    if(userAnswers.get(l).equalsIgnoreCase(correctAnswers.get(l).answer)) totalScore++;
+        }
     } else if(questionType == QuestionType.MULTIPLE_CHOICE){
         String answer =  request.getParameter("question" + i);
+        if(quiz.is_single_page) answer = userAnswersSingle.get(0);
         if(answer != null)
         if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
 
     } else if(questionType == QuestionType.PICTURE_RESPONSE) {
         String answer = request.getParameter("question" + i);
+        if(quiz.is_single_page) answer = userAnswersSingle.get(0);
         if(answer != null)
         if(answer.equalsIgnoreCase(correctAnswers.get(0).answer)) totalScore++;
 
     } else if (questionType == QuestionType.MULTI_ANSWER){
         ArrayList<String> userAnswers = new ArrayList<String>();
+        if(quiz.is_single_page){
+        userAnswers = userAnswersSingle;
+        } else{
         for(int j = 0; j < correctAnswers.size(); j++){
-            userAnswers.add(request.getParameter("question" + i +"_"+ j));
+            userAnswers.add(request.getParameter("question" + i +"_"+j));
+        }
         }
         Map<String, Integer> correctFrequencyMap = new HashMap<String, Integer>();
         for (Answer curAnswer : correctAnswers) {
@@ -175,8 +213,12 @@ for(int i = 0; i < questions.size(); i++){
 
     } else if (questionType == QuestionType.MULTI_AN_CHOICE){
         ArrayList<String> userAnswers = new ArrayList<String>();
+        if(quiz.is_single_page){
+        userAnswers = userAnswersSingle;
+        } else{
         for(int j = 0; j < correctAnswers.size(); j++){
             userAnswers.add(request.getParameter("question" + i +"_"+j));
+        }
         }
 
         for(int k = 0; k < userAnswers.size(); k++){
@@ -192,8 +234,22 @@ for(int i = 0; i < questions.size(); i++){
 %>
 
 <%
+int time_taken = (int)((Duration)session.getAttribute("time"+quizID+"_"+user.getId())).toSeconds();
+ArrayList<Integer> iyo = (ArrayList<Integer>) session.getAttribute("xulignobs"+quizID+"_"+user.getId());
+if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get(0) == 0)){
+    con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)((Duration)session.getAttribute("time"+quizID+"_"+user.getId())).toSeconds()));
 
-con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)((Duration)session.getAttribute("time")).toSeconds()));
+    iyo = new ArrayList<Integer>();
+    iyo.clear();
+    iyo.add(1);
+    iyo.add(user.getId());
+    iyo.add(quizID);
+
+    session.setAttribute("xulignobs"+quizID+"_"+user.getId(), iyo);
+} else{
+
+}
+
 
 %>
 
@@ -207,7 +263,7 @@ con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)
         <div class="score">
             Your Score: <%=totalScore%> out of <%=correctAnswers1.size()%>
              <br>
-            <span class="time-taken">Time taken: <%=time_taken%>> minutes</span>
+            <span class="time-taken">Time taken: <%=TimeInStrings.timeToStrings(time_taken)%></span>
         </div>
 
         <div class="tables-row">
@@ -219,14 +275,41 @@ con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)
                         <th>Your Answer </th>
                         <th>Correct Answer</th>
                     </tr>
+
                     <%
-                    for(int i = 0; i < 1; i++) {%>
-                        <tr>
-                            <td>1</td>
-                            <td>Option B</td>
-                            <td>Option A</td>
-                        </tr>
-                    <% }%>
+                    for (int i = 0; i < questions.size(); i++) {
+                        Question question = questions.get(i);
+                        QuestionType questionType = question.type;
+                        List<Answer> correctAnswers = con.getAnswers(question.id, true);
+                        String userAnswer = "";
+                        ArrayList<String> userAnswersSingle1 = (ArrayList<String>)ses.getAttribute("question" + i + "_" + quizID + "_" + user.getId());
+
+                        if (questionType == QuestionType.QUESTION_RESPONSE || questionType == QuestionType.MULTIPLE_CHOICE
+                                || questionType == QuestionType.PICTURE_RESPONSE) {
+                            if(quiz.is_single_page) userAnswer = userAnswersSingle1.get(0);
+                            else{
+                            userAnswer = request.getParameter("question" + i);
+                            }
+                        } else if (questionType == QuestionType.FILL_IN_THE_BLANK || questionType == QuestionType.MULTI_ANSWER
+                                || questionType == QuestionType.MULTI_AN_CHOICE) {
+                            ArrayList<String> userAnswers = userAnswersSingle1;
+                            userAnswer = String.join("<br>", userAnswers);
+                        }
+                    %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td><%= userAnswer %></td>
+                        <td>
+                            <%
+                            for (Answer correctAnswer : correctAnswers) {
+                                out.print(correctAnswer.answer + "<br>");
+                            }
+                            %>
+                        </td>
+                    </tr>
+                    <%
+                    }
+                    %>
                 </table>
             </div>
             <div class="table-container">
@@ -238,11 +321,27 @@ con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)
                         <th>Score</th>
                         <th>Time Taken</th>
                     </tr>
+                    <%
+                    ArrayList<QuizHistory> quizHistories = con.GetUserQuizHistoryAndDate(user.getId());
+                    ArrayList<QuizHistory> thisQuizHistories = new ArrayList<QuizHistory>();
+                    for(int i = 0; i < quizHistories.size(); i++){
+                        if(quizID == quizHistories.get(i).getQuiz_id())
+                        thisQuizHistories.add(quizHistories.get(i));
+                    }
+                    Collections.sort(thisQuizHistories, new Comparator<QuizHistory>() {
+                        @Override
+                        public int compare(QuizHistory qh1, QuizHistory qh2) {
+                            return qh2.getTakeDate().compareTo(qh1.getTakeDate());
+                        }
+                    });
+                    for(int i = 0; i < thisQuizHistories.size(); i++){
+                    %>
                     <tr>
-                        <td>Attempt 1</td>
-                        <td><%=totalScore%>/<%=correctAnswers1.size()%></td>
-                        <td>12 minutes <%=esa%></td>
+                        <td>Attempt <%=thisQuizHistories.size() - i%></td>
+                        <td><%=thisQuizHistories.get(i).getScore()%>/<%=correctAnswers1.size()%></td>
+                        <td><%=TimeInStrings.timeToStrings(thisQuizHistories.get(i).getTime_taken())%></td>
                     </tr>
+                    <% } %>
                 </table>
             </div>
             <div class="table-container">
@@ -254,11 +353,32 @@ con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)
                         <th>Score</th>
                         <th>Time Taken</th>
                     </tr>
+                    <%
+                    ArrayList<QuizHistory> quizHistoriess = con.GetquizQuizHistoryAndDate(quizID);
+                    Comparator<QuizHistory> customComparator = new Comparator<QuizHistory>() {
+                        @Override
+                        public int compare(QuizHistory q1, QuizHistory q2) {
+                            if (q1.getScore() != q2.getScore()) {
+                                return Double.compare(q2.getScore(), q1.getScore());
+                            } else {
+                                return Integer.compare(q1.getTime_taken(), q2.getTime_taken());
+                            }
+                        }
+                    };
+                    Collections.sort(quizHistoriess, customComparator);
+                    ArrayList<Integer> gavlilebi = new ArrayList<Integer>();
+                    for(int i = 0; i < quizHistoriess.size(); i++){
+                    if(quizHistoriess.get(i) != null && !gavlilebi.contains(quizHistoriess.get(i).getUser_id())){
+                       %>
                     <tr>
-                        <td>Top Scorer 1</td>
-                        <td>9/10</td>
-                        <td>9 minutes</td>
+                        <td><%= con.getUsers(quizHistoriess.get(i).getUser_id()).get(0).getUsername()%></td>
+                        <td><%=quizHistoriess.get(i).getScore()%>/<%=correctAnswers1.size()%></td>
+                        <td><%=TimeInStrings.timeToStrings(quizHistoriess.get(i).getTime_taken())%></td>
                     </tr>
+
+                    <% }
+                       gavlilebi.add(quizHistoriess.get(i).getUser_id());
+                     } %>
                 </table>
             </div>
             <div class="table-container">
@@ -270,11 +390,24 @@ con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)
                         <th>Score</th>
                         <th>Time Taken</th>
                     </tr>
+                    <%
+                    ArrayList<QuizHistory> quizHistoriesss = con.getFriendsQuizHistory(user.getId(), quizID);
+                    Collections.sort(quizHistoriesss, customComparator);
+                    ArrayList<Integer> gavlilebi1 = new ArrayList<Integer>();
+                    for (int i = 0; i < quizHistoriesss.size(); i++) {
+                        QuizHistory history = quizHistoriesss.get(i);
+                        if (history != null && !gavlilebi1.contains(history.getUser_id())) {
+                    %>
                     <tr>
-                        <td>Your Friend 1</td>
-                        <td>9/10</td>
-                        <td>9 minutes</td>
+                        <td><%= con.getUsers(history.getUser_id()).get(0).getUsername() %></td>
+                        <td><%= history.getScore() %>/<%= correctAnswers1.size() %></td>
+                        <td><%= TimeInStrings.timeToStrings(history.getTime_taken()) %></td>
                     </tr>
+                    <%
+                            gavlilebi1.add(history.getUser_id());
+                        }
+                    }
+                    %>
                 </table>
             </div>
         </div>
@@ -282,8 +415,8 @@ con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)
     <div>
         <h2>Rate and Review</h2>
             <form action="./SaveReview" method="post">
-                <input type="hidden" name="quizId" value="<%= 1 %>">
-                <input type="hidden" name="userId" value="<%= 1 %>">
+                <input type="hidden" name="quizId" value="<%= quizID %>">
+                <input type="hidden" name="userId" value="<%= user.getId() %>">
                 <label for="rating">Rating:</label>
                 <select id="rating" name="rating">
                     <option value="1">1</option>
@@ -291,6 +424,11 @@ con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
                 </select>
                 <br>
                 <label for="review">Review:</label>

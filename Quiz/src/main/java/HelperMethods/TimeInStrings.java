@@ -18,13 +18,16 @@ public class TimeInStrings {
     public int getHours(){
         return Integer.parseInt(time.split(" ")[0]);
     }
-    public static String timeToStrings(int hours, int minutes, int seconds){
+    public static String timeToStrings(int seconds){
         String time = "";
-        time+=hours;
-        time+=" ";
-        time+=minutes;
-        time+=" ";
-        time+= seconds;
+        int hours = seconds / 3600;
+        int minutes= (seconds - hours * 3600) / 60;
+        int secondss = (seconds - hours * 3600 - minutes * 60);
+
+        time += hours == 0 ? "":""+hours + " Hours ";
+        time += minutes == 0 && seconds == 0 ? "":""+ minutes +" Minutes ";
+        time += secondss == 0 && minutes == 0? "":""+ secondss +" Seconds";
+
         return time;
     }
 
