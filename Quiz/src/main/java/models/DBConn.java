@@ -19,10 +19,11 @@ public class DBConn{
         try{
             conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
             stmt = conn.createStatement();
+
             executeUpdate("USE " + database);
         } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     public void closeDBConn() {
@@ -38,6 +39,7 @@ public class DBConn{
     private void executeQuery(String q) {
         try{
             System.out.println(String.format("Executing querry: %s", q));
+
             rs = stmt.executeQuery(q);
         } catch (Exception e){
             System.out.println("query: " + q + " " + e.getMessage());
