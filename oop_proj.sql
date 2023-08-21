@@ -27,7 +27,8 @@ CREATE TABLE users (
     password_hash VARCHAR(255),
     role VARCHAR(255),
     pfp VARCHAR(1000),
-    isPrivate bool
+    isPrivate bool,
+    event_time TIMESTAMP
 );
 
 INSERT INTO users (username, password_hash, role, isPrivate)
@@ -104,7 +105,7 @@ CREATE TABLE quiz_history (
     score DECIMAL(5, 2),
     quiz_id INT,
     user_id INT,
-    time_taken INT,
+    time_taken VARCHAR(2000),
     take_date TIMESTAMP,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
