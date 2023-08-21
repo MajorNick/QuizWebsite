@@ -171,8 +171,9 @@ class HTMLCodeBlocks{
             "    font-size: 18px;\n" +
             "}\n" +
             "\n" +
-            "p.question-form {\n" +
+            ".question-form {\n" +
             "    font-size: 18px;\n" +
+            "    list-style-type: none;\n" +
             "}\n" +
             "\n" +
             "select.question-form {\n" +
@@ -185,43 +186,97 @@ class HTMLCodeBlocks{
             "\n" +
             ".sampleQuiz {\n" +
             "    width: min(100%, 600px);\n" +
+            "}" +
+            ".question-form {\n" +
+            "    font-size: 18px;\n" +
+            "    list-style-type: none;\n" +
             "}";
     public static final String scriptStart =
             "let questionsDeleted = 0;\n" +
-                    "const questionAnswerCounts = new Map();\n" +
-                    "\n" +
-                    "document.addEventListener(\"DOMContentLoaded\", function () {\n" +
-                    "\n" +
-                    "    document.getElementById(\"addQuestion\").addEventListener(\"click\", function (event) {\n" +
-                    "        event.preventDefault();\n" +
-                    "\n" +
-                    "        globalDivCount++;\n" +
-                    "        var divNum = globalDivCount - questionsDeleted;\n" +
-                    "        questionAnswerCounts.set(divNum, 0);\n" +
-                    "\n" +
-                    "        var newQuestion = document.createElement(\"div\");\n" +
-                    "        newQuestion.className = \"block-container\";\n" +
-                    "        newQuestion.id = `questionBlock${divNum}`;\n" +
-                    "\n" +
-                    "        addQuestionDiv(divNum, newQuestion);\n" +
-                    "\n" +
-                    "        var container = document.getElementById(\"quiz-contents\");\n" +
-                    "\n" +
-                    "        var addButton = document.getElementById(\"addQuestion\");\n" +
-                    "\n" +
-                    "        container.insertBefore(newQuestion, addButton);\n" +
-                    "\n" +
-                    "        document.getElementById(\"maxQuestionIndex\").value = globalDivCount;\n" +
-                    "\n" +
-                    "        addSelectEventListener(divNum);\n" +
-                    "\n" +
-                    "        addAddAnswerEventListener(divNum);\n" +
-                    "\n" +
-                    "        addDeleteQuestionListener(divNum);\n" +
-                    "    });\n";
+            "const questionAnswerCounts = new Map();\n" +
+            "let quizTagCount = 0;\n" +
+            "\n" +
+            "document.addEventListener(\"DOMContentLoaded\", function () {\n" +
+            "\n" +
+            "    document.getElementById(\"addQuestion\").addEventListener(\"click\", function (event) {\n" +
+            "        event.preventDefault();\n" +
+            "\n" +
+            "        globalDivCount++;\n" +
+            "        var divNum = globalDivCount - questionsDeleted;\n" +
+            "        questionAnswerCounts.set(divNum, 0);\n" +
+            "\n" +
+            "        var newQuestion = document.createElement(\"div\");\n" +
+            "        newQuestion.className = \"block-container\";\n" +
+            "        newQuestion.id = `questionBlock${divNum}`;\n" +
+            "\n" +
+            "        addQuestionDiv(divNum, newQuestion);\n" +
+            "\n" +
+            "        var container = document.getElementById(\"quiz-contents\");\n" +
+            "\n" +
+            "        var addButton = document.getElementById(\"addQuestion\");\n" +
+            "\n" +
+            "        container.insertBefore(newQuestion, addButton);\n" +
+            "\n" +
+            "        document.getElementById(\"maxQuestionIndex\").value = globalDivCount;\n" +
+            "\n" +
+            "        addSelectEventListener(divNum);\n" +
+            "\n" +
+            "        addAddAnswerEventListener(divNum);\n" +
+            "\n" +
+            "        addDeleteQuestionListener(divNum);\n" +
+            "    });\n" +
+            "\n" +
+            "    document.getElementById(\"addQuizTag\").addEventListener(\"click\", function (event) {\n" +
+            "        event.preventDefault();\n" +
+            "\n" +
+            "        let quizTags = document.getElementById(\"quizTags\");\n" +
+            "        let tagName = document.getElementById(\"quiz_new_tag\").value;\n" +
+            "        if (tagName == \"\") {\n" +
+            "            return;\n" +
+            "        }\n" +
+            "\n" +
+            "        quizTagCount++;\n" +
+            "\n" +
+            "        let newTag = document.createElement(\"li\");\n" +
+            "        newTag.id = `quiz_tag_item${quizTagCount}`;\n" +
+            "\n" +
+            "        let newTagName = document.createElement(\"span\");\n" +
+            "        newTagName.innerHTML = tagName;\n" +
+            "\n" +
+            "        document.getElementById(\"quiz_tag_max_index\").value = quizTagCount;\n" +
+            "\n" +
+            "        let removeButton = document.createElement(\"button\");\n" +
+            "        removeButton.classList.add(\"action-button\");\n" +
+            "        removeButton.id = `removeTag${quizTagCount}`;\n" +
+            "        removeButton.innerHTML = \"x\";\n" +
+            "\n" +
+            "        let tagNameInput = document.createElement(\"input\");\n" +
+            "        tagNameInput.type = \"hidden\";\n" +
+            "        tagNameInput.value = tagName;\n" +
+            "        tagNameInput.name = `quiz_tag${quizTagCount}`;\n" +
+            "\n" +
+            "        newTag.appendChild(removeButton);\n" +
+            "        newTag.appendChild(newTagName);\n" +
+            "        newTag.appendChild(tagNameInput);\n" +
+            "\n" +
+            "        quizTags.appendChild(newTag);\n" +
+            "        document.getElementById(\"quiz_new_tag\").value = \"\";\n" +
+            "\n" +
+            "        addRemoveTagListener(quizTagCount);\n" +
+            "    });\n\n";
     public static final String scriptEnd = "});\n" +
+            "function addRemoveTagListener(tagNum) {\n" +
+            "    document.getElementById(`removeTag${tagNum}`).addEventListener(\"click\", function (event) {\n" +
+            "        event.preventDefault();\n" +
+            "\n" +
+            "        let curTagNum = parseInt(this.id.replace(\"removeTag\", \"\"));\n" +
+            "\n" +
+            "        document.getElementById(`quiz_tag_item${curTagNum}`).remove();\n" +
+            "    })\n" +
+            "}\n" +
+            "\n" +
             "function addAnswerBox(selectedVal, divNum, answerNum, addAnswerButton) {\n" +
-            "    var newAnswer = document.createElement(\"div\");\n" +
+            "    let newAnswer = document.createElement(\"div\");\n" +
             "    newAnswer.className = \"block-items\";\n" +
             "\n" +
             "    if (selectedVal == 0 || selectedVal == 3) {\n" +
@@ -229,12 +284,12 @@ class HTMLCodeBlocks{
             "            <textarea name=\"q${divNum}\" class=\"note_text\" placeholder=\"Answer\" type=\"text\" rows=\"1\" cols=\"50\"></textarea>\n" +
             "        `;\n" +
             "        if (selectedVal == 3) {\n" +
-            "            var questionTextCont = document.getElementById(`question-text${divNum}`);\n" +
+            "            let questionTextCont = document.getElementById(`question-text${divNum}`);\n" +
             "            questionTextCont.placeholder = \"Image URL\";\n" +
             "        }\n" +
             "        addAnswerButton.classList.add(\"hidden\");\n" +
             "    } else if (selectedVal == 2) {\n" +
-            "        var rbParams = \"\";\n" +
+            "        let rbParams = \"\";\n" +
             "        if (answerNum == 1) {\n" +
             "            rbParams = \" checked=\\\"checked\\\"\";\n" +
             "        }\n" +
@@ -257,10 +312,10 @@ class HTMLCodeBlocks{
             "            <input name=\"q${divNum}-ans${answerNum}\" class=\"note_text\" placeholder=\"Blank ${answerNum}\" type=\"text\"></input>\n" +
             "        `;\n" +
             "    }\n" +
-            "    var answerCountInput = document.getElementById(`answerCount${divNum}`);\n" +
+            "    let answerCountInput = document.getElementById(`answerCount${divNum}`);\n" +
             "    answerCountInput.value = answerNum;\n" +
             "\n" +
-            "    var ansContainer = document.getElementById(`answerList${divNum}`);\n" +
+            "    let ansContainer = document.getElementById(`answerList${divNum}`);\n" +
             "    ansContainer.appendChild(newAnswer);\n" +
             "}\n" +
             "\n" +
@@ -277,10 +332,10 @@ class HTMLCodeBlocks{
             "                <option value=\"\" disabled selected>Select Question Type</option>\n" +
             "                <option value=\"0\">Question Response</option>\n" +
             "                <option value=\"1\">Fill in the Blank</option>\n" +
-            "                <option value=\"2\">Multiple Choise</option>\n" +
+            "                <option value=\"2\">Multiple Choice</option>\n" +
             "                <option value=\"3\">Picture Response</option>\n" +
             "                <option value=\"4\">Multiple Answer</option>\n" +
-            "                <option value=\"5\">Multiple Choise & Answer</option>\n" +
+            "                <option value=\"5\">Multiple Choice & Answer</option>\n" +
             "            </select>\n" +
             "            <textarea id=\"question-text${divNum}\" name=\"question${divNum}\" class=\"note_text\" placeholder=\"Question\" rows=\"4\" cols=\"50\"></textarea>\n" +
             "            <div id=\"answerList${divNum}\" class=\"answer-list\">\n" +
@@ -294,27 +349,27 @@ class HTMLCodeBlocks{
             "\n" +
             "function addSelectEventListener(divNum) {\n" +
             "    document.getElementById(`select${divNum}`).addEventListener(\"change\", function () {\n" +
-            "        var curDivNum = parseInt(this.id.replace(\"select\", \"\"));\n" +
+            "        let curDivNum = parseInt(this.id.replace(\"select\", \"\"));\n" +
             "\n" +
-            "        var addAnswerButton = document.getElementById(`addAnswer${divNum}`);\n" +
+            "        let addAnswerButton = document.getElementById(`addAnswer${divNum}`);\n" +
             "        addAnswerButton.classList.remove(\"hidden\");\n" +
-            "        var selectedVal = this.value;\n" +
-            "        var ansContainer = document.getElementById(`answerList${divNum}`);\n" +
+            "        let selectedVal = this.value;\n" +
+            "        let ansContainer = document.getElementById(`answerList${divNum}`);\n" +
             "        ansContainer.innerHTML = \"\";\n" +
             "\n" +
             "        questionAnswerCounts.set(curDivNum, 1);\n" +
             "        addAnswerBox(selectedVal, divNum, questionAnswerCounts.get(curDivNum), addAnswerButton);\n" +
             "    });\n" +
-            "}" +
+            "}\n" +
             "\n" +
             "function addAddAnswerEventListener(divNum) {\n" +
             "    document.getElementById(`addAnswer${divNum}`).addEventListener(\"click\", function (event) {\n" +
             "        event.preventDefault();\n" +
             "\n" +
-            "        var curDivNum = parseInt(this.id.replace(\"addAnswer\", \"\"));\n" +
+            "        let curDivNum = parseInt(this.id.replace(\"addAnswer\", \"\"));\n" +
             "\n" +
             "        questionAnswerCounts.set(curDivNum, questionAnswerCounts.get(curDivNum) + 1);\n" +
-            "        var selectedVal = document.getElementById(`select${curDivNum}`).value;\n" +
+            "        let selectedVal = document.getElementById(`select${curDivNum}`).value;\n" +
             "\n" +
             "        addAnswerBox(selectedVal, curDivNum, questionAnswerCounts.get(curDivNum), null);\n" +
             "    });\n" +
@@ -324,13 +379,13 @@ class HTMLCodeBlocks{
             "    document.getElementById(`deleteQuestion${divNum}`).addEventListener(\"click\", function (event) {\n" +
             "        event.preventDefault();\n" +
             "\n" +
-            "        var curDivNum = parseInt(this.id.replace(\"deleteQuestion\", \"\"));\n" +
+            "        let curDivNum = parseInt(this.id.replace(\"deleteQuestion\", \"\"));\n" +
             "\n" +
-            "        var questionBlock = document.getElementById(`questionBlock${curDivNum}`);\n" +
+            "        let questionBlock = document.getElementById(`questionBlock${curDivNum}`);\n" +
             "        questionBlock.remove();\n" +
             "\n" +
             "        for (let i = curDivNum + 1; i <= globalDivCount; i++) {\n" +
-            "            var nextQuestionBody = document.getElementById(`question${i}`);\n" +
+            "            let nextQuestionBody = document.getElementById(`question${i}`);\n" +
             "            if (nextQuestionBody === null) {\n" +
             "                continue;\n" +
             "            }\n" +
@@ -376,6 +431,10 @@ public class EditQuiz extends HttpServlet {
                 ArrayList<Answer> answers = dbConn.getAnswers(question.id,false);
                 allAnswers.add(answers);
             }
+            ArrayList<Categorya> categoryas = dbConn.getCategories();
+            int categoryId = dbConn.getQuizCategory(quiz.id);
+
+            ArrayList<String> quizTags = dbConn.getQuizTags(quiz.id);
 
             dbConn.closeDBConn();
 
@@ -440,6 +499,30 @@ public class EditQuiz extends HttpServlet {
             quiz_name.closesInstantly = true;
 
             form.add(quiz_name);
+            HTMLTag selectCategory = new HTMLTag("select");
+            selectCategory.name = "quiz_category";
+            selectCategory.id = "quiz_category";
+            selectCategory._class = "question-form";
+
+            HTMLTag noCatOption = new HTMLTag("option");
+            noCatOption.value = "0";
+            if(categoryId == 0){
+                noCatOption.selected = "selected";
+            }
+            noCatOption.inner = "No Category";
+            selectCategory.add(noCatOption);
+
+            for(Categorya cat : categoryas){
+                HTMLTag catOption = new HTMLTag("option");
+                catOption.value = "" + cat.id;
+                if(categoryId == cat.id){
+                    catOption.selected = "selected";
+                }
+                catOption.inner = cat.category;
+                selectCategory.add(catOption);
+            }
+
+            form.add(selectCategory);
             form.add(brTag);
 
             HTMLTag description = new HTMLTag("textarea");
@@ -450,6 +533,66 @@ public class EditQuiz extends HttpServlet {
             description.inner = quiz.description;
 
             form.add(description);
+            form.add(brTag);
+
+            HTMLTag quizTags_tag = new HTMLTag("ul");
+            quizTags_tag.id = "quizTags";
+            quizTags_tag._class = "question-form";
+
+            int quiz_tag_id = 0;
+            for(String quiz_tag : quizTags){
+                quiz_tag_id++;
+                HTMLTag quiz_tag_tag = new HTMLTag("li");
+                quiz_tag_tag.id = "quiz_tag_item" + quiz_tag_id;
+
+                HTMLTag delete_tag_button = new HTMLTag("button");
+                delete_tag_button._class = "action-button";
+                delete_tag_button.id = "removeTag" + quiz_tag_id;
+                delete_tag_button.inner = "x";
+
+                quiz_tag_tag.add(delete_tag_button);
+
+                HTMLTag tag_name_tag = new HTMLTag("span");
+                tag_name_tag.inner = quiz_tag;
+
+                quiz_tag_tag.add(tag_name_tag);
+
+                HTMLTag tag_input = new HTMLTag("input");
+                tag_input.type = "hidden";
+                tag_input.value = quiz_tag;
+                tag_input.name = "quiz_tag" + quiz_tag_id;
+
+                quiz_tag_tag.add(tag_input);
+
+                quizTags_tag.add(quiz_tag_tag);
+
+                script += "addRemoveTagListener(" + quiz_tag_id + ");\n";
+            }
+
+            form.add(quizTags_tag);
+
+            HTMLTag add_quiz_tag = new HTMLTag("input");
+            add_quiz_tag.id = "quiz_new_tag";
+            add_quiz_tag._class = "note_text";
+            add_quiz_tag.placeholder = "Tag";
+            add_quiz_tag.type = "text";
+
+            form.add(add_quiz_tag);
+
+            HTMLTag add_quiz_tag_button = new HTMLTag("button");
+            add_quiz_tag_button._class = "action-button";
+            add_quiz_tag_button.id = "addQuizTag";
+            add_quiz_tag_button.inner = "Add Tag";
+
+            form.add(add_quiz_tag_button);
+
+            HTMLTag quiz_tag_max_count = new HTMLTag("input");
+            quiz_tag_max_count.name = "quiz_tag_max_index";
+            quiz_tag_max_count.id = "quiz_tag_max_index";
+            quiz_tag_max_count.type = "hidden";
+            quiz_tag_max_count.value = "" + quizTags.size();
+
+            form.add(quiz_tag_max_count);
             form.add(brTag);
 
             HTMLTag single_page_cb = new HTMLTag("input");

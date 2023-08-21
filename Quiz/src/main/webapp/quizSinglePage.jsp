@@ -46,19 +46,19 @@
 </div>
 
 <%
-    boolean correction  = Boolean.parseBoolean(request.getParameter("correction"));
-    int quizID = Integer.parseInt(request.getParameter("id"));;
+    int quizID = Integer.parseInt(request.getParameter("id"));
     User user1 = (User) session.getAttribute("user");
+    if (user1 == null) {
+       response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+       return;
+    }
     HttpSession ses = request.getSession();
     Integer iterator = (Integer) ses.getAttribute("iterator"+quizID+"_"+user1.getId());
 
 
-    if (user1 == null) {
-        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
-        return;
-    }
 
     //boolean correction  = Boolean.valueOf(request.getParameter("correction"));
+    boolean correction  = Boolean.parseBoolean(request.getParameter("correction"));
 
     DBConn con = new DBConn();
     Quiz quiz = con.getQuiz(quizID);
@@ -88,12 +88,12 @@
 
             }
 
-            ses.setAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator,tmp);
+            ses.setAttribute("question"+iterator+"_"+quizID+"_"+user1.getId(),tmp);
         }else{
 
             ArrayList<String> tmp =new ArrayList<String>();
             tmp.add(request.getParameter("question"+iterator));
-            ses.setAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator,tmp);
+            ses.setAttribute("question"+iterator+"_"+quizID+"_"+user1.getId(),tmp);
         }
     }
 
@@ -104,19 +104,19 @@
         iterator--;
     }else if ("submit".equals(action)) {
 
-        if (questions.get(iterator).type == QuestionType.QUESTION_RESPONSE){
-            String responseAnswer = request.getParameter("response_answer");
-          //  double score = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
-        }
+            if (questions.get(iterator).type == QuestionType.QUESTION_RESPONSE){
+                String responseAnswer = request.getParameter("response_answer");
+                double score = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
+            }
     }else if("End Quiz".equals(action)){
         ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
         response.sendRedirect("quizResults.jsp?id=" + request.getParameter("id"));
-    }else if( action != null){
+        }else if( action != null){
         try {
             int selected = Integer.parseInt(action);
             iterator = selected - 1;
         } catch (NumberFormatException e) {
-%> <h1> erroooooooor while parsing request</h1> <%
+            %> <h1> erroooooooor while parsing request</h1> <%
         }
     }
     ses.setAttribute("iterator"+quizID+"_"+user1.getId(), iterator);
@@ -130,17 +130,17 @@
     <p>Question <%= iterator + 1 %>: <%= questionType == QuestionType.PICTURE_RESPONSE?"":question.question %></p>
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) {
-        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
+        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
         String v = "";
         if(answ != null) {
-            v = answ.get(0) == null ? "" : answ.get(0);
+             v = answ.get(0) == null ? "" : answ.get(0);
         }
     %>
     <input type="text" name=<%="question"+iterator%>  value=<%=v%> >
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) {
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
-        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
+        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
 
         for (int j = 0; j < answers.size(); j++) {
             String v = "";
@@ -156,7 +156,7 @@
 
     <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) {
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
-        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
+        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question" +iterator+"_"+quizID+"_"+user1.getId());
         String selectedAnswer = selected==null ?"":selected.get(0);
         for (int j = 0; j < answers.size(); j++) {
 
@@ -169,7 +169,7 @@
     %>
 
     <% } else if (questionType == QuestionType.PICTURE_RESPONSE) {
-        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
+        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
         String v = "";
         if(answ != null) {
             v = answ.get(0) == null ? "" : answ.get(0);
@@ -183,7 +183,7 @@
 
 
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
-        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
+        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
 
         for (int j = 0; j < answers.size(); j++) {
             String v = "";
@@ -199,7 +199,7 @@
 
     <% } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>
     <%
-        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
+        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question" +iterator+"_"+quizID+"_"+user1.getId());
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
 
         for (int j = 0; j < answers.size(); j++) {
@@ -240,7 +240,7 @@
 </form>
 <%
 } else {
-    ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
+        ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
 %>
 
 <p>Quiz completed.</p>

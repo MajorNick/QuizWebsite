@@ -95,6 +95,8 @@ button.navbarItem {
     height: 200px;
     object-fit: cover;
     border-radius: 5%;
+    border: 4px solid #007bff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .username {
@@ -109,6 +111,7 @@ button.navbarItem {
     align-items: flex-start;
 }
 
+
 .action-button {
     background-color: #2b91fe;
     color: white;
@@ -122,7 +125,6 @@ button.navbarItem {
 
 .action-button:hover {
     background-color: #9dff0a;
-    /* Change to the color you want on hover */
 }
 
 .remove-friend-button {
@@ -138,7 +140,6 @@ button.navbarItem {
 
 .remove-friend-button:hover {
     background-color: #ff2c2c;
-    /* Change to the color you want on hover */
 }
 
 .admin-button {
@@ -194,6 +195,12 @@ button.navbarItem {
     font-size: 13px;
 }
 
+#id2 {
+    background-color:black;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
 
 
 
@@ -209,6 +216,9 @@ button.navbarItem {
     }
     int userId= user.getId();
     String TargetId = request.getParameter("id");
+
+    String buttonName = !dbConn.getUsers(userId).get(0).isPrivate() ? "Make private" : "Make Public";
+
     TargetId = TargetId == null ? ""+userId : TargetId;
     int targetId=Integer.parseInt(TargetId);
 
@@ -239,8 +249,56 @@ button.navbarItem {
   %>
 
   <style>
+  #right {
+      background-color: #f8f8f8;
+      border: 2px solid #007bff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-left: 20px;
+      flex: 1;
+    }
+
+    #right h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    #right form {
+      margin-bottom: 20px;
+    }
+
+    #right textarea {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    #right button {
+      background-color: #2b91fe;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #right ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #right li {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 5px;
+    }
 
   <% if (!(user.isAdmin() && userId == targetId)) { %>
+
        #right {
           display: none;
          }
@@ -261,6 +319,12 @@ button.navbarItem {
     </div>
     <div class="right-side1">
         <% if (user.isAdmin() && userId != targetId) { %>
+        <form class="navbarItem" action="./BanUser" method="post">
+          <button id = "id2" class="action-button">Ban User</button>
+          <input type="hidden" name="userId" value="<%= userId %>">
+          <input type="hidden" name="targetId" value="<%= targetId %>">
+        </form>
+
         <form class="navbarItem" action="./RemoveAccount" method="post">
           <button id = "id" class="action-button">Remove Account</button>
           <input type="hidden" name="userId" value="<%= userId %>">
@@ -283,13 +347,6 @@ button.navbarItem {
   </div>
 
 
-
-
-
-
-
-
-
     <div class="block-container" id="main-block">
           <div id="left">
             <div class="left-side">
@@ -299,6 +356,14 @@ button.navbarItem {
               </div>
               <div class="user-id">User Id: <%= targetId %>
               </div>
+              <% if (userId == targetId) { %>
+              <form action="./Picture" method="post">
+                  <textarea name="Picture" class="note_text" placeholder="Picture URL" rows="1" cols="30"></textarea>
+                  <br>
+                  <button class="action-button">Change Picture</button>
+                  <input type="hidden" name="userId" value="<%= userId %>">
+                </form>
+                <% } %>
             </div>
             <div class="right-side">
               <form action="./AddFriend" method="post">
@@ -321,6 +386,13 @@ button.navbarItem {
                 <input type="hidden" name="userId" value="<%= userId %>">
                 <input type="hidden" name="targetId" value="<%= targetId %>">
               </form>
+
+              <form action="./makePrivate" method="post">
+                  <br>
+                  <button class="action-button"><%= buttonName %></button>
+                  <input type="hidden" name="userId" value="<%= userId %>">
+               </form>
+
             </div>
             </div>
 

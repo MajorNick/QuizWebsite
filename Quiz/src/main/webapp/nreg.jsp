@@ -134,6 +134,28 @@
 </head>
 
 <%  DBConn dbConn=new DBConn();
+    User user = (User) session.getAttribute("user");
+    if (user != null) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
+
+    Cookie[] cookies = request.getCookies();
+
+    boolean usernameCookieExists = false;
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("username")) {
+                usernameCookieExists = true;
+                break;
+            }
+        }
+    }
+
+    if (usernameCookieExists) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
 
         %>
 <body>

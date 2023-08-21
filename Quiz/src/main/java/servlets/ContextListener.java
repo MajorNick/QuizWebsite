@@ -25,7 +25,7 @@ public class ContextListener implements ServletContextListener, HttpSessionListe
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
-
+        httpSessionEvent.getSession().setAttribute("daloginda", false);
     }
 
     @Override

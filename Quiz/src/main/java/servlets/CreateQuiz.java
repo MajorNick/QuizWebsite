@@ -71,19 +71,9 @@ public class CreateQuiz extends HttpServlet {
             return;
         }
 
-        System.out.println("quizCategory: " + quizCategory);
-
         int quizTagMax = 0;
         if(quizTagMaxIndex != null){
             quizTagMax = Integer.parseInt(quizTagMaxIndex);
-        }
-
-        for(int i = 1; i <= quizTagMax; i++){
-            String quizTag = request.getParameter("quiz_tag" + i);
-            if(quizTag == null){
-                continue;
-            }
-            System.out.println(quizTag);
         }
 
         boolean isSinglePageCB_BOOL = parseBooleanFromReq(isSinglePageCB);
@@ -108,7 +98,6 @@ public class CreateQuiz extends HttpServlet {
         ArrayList<Answer> answersToInsert = new ArrayList<>();
 
         for(int i = 1; i <= maxQuestionIndex_INT; i++){
-            questionId++;
             String question_type = request.getParameter(String.format("select%d", i));
             String questionText = request.getParameter(String.format("question%d", i));
             String answerCount = request.getParameter(String.format("answerCount%d", i));
@@ -121,7 +110,7 @@ public class CreateQuiz extends HttpServlet {
                 System.out.println("question_type " + i + " == null");
                 continue;
             }
-
+            questionId++;
             int answerCount_Int = Integer.parseInt(answerCount);
             int questionType_INT = Integer.parseInt(question_type);
             int question_num = i;
@@ -182,9 +171,45 @@ public class CreateQuiz extends HttpServlet {
         for(Answer answer : answersToInsert){
             dbConn.insertAnswer(answer);
         }
+        for(int i = 1; i <= quizTagMax; i++){
+            String quizTag = request.getParameter("quiz_tag" + i);
+            if(quizTag == null){
+                continue;
+            }
+            int tag_id = dbConn.getTagId(quizTag);
+            if(tag_id == -1){
+                Tag tag = new Tag(-1, quizTag);
+                dbConn.insertTag(tag);
+                tag_id = dbConn.getLastTagId();
+                if(tag_id == -1){
+                    continue;
+                }
+            }
+            TagQuiz tagQuiz = new TagQuiz(-1, tag_id, quiz.id);
+            dbConn.insertTagQuiz(tagQuiz);
+            System.out.println(quizTag);
+        }
+        if(quizCategory != null){
+            int quizCat = Integer.parseInt(quizCategory);
+            dbConn.updateQuizCategory(quiz.id, quizCat);
+        }
+
+        if(!editingQuiz){
+            int quizNum = dbConn.getQuizNumCreatedByUser(creator_id);
+            if(quizNum == 1){
+                UserAchievement userAchievement = new UserAchievement(-1, creator_id, 1);
+                dbConn.insertUserAchievement(userAchievement);
+            } else if(quizNum == 5){
+                UserAchievement userAchievement = new UserAchievement(-1, creator_id, 2);
+                dbConn.insertUserAchievement(userAchievement);
+            } else if(quizNum == 10){
+                UserAchievement userAchievement = new UserAchievement(-1, creator_id, 3);
+                dbConn.insertUserAchievement(userAchievement);
+            }
+        }
 
         dbConn.closeDBConn();
 
-//        response.sendRedirect(redirectUrl);
+        response.sendRedirect("./quizSummary.jsp?id=" + quiz.id);
     }
 }

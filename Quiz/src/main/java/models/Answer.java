@@ -13,6 +13,10 @@ public class Answer{
         this.isCorrect = isCorrect;
     }
 
+    public int getId(){
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +

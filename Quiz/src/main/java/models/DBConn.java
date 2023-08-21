@@ -1,9 +1,9 @@
 package Quiz.src.main.java.models;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DBConn{
     private static final String account = "oopUser";
@@ -21,8 +21,6 @@ public class DBConn{
             stmt = conn.createStatement();
             executeUpdate("USE " + database);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         }
 
     }
@@ -34,8 +32,6 @@ public class DBConn{
             stmt.close();
             conn.close();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -67,11 +63,19 @@ public class DBConn{
         executeUpdate(q);
     }
 
+    public void insertRateAndReview(rateAndReview r){
+        if(r == null)
+            throw new RuntimeException("Provided insertRateAndReview is null");
+
+        String q = String.format("INSERT INTO rateAndReview (quiz_id, rating, user_id, review)  VALUES(%d, %d, %d, '%s')", r.quizId, r.rating, r.userId, r.review);
+        executeUpdate(q);
+    }
+
     public void insertCategory(Categorya c){
         if(c == null)
             throw new RuntimeException("Provided Category is null");
 
-        String q = String.format("INSERT INTO Category (category)  VALUES('%s')", c.category);
+        String q = String.format("INSERT INTO quiz_categories (category)  VALUES('%s')", c.category);
         executeUpdate(q);
     }
     public void insertTag(Tag t){
@@ -118,7 +122,7 @@ public class DBConn{
         if(u == null)
             throw new RuntimeException("Provided UserAchievement is null");
 
-        String q = String.format("INSERT INTO users (username, password_hash, role)  VALUES('%s', '%s', '%s')", u.getUsername(), u.getPasswordHash(), u.getRole());
+        String q = String.format("INSERT INTO users (username, password_hash, role, isPrivate)  VALUES('%s', '%s', '%s', %b)", u.getUsername(), u.getPasswordHash(), u.getRole(), false);
         executeUpdate(q);
     }
 
@@ -130,12 +134,24 @@ public class DBConn{
         executeUpdate(q);
     }
 
-    public void insertQuizHistory(QuizHistory qh){
-        if(qh == null)
+    public void insertQuizHistory(QuizHistory qh) {
+        if (qh == null) {
             throw new RuntimeException("Provided Quiz History is null");
+        }
 
-        String q = String.format("INSERT INTO quiz_history (score, quiz_id, user_id, time_taken)  VALUES(%f, %d, %d, %d)", qh.getScore(), qh.getQuiz_id(), qh.getUser_id(), qh.getTime_taken());
-        executeUpdate(q);
+        String query = "INSERT INTO quiz_history (score, quiz_id, user_id, time_taken, take_date) VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setDouble(1, qh.getScore());
+            preparedStatement.setInt(2, qh.getQuiz_id());
+            preparedStatement.setInt(3, qh.getUser_id());
+            preparedStatement.setInt(4, qh.getTime_taken());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void insertQuiz(Quiz qz){
@@ -174,6 +190,8 @@ public class DBConn{
                 "WHERE " + String.format("n.id = %d", nId);
         executeUpdate(q);
     }
+
+
 
     public ArrayList<Notification> getNotifications(int receiverId, int senderId, String notifType) {
         String q = "SELECT * FROM notifications n";
@@ -223,6 +241,27 @@ public class DBConn{
         return selection;
     }
 
+    public ArrayList<Notification> containsNotification(Notification n) {
+        String q = String.format("SELECT * FROM notifications n where receiver_id = %d &&" +
+                "sender_id = %d && notif_type = '%s' && notif_body = '%s'", n.getReceiverId(), n.getSenderId(), n.getNotifType(),n.getNotifBody());
+
+        ArrayList<Notification> notifications = new ArrayList<>();
+        try{
+            executeQuery(q);
+
+            while (rs.next()) {
+                Notification qh = new Notification(rs.getInt("id"), rs.getInt("receiver_id"), rs.getInt("sender_id"), rs.getString("notif_type"), rs.getString("notif_body"));
+                notifications.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return notifications;
+    }
+
     public ArrayList<Announcement> getAnnouncements() {
         String q = "SELECT * FROM announcements";
         ArrayList<Announcement> selection = new ArrayList<>();
@@ -262,6 +301,28 @@ public class DBConn{
         }
         return quizHistory;
     }
+    public ArrayList<QuizHistory> getUserQuizHistory(int user_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(user_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.user_id = %d", user_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
     public ArrayList<Achievement> getAchievements(int id) {
         String q = "SELECT * FROM achievements";
         if(id != -1){
@@ -307,6 +368,26 @@ public class DBConn{
         return selection;
     }
 
+    public ArrayList<User> getAllAdmins() {
+        String query = "SELECT * FROM users u where u.role = 'admin'";
+
+        ArrayList<User> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
+                user.setPfpLink(rs.getString("pfp"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return selection;
+    }
+
 
     public ArrayList<User> getUsers(int id) {
         String query = "SELECT * FROM users";
@@ -319,7 +400,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
                 user.setPfpLink(rs.getString("pfp"));
                 selection.add(user);
             }
@@ -342,7 +423,7 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
                 user.setPfpLink(rs.getString("pfp"));
                 selection.add(user);
             }
@@ -366,8 +447,46 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"));
+                User user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("password_hash"), rs.getString("role"), rs.getBoolean("isPrivate"));
                 user.setPfpLink(rs.getString("pfp"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return selection;
+    }
+
+    public ArrayList<rateAndReview> getRateAndReviewByID(int reviewId) {
+        String query = String.format("SELECT * FROM rateAndReview u where u.id = %d", reviewId);
+
+        ArrayList<rateAndReview> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                rateAndReview user = new rateAndReview(rs.getInt("id"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("rating"), rs.getString("review"));
+                selection.add(user);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return selection;
+    }
+
+    public ArrayList<rateAndReview> getRateAndReview(int quizId) {
+        String query = String.format("SELECT * FROM rateAndReview u where u.quiz_id = %d", quizId);
+
+        ArrayList<rateAndReview> selection = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                rateAndReview user = new rateAndReview(rs.getInt("id"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("rating"), rs.getString("review"));
                 selection.add(user);
             }
 
@@ -402,121 +521,74 @@ public class DBConn{
 
     public void removeUser(int user_id){
         String q = String.format("DELETE FROM users u WHERE (u.id = %d)", user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
+
+    public void removeRateAndReview(int revId){
+        String q = String.format("DELETE FROM rateAndReview r WHERE (r.id = %d)", revId);
+        executeUpdate(q);
+    }
+
+    public void removeExactReview(rateAndReview review){
+        String q = String.format("DELETE FROM rateAndReview r WHERE (r.user_id = %d) &&" +
+                                    "(r.quiz_id = %d) && (r.rating = %d) && (r.review = '%s')",
+                                    review.userId, review.quizId, review.rating, review.review);
+        executeUpdate(q);
+    }
+
     public void removeQuiz(int quiz_id){
         String q = String.format("DELETE FROM quizzes q WHERE (q.id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void makeUserAdmin(int user_id){
         String q = String.format("UPDATE users SET role = 'admin' WHERE id = %d;", user_id);
+        executeUpdate(q);
+    }
 
-        try{
-            executeUpdate(q);
+    public void makeUserPrivate(int user_id, boolean priv){
+        String q = String.format("UPDATE users SET isPrivate = %b WHERE id = %d;", priv, user_id);
+        executeUpdate(q);
+    }
 
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+    public void updateUserPicture(int user_id, String pfp){
+        String q = String.format("UPDATE users SET pfp = '%s' WHERE id = %d;", pfp, user_id);
+        executeUpdate(q);
     }
 
     public void removeUserQuizes(int user_id){
         String q = String.format("DELETE FROM quizzes q WHERE (q.creator_id = %d)", user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeUserNotifications(int user_id){
         String q = String.format("DELETE FROM notifications n WHERE (n.receiver_id = %d) OR (n.sender_id = %d)", user_id, user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeUserAchievements(int user_id){
         String q = String.format("DELETE FROM user_achievements a WHERE (a.user_id = %d)", user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeQuizQuestions(int quiz_id){
         String q = String.format("DELETE FROM questions q WHERE (q.quiz_id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeQuizAnswers(int quiz_id){
         String q = String.format("DELETE FROM answers q WHERE (q.question_id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeQuizHistory(int quiz_id){
         String q = String.format("DELETE FROM quiz_history q WHERE (q.quiz_id = %d)", quiz_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public void removeFriend(int user_id, int friend_id){
         String q = String.format("DELETE FROM friends WHERE (user_id = %d AND friend_id = %d) OR (user_id = %d AND friend_id = %d)", user_id, friend_id, friend_id, user_id);
-
-        try{
-            executeUpdate(q);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        executeUpdate(q);
     }
 
     public boolean areFriends(int user_id, int friend_id){
@@ -547,6 +619,7 @@ public class DBConn{
                               "q.quiz_name,\n" +
                               "q.is_single_page,\n" +
                               "q.can_be_practiced,\n" +
+                              "q.rand_question_order,\n" +
                               "q.description,\n" +
                               "u.username\n" +
                        "FROM quiz_history qh JOIN quizzes q ON(qh.quiz_id = q.id) JOIN users u ON(q.creator_id = u.id)";
@@ -574,8 +647,204 @@ public class DBConn{
         return quizHistory;
     }
 
+    public ArrayList<QuizHistory> GetUserQuizHistoryAndDate(int user_id) {
+        String query = "SELECT qh.id,\n" +
+                "qh.score, \n" +
+                "qh.quiz_id, \n" +
+                "qh.time_taken, \n" +
+                "qh.take_date, \n" +
+                "q.creator_id,\n" +
+                "q.quiz_name,\n" +
+                "q.is_single_page,\n" +
+                "q.can_be_practiced,\n" +
+                "q.rand_question_order,\n" +
+                "q.description,\n" +
+                "u.username\n" +
+                "FROM quiz_history qh JOIN quizzes q ON(qh.quiz_id = q.id) JOIN users u ON(q.creator_id = u.id)";
+        if(user_id != -1){
+            query += String.format(" WHERE qh.user_id = %d", user_id);
+        }
+        query += " ORDER BY qh.id DESC";
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("creator_id"), rs.getInt("time_taken"));
+                if(rs.getTimestamp("take_date")!= null)
+                qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
+                Quiz q = new Quiz(qh.getQuiz_id(), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"), rs.getBoolean("rand_question_order"));
+                q.creatorName = rs.getString("username");
+                qh.setQuiz(q);
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
+    public ArrayList<QuizHistory> GetquizQuizHistoryAndDate(int quiz_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(quiz_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.quiz_id = %d", quiz_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
+    public ArrayList<QuizHistory> getFriendsQuizHistory(int user_id, int quiz_id){
+        ArrayList<Friend> friends = getUserFriends(user_id);
+        ArrayList<QuizHistory> quizHistories = GetquizQuizHistoryAndDate(quiz_id);
+        Set<Integer> friendUserIds = new HashSet<>();
+        for (Friend friend : friends) {
+            friendUserIds.add(friend.getUser_id());
+        }
+        List<QuizHistory> friendQuizHistories = quizHistories.stream()
+                .filter(history -> friendUserIds.contains(history.getUser_id()))
+                .toList();
+        return new ArrayList<>(friendQuizHistories);
+    }
+
+    public ArrayList<QuizHistory> GetquizQuizHistoryAndDate(int quiz_id, int user_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(quiz_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.quiz_id = %d", quiz_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
+
+
     public ArrayList<Quiz> getQuizzes(){
         String quizzesQuery = "SELECT * FROM quizzes;";
+        ArrayList<Quiz> selection = new ArrayList<>();
+        try{
+            executeQuery(quizzesQuery);
+
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt("id"),
+                        rs.getInt("creator_id"),
+                        rs.getString("quiz_name"),
+                        rs.getString("description"),
+                        rs.getBoolean("is_single_page"),
+                        rs.getBoolean("can_be_practiced"),
+                        rs.getBoolean("rand_question_order")
+                );
+                selection.add(quiz);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+
+    public int getCategoryId(String category){
+        String quizzesQuery = String.format("SELECT * FROM quiz_categories where category = '%s';", category);
+        int id = -1;
+        try{
+            executeQuery(quizzesQuery);
+            rs.next();
+            id = rs.getInt("id");
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public ArrayList<Quiz> getQuizzesByCategory(String category){
+        int categoryId = getCategoryId(category);
+        String quizzesQuery = String.format("SELECT * FROM quizzes where category_id = %d;", categoryId);
+        ArrayList<Quiz> selection = new ArrayList<>();
+        try{
+            executeQuery(quizzesQuery);
+
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt("id"),
+                        rs.getInt("creator_id"),
+                        rs.getString("quiz_name"),
+                        rs.getString("description"),
+                        rs.getBoolean("is_single_page"),
+                        rs.getBoolean("can_be_practiced"),
+                        rs.getBoolean("rand_question_order")
+                );
+                selection.add(quiz);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+
+    public ArrayList<Quiz> getQuizzesByTag(String tag){
+        String quizzesQuery = String.format("SELECT q.* FROM quizzes q JOIN tag_quiz tq ON q.id = tq.quiz_id\n" +
+                "                JOIN quiz_tags qt ON tq.tag_id = qt.id\n" +
+                "                WHERE qt.tag = '%s';", tag);
+        ArrayList<Quiz> selection = new ArrayList<>();
+        try{
+            executeQuery(quizzesQuery);
+
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt("id"),
+                        rs.getInt("creator_id"),
+                        rs.getString("quiz_name"),
+                        rs.getString("description"),
+                        rs.getBoolean("is_single_page"),
+                        rs.getBoolean("can_be_practiced"),
+                        rs.getBoolean("rand_question_order")
+                );
+                selection.add(quiz);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return  null;
+        }
+        return selection;
+    }
+
+    public ArrayList<Quiz> getQuizzesByName(String quizName){
+        String quizzesQuery = String.format("SELECT * FROM quizzes q WHERE q.quiz_name = '%s';", quizName);
         ArrayList<Quiz> selection = new ArrayList<>();
         try{
             executeQuery(quizzesQuery);
@@ -810,7 +1079,7 @@ public class DBConn{
     }
 
     public ArrayList<Quiz> getRecentlyCreatedQuizzes(int creator_id){
-        String query = String.format("SELECT * FROM quizzes ORDER BY id DESC LIMIT 5");
+        String query = String.format("SELECT * FROM quizzes ORDER BY id DESC");
         if(creator_id != -1) {
             query = String.format("SELECT * FROM quizzes WHERE creator_id = %d ORDER BY id DESC LIMIT 5", creator_id);
         }
@@ -832,7 +1101,7 @@ public class DBConn{
     }
 
     public ArrayList<Quiz> getPopularQuizzes(){
-        String query = String.format("SELECT quiz_id, COUNT(*) AS frequency FROM quiz_history GROUP BY quiz_id ORDER BY frequency DESC LIMIT 5");
+        String query = String.format("SELECT quiz_id, COUNT(*) AS frequency FROM quiz_history GROUP BY quiz_id ORDER BY frequency DESC");
         Map<Integer, Integer> quizFrequencyMap = new HashMap<>();
         ArrayList<Quiz> popularQuizzes = new ArrayList<>();
         try{
@@ -871,12 +1140,12 @@ public class DBConn{
     }
 
     public int getLastQuestionId(){
-        String q = "SELECT MAX(id) as next_id FROM questions";
+        String q = "SELECT MAX(id) as cur_id FROM questions";
         try{
             executeQuery(q);
             rs.next();
-            int nextId = rs.getInt("next_id");
-            return  nextId;
+            int cur_id = rs.getInt("cur_id");
+            return  cur_id;
         } catch (Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -886,22 +1155,139 @@ public class DBConn{
 
     public void updateQuiz(Quiz qu){
         String q = "UPDATE quizzes q\n" +
-                   String.format("SET q.quiz_name = '%s', q.description = '%s', q.is_single_page = %b, q.can_be_practiced = %b, q.rand_question_order = %b\n", qu.quiz_name, qu.description, qu.is_single_page, qu.can_be_practiced, qu.rand_question_order) +
-                   "WHERE q.id = 3;";
+                   String.format("SET q.quiz_name = '%s', q.description = '%s', q.is_single_page = %b, q.can_be_practiced = %b, q.rand_question_order = %b WHERE q.id = %d;", qu.quiz_name, qu.description, qu.is_single_page, qu.can_be_practiced, qu.rand_question_order, qu.id);
+        executeUpdate(q);
+    }
+    public void updateRateAndReview(rateAndReview r){
+        if(r == null)
+            throw new RuntimeException("Provided insertRateAndReview is null");
+        String q = "UPDATE rateAndReview q\n" +
+                String.format("SET q.rating = %d, q.review = '%s' WHERE q.id = %d;", r.rating, r.review, r.id);
+        executeUpdate(q);
     }
 
     public void trimQuiz(Quiz qu){
         String delete_answers = String.format("DELETE FROM answers WHERE question_id IN (SELECT id FROM questions WHERE quiz_id = %d)", qu.id);
         String delete_questions = String.format("DELETE FROM questions WHERE quiz_id = %d", qu.id);
-
-        // tags and history
+        String delete_tags = String.format("DELETE FROM tag_quiz WHERE quiz_id = %d", qu.id);
 
         try {
             executeUpdate(delete_answers);
             executeUpdate(delete_questions);
+            executeUpdate(delete_tags);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
+    }
+    public ArrayList<Categorya> getCategories(){
+        ArrayList<Categorya> categories = new ArrayList<>();
+        String q = "SELECT * FROM quiz_categories";
+        try{
+            executeQuery(q);
+
+            while (rs.next()) {
+                Categorya categorya = new Categorya(rs.getInt("id"), rs.getString("category"));
+                categories.add(categorya);
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return categories;
+    }
+    public int getTagId(String tag){
+        String q = String.format("SELECT * FROM quiz_tags qt WHERE qt.tag = '%s'", tag);
+        try{
+            executeQuery(q);
+
+            while(rs.next()){
+                int id = rs.getInt("id");
+                return id;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    public int getLastTagId(){
+        String q = "SELECT MAX(id) as cur_id FROM quiz_tags";
+        try{
+            executeQuery(q);
+            rs.next();
+            int cur_id = rs.getInt("cur_id");
+            return  cur_id;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    public void updateQuizCategory(int quiz_id, int category_id){
+        String u = String.format("UPDATE quizzes q SET q.category_id = %d WHERE q.id = %d", category_id, quiz_id);
+        if(category_id == 0){
+            u = String.format("UPDATE quizzes q SET q.category_id = null WHERE q.id = %d", quiz_id);
+        }
+        executeUpdate(u);
+    }
+    public int getQuizCategory(int quiz_id){
+        String q = String.format("select category_id from quizzes q where q.id=%d", quiz_id);
+        try{
+            executeQuery(q);
+            rs.next();
+            int category_id = rs.getInt("category_id");
+            System.out.println("quiz category ID: " + category_id);
+            return category_id;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    public ArrayList<Tag> getTags(){
+        String q = "SELECT * FROM quiz_tags";
+        ArrayList<Tag> tags = new ArrayList<>();
+        try{
+            executeQuery(q);
+
+            while (rs.next()) {
+                Tag tag = new Tag(rs.getInt("id"), rs.getString("tag"));
+                tags.add(tag);
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return tags;
+    }
+    public ArrayList<String> getQuizTags(int quiz_id){
+        String q = String.format("SELECT tag FROM tag_quiz tq JOIN quiz_tags qt ON(tq.tag_id = qt.id) WHERE tq.quiz_id = %d", quiz_id);
+        ArrayList<String> tags = new ArrayList<>();
+        try{
+            executeQuery(q);
+            while(rs.next()){
+                String tag = rs.getString("tag");
+                tags.add(tag);
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return tags;
+    }
+    public int getQuizNumCreatedByUser(int user_id){
+        String q = String.format("SELECT COUNT(*) AS num FROM quizzes q WHERE q.creator_id = %d", user_id);
+        try{
+            executeQuery(q);
+            while(rs.next()){
+                int num = rs.getInt("num");
+                return num;
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
     }
 }
