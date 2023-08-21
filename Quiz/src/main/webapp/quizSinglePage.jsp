@@ -103,11 +103,8 @@
     } else if ("Prev".equals(action)) {
         iterator--;
     }else if ("submit".equals(action)) {
-
-            if (questions.get(iterator).type == QuestionType.QUESTION_RESPONSE){
-                String responseAnswer = request.getParameter("response_answer");
+                ArrayList<String> responseAnswer =(ArrayList<String>) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
                 double score = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
-            }
     }else if("End Quiz".equals(action)){
         ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
         response.sendRedirect("quizResults.jsp?id=" + request.getParameter("id"));
