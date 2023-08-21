@@ -80,7 +80,13 @@
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
-        <input type="text" name=<%="question"+i%>>
+           <%
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
+        for(int j=0;j<answers.size();j++){
+    %>
+    <input type="text" name=<%="question"+i+"_"+j%>>
+
+    <% }
 
     <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
@@ -93,7 +99,7 @@
   <%
      }
   }else if (questionType == QuestionType.PICTURE_RESPONSE) { %>
-
+    <img src=<%=question.question%>  width="300" height="200" style="border: 2px solid black;">
     <input type="text" name=<%="question"+i %>>
 
     <% } else if (questionType == QuestionType.MULTI_ANSWER) { %>

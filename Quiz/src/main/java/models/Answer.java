@@ -12,4 +12,12 @@ public class Answer{
         this.answer = answer;
         this.isCorrect = isCorrect;
     }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "answer='" + answer + '\'' +
+                ", isCorrect=" + isCorrect +
+                '}';
+    }
 }
