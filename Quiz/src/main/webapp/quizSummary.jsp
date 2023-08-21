@@ -47,6 +47,7 @@
         display: inline-block;
         font-size: 15px;
         border-radius: 5px;
+        cursor: pointer;
     }
 
     .action-button:hover {
@@ -205,6 +206,8 @@
     HttpSession ses = request.getSession();
     ses.setAttribute("iterator",null);
 
+    String ReportText = request.getParameter("reporttext");
+    ReportText = ReportText == null ? "Inappropriate Quiz" : ReportText;
 %>
 
 
@@ -233,7 +236,7 @@
             </form>
         <% } else {%>
             <form class="navbarItem" action="./markAsBad" method="post">
-              <button id = "id2" class="action-button">Inappropriate Quiz</button>
+              <button id = "id2" class="action-button"><%= ReportText %></button>
               <input type="hidden" name="quizid" value="<%= quizid %>">
               <input type="hidden" name="userId" value="<%= userId %>">
             </form>

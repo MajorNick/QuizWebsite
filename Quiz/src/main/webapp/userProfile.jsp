@@ -195,6 +195,12 @@ button.navbarItem {
     font-size: 13px;
 }
 
+#id2 {
+    background-color:black;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
 
 
 
@@ -313,6 +319,12 @@ button.navbarItem {
     </div>
     <div class="right-side1">
         <% if (user.isAdmin() && userId != targetId) { %>
+        <form class="navbarItem" action="./BanUser" method="post">
+          <button id = "id2" class="action-button">Ban User</button>
+          <input type="hidden" name="userId" value="<%= userId %>">
+          <input type="hidden" name="targetId" value="<%= targetId %>">
+        </form>
+
         <form class="navbarItem" action="./RemoveAccount" method="post">
           <button id = "id" class="action-button">Remove Account</button>
           <input type="hidden" name="userId" value="<%= userId %>">
