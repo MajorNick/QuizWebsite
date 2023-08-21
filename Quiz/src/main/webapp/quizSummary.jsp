@@ -218,7 +218,7 @@
     session.setAttribute("xulignobs"+quizid+"_"+user.getId(), iyo);
     ArrayList<Question> questions = con.getQuestions(quizid);
     for(int i = 0; i < questions.size(); i++){
-        session.setAttribute("question" + i+"quizId"+quizid, null);
+        session.setAttribute("question" + i+"_"+quizid+"_"+userId, null);
     }
 %>
 
