@@ -276,7 +276,7 @@
 
 <% if (user1 != null) { %>
 <div class = best_performances>
-    <h3>Best Performances</h3>
+    <h3> Your Best Performances</h3>
     <%
 
     %>
@@ -299,23 +299,24 @@
         ArrayList<Integer> bestUsers = con.getBestPerformance(id,false);
     %>
 
+
     <ul>
         <% for(int i : bestUsers){
             User us = con.getUsers(i).get(0);%>
-            <li> <%=us.getUsername()%></li>
+        <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a></li>
         <% } %>
     </ul>
 </div>
 <div class = today_highest_scores>
     <h3>Today's Highest Scores</h3>
     <%
-         bestUsers = con.getBestPerformance(id,false);
+         bestUsers = con.getBestPerformance(id,true);
     %>
 
     <ul>
         <% for(int i : bestUsers){
             User us = con.getUsers(i).get(0);%>
-        <li> <%=us.getUsername()%></li>
+        <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a></li>
         <% } %>
     </ul>
 </div>
@@ -328,7 +329,7 @@
     <ul>
         <% for(int i : lastTaker){
             User us = con.getUsers(i).get(0);%>
-        <li> <%=us.getUsername()%></li>
+        <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a></li>
         <% } %>
     </ul>
 </div>
