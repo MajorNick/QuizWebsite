@@ -104,7 +104,8 @@
         iterator--;
     }else if ("submit".equals(action)) {
                 ArrayList<String> responseAnswer =(ArrayList<String>) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
-                double score = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
+                ArrayList<String> userCorrectAnswers = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
+
     }else if("End Quiz".equals(action)){
         ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
         response.sendRedirect("quizResults.jsp?id=" + request.getParameter("id"));
@@ -133,7 +134,7 @@
              v = answ.get(0) == null ? "" : answ.get(0);
         }
     %>
-    <input type="text" name=<%="question"+iterator%>  value=<%=v%> >
+    <input type="text" name=<%="question"+iterator%>  value="<%=v%>" >
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) {
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
@@ -146,7 +147,7 @@
                 v = definedAnswers.get(j) == null ? "" : definedAnswers.get(j);
 
             } %>
-    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value=<%=v%>>
+    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value="<%=v%>">
     <%
         }
     %>
@@ -174,7 +175,7 @@
 
     <img src=<%=question.question%>  width="300" height="200" style="border: 2px solid black;">
     <br>
-    <input type="text" name=<%="question"+iterator%> value=<%=v%>>
+    <input type="text" name=<%="question"+iterator%> value="<%=v%>">
 
     <% } else if (questionType == QuestionType.MULTI_ANSWER) {
 
@@ -189,7 +190,9 @@
                 v = definedAnswers.get(j) == null ? "" : definedAnswers.get(j);
 
             } %>
-    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value=<%=v%>>
+
+
+    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value="<%=v%>">
     <%
         }
     %>
