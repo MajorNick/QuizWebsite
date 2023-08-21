@@ -21,7 +21,9 @@
 <%@ page import="java.time.LocalTime" %>
 <%@ page import="java.util.Collections" %>
 <%@ page import="java.util.Comparator" %>
+
 <%@ page import="java.util.stream.Collectors" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,8 +149,16 @@ for(int i = 0; i < questions.size(); i++){
     Question question = questions.get(i);
     QuestionType questionType = question.type;
     List<Answer> correctAnswers = con.getAnswers(questions.get(i).id,true);
+    List<Answer> allAnswers = con.getAnswers(questions.get(i).id, false);
 
     ArrayList<String> userAnswersSingle = (ArrayList<String>)ses.getAttribute("question" + i +"_"+quizID+"_"+user.getId());
+
+    if(userAnswersSingle == null){
+        userAnswersSingle = new ArrayList<String>();
+        for(int i1 = 0; i1 < allAnswers.size(); i1++){
+            userAnswersSingle.add(null);
+        }
+    }
 
 
     if (questionType == QuestionType.QUESTION_RESPONSE){
@@ -247,6 +257,7 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
     iyo.add(quizID);
 
     session.setAttribute("xulignobs"+quizID+"_"+user.getId(), iyo);
+
 } else{%>
 <%}
 
@@ -283,7 +294,16 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                         QuestionType questionType = question.type;
                         List<Answer> correctAnswers = con.getAnswers(question.id, true);
                         String userAnswer = "";
+                        List<Answer> allAnswers = con.getAnswers(questions.get(i).id, false);
                         ArrayList<String> userAnswersSingle1 = (ArrayList<String>)ses.getAttribute("question" + i + "_" + quizID + "_" + user.getId());
+
+
+                        if(userAnswersSingle1 == null){
+                            userAnswersSingle1 = new ArrayList<String>();
+                            for(int i1 = 0; i1 < allAnswers.size(); i1++){
+                                userAnswersSingle1.add(null);
+                            }
+                        }
 
                         if (questionType == QuestionType.QUESTION_RESPONSE || questionType == QuestionType.MULTIPLE_CHOICE
                                 || questionType == QuestionType.PICTURE_RESPONSE) {
@@ -294,6 +314,7 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                         } else if (questionType == QuestionType.FILL_IN_THE_BLANK || questionType == QuestionType.MULTI_ANSWER
                                 || questionType == QuestionType.MULTI_AN_CHOICE) {
                             ArrayList<String> userAnswers = userAnswersSingle1;
+
                             ArrayList<String> userAnswers23 = new ArrayList<String>();
 
                             if(!quiz.is_single_page){
@@ -306,11 +327,12 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                             for(String ans: userAnswers){
                                 if(ans!=null){
                                     answersWithouNulls.add(ans);
-                                } else {
-                                    answersWithouNulls.add("No answer");
+                                } else{
+                                    answersWithouNulls.add("");
                                 }
                             }
                             userAnswer = String.join("<br>", answersWithouNulls);
+
                         }
                     %>
                     <tr>
@@ -320,6 +342,7 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                         <%} else{%>
                             <td><%=""%></td>
                         <%}%>
+
                         <td>
                             <%
                             for (Answer correctAnswer : correctAnswers) {
