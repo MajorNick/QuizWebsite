@@ -160,6 +160,10 @@
         background-color: #0056b3;
     }
 
+    .mainButton:hover {
+        background-color: #0056b3;
+    }
+
     .seeAllButton{
          background-color: #b2c7ff;
          font-size: 24px;
@@ -342,14 +346,15 @@
                             if(ns.size()==0){ %>
                                 <p style="color:grey;">You have no notifications.</p>
                             <% } else {
-                            for(Notification n : ns) {
+                            for (int i = 0; i < Math.min(maxElementsToShow, ns.size()); i++) {
                             %>
                             <li>
-                                <%= n.getNotifBody()%>
+                                <%= ns.get(i).getNotifBody()%>
                             </li>
-                            <% }} %>
+                            <% } %>
                     </ul>
                     <a href="notifications.jsp">See All</a>
+                    <% } %>
                 </div>
                 <div class="box">
                     <h1>Achievements</h1>

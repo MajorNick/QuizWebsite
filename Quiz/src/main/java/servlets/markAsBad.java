@@ -30,13 +30,16 @@ public class markAsBad extends HttpServlet {
 
         ArrayList<User> admins = dbConn.getAllAdmins();
 
+        String noteText = String.format("%s reported: <a href=\"./quizSummary.jsp?id=%d\">%s</a> is an inappropriate quiz.", dbConn.getUsers(userId).get(0).getUsername(), quizId, dbConn.getQuizById(quizId).quiz_name);
         admins.forEach(a -> {Notification notification = new Notification(1, a.getId(), userId, "note",
-                "Debiloba testia batono admino." + "\nQuizId : " + quizId); if(dbConn.containsNotification(notification).isEmpty()) dbConn.insertNotification(notification);});
+                noteText); if(dbConn.containsNotification(notification).isEmpty()) dbConn.insertNotification(notification);});
 
         dbConn.closeDBConn();
 
 
-        response.sendRedirect("userProfile.jsp");
+       // response.sendRedirect("home.jsp");
 
+        String redirectUrl = String.format("./quizSummary.jsp?id=%d&reporttext=%s", quizId, "Marked as Inappropriate");
+        response.sendRedirect(redirectUrl);
     }
 }

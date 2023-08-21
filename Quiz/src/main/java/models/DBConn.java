@@ -1,9 +1,9 @@
 package Quiz.src.main.java.models;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DBConn{
     private static final String account = "oopUser";
@@ -134,12 +134,24 @@ public class DBConn{
         executeUpdate(q);
     }
 
-    public void insertQuizHistory(QuizHistory qh){
-        if(qh == null)
+    public void insertQuizHistory(QuizHistory qh) {
+        if (qh == null) {
             throw new RuntimeException("Provided Quiz History is null");
+        }
 
-        String q = String.format("INSERT INTO quiz_history (score, quiz_id, user_id, time_taken)  VALUES(%f, %d, %d, %d)", qh.getScore(), qh.getQuiz_id(), qh.getUser_id(), qh.getTime_taken());
-        executeUpdate(q);
+        String query = "INSERT INTO quiz_history (score, quiz_id, user_id, time_taken, take_date) VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setDouble(1, qh.getScore());
+            preparedStatement.setInt(2, qh.getQuiz_id());
+            preparedStatement.setInt(3, qh.getUser_id());
+            preparedStatement.setInt(4, qh.getTime_taken());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void insertQuiz(Quiz qz){
@@ -634,6 +646,107 @@ public class DBConn{
         }
         return quizHistory;
     }
+
+    public ArrayList<QuizHistory> GetUserQuizHistoryAndDate(int user_id) {
+        String query = "SELECT qh.id,\n" +
+                "qh.score, \n" +
+                "qh.quiz_id, \n" +
+                "qh.time_taken, \n" +
+                "qh.take_date, \n" +
+                "q.creator_id,\n" +
+                "q.quiz_name,\n" +
+                "q.is_single_page,\n" +
+                "q.can_be_practiced,\n" +
+                "q.rand_question_order,\n" +
+                "q.description,\n" +
+                "u.username\n" +
+                "FROM quiz_history qh JOIN quizzes q ON(qh.quiz_id = q.id) JOIN users u ON(q.creator_id = u.id)";
+        if(user_id != -1){
+            query += String.format(" WHERE qh.user_id = %d", user_id);
+        }
+        query += " ORDER BY qh.id DESC";
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("creator_id"), rs.getInt("time_taken"));
+                if(rs.getTimestamp("take_date")!= null)
+                qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
+                Quiz q = new Quiz(qh.getQuiz_id(), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"), rs.getBoolean("rand_question_order"));
+                q.creatorName = rs.getString("username");
+                qh.setQuiz(q);
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
+    public ArrayList<QuizHistory> GetquizQuizHistoryAndDate(int quiz_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(quiz_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.quiz_id = %d", quiz_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
+    public ArrayList<QuizHistory> getFriendsQuizHistory(int user_id, int quiz_id){
+        ArrayList<Friend> friends = getUserFriends(user_id);
+        ArrayList<QuizHistory> quizHistories = GetquizQuizHistoryAndDate(quiz_id);
+        Set<Integer> friendUserIds = new HashSet<>();
+        for (Friend friend : friends) {
+            friendUserIds.add(friend.getUser_id());
+        }
+        List<QuizHistory> friendQuizHistories = quizHistories.stream()
+                .filter(history -> friendUserIds.contains(history.getUser_id()))
+                .toList();
+        return new ArrayList<>(friendQuizHistories);
+    }
+
+    public ArrayList<QuizHistory> GetquizQuizHistoryAndDate(int quiz_id, int user_id) {
+        String query = "SELECT * FROM quiz_history";
+        if(quiz_id != -1){
+            query = String.format("SELECT * FROM quiz_history q where q.quiz_id = %d", quiz_id);
+        }
+
+        ArrayList<QuizHistory> quizHistory = new ArrayList<>();
+        try{
+            executeQuery(query);
+
+            while (rs.next()) {
+                QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("user_id"), rs.getInt("time_taken"));
+                qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
+                quizHistory.add(qh);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return quizHistory;
+    }
+
+
 
     public ArrayList<Quiz> getQuizzes(){
         String quizzesQuery = "SELECT * FROM quizzes;";

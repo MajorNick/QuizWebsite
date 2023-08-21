@@ -1,14 +1,17 @@
 package Quiz.src.main.java.models;
 
+import java.time.LocalDateTime;
+
 public class QuizHistory {
     private int Id;
     private double Score;
     private int Quiz_id;
     private int User_id;
-    private double Time_taken;
+    private int Time_taken;
     private Quiz _quiz;
+    private LocalDateTime take_date;
 
-    public QuizHistory(int id, double score, int quiz_id, int user_id, double time_taken){
+    public QuizHistory(int id, double score, int quiz_id, int user_id, int time_taken){
         Id = id;
         Score = score;
         Quiz_id = quiz_id;
@@ -32,7 +35,7 @@ public class QuizHistory {
         return Score;
     }
 
-    public double getTime_taken() {
+    public int getTime_taken() {
         return Time_taken;
     }
 
@@ -42,5 +45,11 @@ public class QuizHistory {
 
     public Quiz getQuiz(){
         return _quiz;
+    }
+    public void setTakeDate(LocalDateTime take_date){
+        this.take_date = take_date;
+    }
+    public LocalDateTime getTakeDate(){
+        return take_date;
     }
 }

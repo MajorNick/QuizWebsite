@@ -12,4 +12,16 @@ public class Answer{
         this.answer = answer;
         this.isCorrect = isCorrect;
     }
+
+    public int getId(){
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "answer='" + answer + '\'' +
+                ", isCorrect=" + isCorrect +
+                '}';
+    }
 }

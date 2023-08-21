@@ -62,11 +62,9 @@ public class CreateQuiz extends HttpServlet {
         if(quiz_id == null){
             quizId = dbConn.getNextQuizId();
         } else {
-            System.out.println("dkslajf;klasjkfl;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             editingQuiz = true;
             quizId = Integer.parseInt(quiz_id);
         }
-        System.out.println("dkslajf;klasjkfl;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + editingQuiz);
 
         if(maxQuestionIndex == null){
             System.out.println("maxQuestionIndex is null");
@@ -100,7 +98,6 @@ public class CreateQuiz extends HttpServlet {
         ArrayList<Answer> answersToInsert = new ArrayList<>();
 
         for(int i = 1; i <= maxQuestionIndex_INT; i++){
-            questionId++;
             String question_type = request.getParameter(String.format("select%d", i));
             String questionText = request.getParameter(String.format("question%d", i));
             String answerCount = request.getParameter(String.format("answerCount%d", i));
@@ -113,7 +110,7 @@ public class CreateQuiz extends HttpServlet {
                 System.out.println("question_type " + i + " == null");
                 continue;
             }
-
+            questionId++;
             int answerCount_Int = Integer.parseInt(answerCount);
             int questionType_INT = Integer.parseInt(question_type);
             int question_num = i;
