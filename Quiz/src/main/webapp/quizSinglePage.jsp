@@ -7,7 +7,6 @@
 <%@ page import="Quiz.src.main.java.HelperMethods.AnswerChecker" %>
 <%@ page import="java.time.LocalTime" %>
 <%@ page import="java.util.Collections" %>
-<%@ page import="java.util.Collection" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -90,7 +89,7 @@
     String action = request.getParameter("action");
     if ("Next".equals(action)) {
         iterator++;
-    } else if ("Prev".equals(action)) {
+    } else if ("Previous".equals(action)) {
         iterator--;
     }else if ("submit".equals(action)) {
         %>
@@ -208,7 +207,7 @@
         <%
             if (iterator != 0){
         %>
-        <input class="submit_button" type="submit" name="action" value="Prev">
+        <input class="submit_button" type="submit" name="action" value="Previous">
         <% } %>
         <%
             if (iterator != questions.size()-1){

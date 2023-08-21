@@ -75,7 +75,8 @@
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
            <%
-        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);
+        ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,true);
+
         for(int j=0;j<answers.size();j++){
     %>
     <input type="text" name=<%="question"+i+"_"+j%>>

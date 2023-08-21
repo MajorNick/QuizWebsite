@@ -29,6 +29,7 @@ public class PreparePracticeQuiz extends HttpServlet{
         }
         HttpSession session = req.getSession();
         session.setAttribute("questionMap",sessionQuestions);
+        session.setAttribute("trialsLeft",3);
 
         RequestDispatcher dispatcher = req.getRequestDispatcher("/quizPractice");
         dispatcher.forward(req, resp);
