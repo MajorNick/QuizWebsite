@@ -21,6 +21,7 @@
 <%@ page import="java.time.LocalTime" %>
 <%@ page import="java.util.Collections" %>
 <%@ page import="java.util.Comparator" %>
+<%@ page import="java.util.stream.Collectors" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -246,9 +247,8 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
     iyo.add(quizID);
 
     session.setAttribute("xulignobs"+quizID+"_"+user.getId(), iyo);
-} else{
-
-}
+} else{%>
+<%}
 
 
 %>
@@ -257,6 +257,7 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
 
 <body>
     <div class="container">
+
         <header>
             <h1>Quiz Results</h1>
         </header>
@@ -293,12 +294,32 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                         } else if (questionType == QuestionType.FILL_IN_THE_BLANK || questionType == QuestionType.MULTI_ANSWER
                                 || questionType == QuestionType.MULTI_AN_CHOICE) {
                             ArrayList<String> userAnswers = userAnswersSingle1;
-                            userAnswer = String.join("<br>", userAnswers);
+                            ArrayList<String> userAnswers23 = new ArrayList<String>();
+
+                            if(!quiz.is_single_page){
+                                for(int j = 0; j < correctAnswers.size(); j++){
+                                    userAnswers23.add(request.getParameter("question" + i +"_"+j));
+                                }
+                                userAnswers = userAnswers23;
+                            }
+                            ArrayList<String> answersWithouNulls = new ArrayList<String>();
+                            for(String ans: userAnswers){
+                                if(ans!=null){
+                                    answersWithouNulls.add(ans);
+                                } else {
+                                    answersWithouNulls.add("No answer");
+                                }
+                            }
+                            userAnswer = String.join("<br>", answersWithouNulls);
                         }
                     %>
                     <tr>
                         <td><%= i + 1 %></td>
+                        <%if(userAnswer != null){%>
                         <td><%= userAnswer %></td>
+                        <%} else{%>
+                            <td><%=""%></td>
+                        <%}%>
                         <td>
                             <%
                             for (Answer correctAnswer : correctAnswers) {

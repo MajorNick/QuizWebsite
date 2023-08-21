@@ -206,7 +206,7 @@
     User creator = con.getUsers(quiz.creator_id).get(0);
     int quizid = quiz.id;
     HttpSession ses = request.getSession();
-    ses.setAttribute("iterator",null);
+    ses.setAttribute("iterator"+quizid+"_"+user1.getId(),null);
 
     String ReportText = request.getParameter("reporttext");
     ReportText = ReportText == null ? "Inappropriate Quiz" : ReportText;
@@ -215,7 +215,7 @@
     iyo.add(user.getId());
     iyo.add(quizid);
 
-    session.setAttribute("xulignobs", iyo);
+    session.setAttribute("xulignobs"+quizid+"_"+user.getId(), iyo);
     ArrayList<Question> questions = con.getQuestions(quizid);
     for(int i = 0; i < questions.size(); i++){
         session.setAttribute("question" + i+"quizId"+quizid, null);
