@@ -111,7 +111,32 @@ class HTMLTag {
 }
 
 class HTMLCodeBlocks{
-    public static final String css = ".block-container {\n" +
+    public static final String css = "" +
+            "" +
+            ".back-button {\n" +
+            "    display: inline-block;\n" +
+            "    background-color: #007bff;\n" +
+            "    color: white;\n" +
+            "    padding: 30px 60px\n" +
+            "    text-decoration: none;\n" +
+            "    font-size: 18px;\n" +
+            " padding: 5px 10px;\n" +
+            "    font-weight: bold;\n" +
+            "    border-radius: 5px;\n" +
+            "    margin-top: 10px;\n" +
+            "}\n" +
+            "\n" +
+            ".back-button:hover {\n" +
+            "    background-color: #0056b3;\n" +
+            "}" +
+            ".chemidivi{\n" +
+            "display = flex;align-items: center;\n" +
+            "  }\n" +
+            ".block-title { \n" +
+            "flex: 1; \n" +
+            "margin-right: 10px; \n" +
+            "}\n" +
+            ".block-container {\n" +
             "    display: flex;\n" +
             "    /* align-items: center; */\n" +
             "    justify-content: center;\n" +
@@ -451,6 +476,7 @@ public class EditQuiz extends HttpServlet {
             HTMLTag title = new HTMLTag("title");
             title.inner = "Edit Quiz";
 
+
             head.add(title);
 
             HTMLTag cssStyle = new HTMLTag("style");
@@ -461,16 +487,28 @@ public class EditQuiz extends HttpServlet {
 
             HTMLTag body = new HTMLTag("body");
 
+
             HTMLTag quiz_summary = new HTMLTag("div");
             quiz_summary._class = "block-container";
+
 
             HTMLTag quiz_summary_cont = new HTMLTag("div");
             quiz_summary_cont._class = "block-contents";
 
+            HTMLTag chemiaxalidivi = new HTMLTag("div");
+            chemiaxalidivi._class = "chemidivi";
+
             HTMLTag quiz_summary_cont_title = new HTMLTag("div");
             quiz_summary_cont_title._class = "block-title";
             quiz_summary_cont_title.inner = "Edit Quiz";
-            quiz_summary_cont.add(quiz_summary_cont_title);
+            chemiaxalidivi.add(quiz_summary_cont_title);
+
+            HTMLTag profileDiv = new HTMLTag("div");
+            profileDiv.inner = "<a class=back-button href=/userProfile.jsp?id=" + userId + ">Profile</a>";
+            chemiaxalidivi.add(profileDiv);
+
+            quiz_summary_cont.add(chemiaxalidivi);
+
 
             HTMLTag form = new HTMLTag("form");
             form.action = "/CreateQuiz";
@@ -689,10 +727,10 @@ public class EditQuiz extends HttpServlet {
                 ArrayList<String> questionTypes = new ArrayList<String>();
                 questionTypes.add("Question Response");
                 questionTypes.add("Fill in the Blank");
-                questionTypes.add("Multiple Choise");
+                questionTypes.add("Multiple Choice");
                 questionTypes.add("Picture Response");
                 questionTypes.add("Multiple Answer");
-                questionTypes.add("Multiple Choise");
+                questionTypes.add("Multiple Choice & Answers");
                 int qTypeNum = 0;
                 int selected = question.type.value;
                 for(String questionType : questionTypes){
@@ -748,7 +786,7 @@ public class EditQuiz extends HttpServlet {
                             HTMLTag check_box = new HTMLTag("input");
                             check_box.name = "cb" + questionNum + "-ans" + ansN;
                             check_box.type = "checkbox";
-                            check_box.value = "" + ansN;
+                            //check_box.value = "" + ansN;
                             check_box.closesInstantly = true;
                             if(answer.isCorrect){
                                 check_box.checked = "checked";

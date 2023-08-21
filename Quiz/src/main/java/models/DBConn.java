@@ -19,10 +19,11 @@ public class DBConn{
         try{
             conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
             stmt = conn.createStatement();
+
             executeUpdate("USE " + database);
         } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     public void closeDBConn() {
@@ -38,6 +39,7 @@ public class DBConn{
     private void executeQuery(String q) {
         try{
             System.out.println(String.format("Executing querry: %s", q));
+
             rs = stmt.executeQuery(q);
         } catch (Exception e){
             System.out.println("query: " + q + " " + e.getMessage());
@@ -715,7 +717,7 @@ public class DBConn{
         ArrayList<QuizHistory> quizHistories = GetquizQuizHistoryAndDate(quiz_id);
         Set<Integer> friendUserIds = new HashSet<>();
         for (Friend friend : friends) {
-            friendUserIds.add(friend.getUser_id());
+            friendUserIds.add(friend.getFriend_id());
         }
         List<QuizHistory> friendQuizHistories = quizHistories.stream()
                 .filter(history -> friendUserIds.contains(history.getUser_id()))
@@ -1167,12 +1169,10 @@ public class DBConn{
     }
 
     public void trimQuiz(Quiz qu){
-        String delete_answers = String.format("DELETE FROM answers WHERE question_id IN (SELECT id FROM questions WHERE quiz_id = %d)", qu.id);
         String delete_questions = String.format("DELETE FROM questions WHERE quiz_id = %d", qu.id);
         String delete_tags = String.format("DELETE FROM tag_quiz WHERE quiz_id = %d", qu.id);
 
         try {
-            executeUpdate(delete_answers);
             executeUpdate(delete_questions);
             executeUpdate(delete_tags);
         } catch (Exception e) {
