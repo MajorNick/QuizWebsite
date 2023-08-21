@@ -300,18 +300,21 @@
                     </h1>
                     <ul class="list">
                         <% ArrayList<QuizHistory> tqs = dbConn.getUserRecentQuizHistory(targetId);
+                           ArrayList<Integer> alreadyAdded = new ArrayList<Integer>();
                             if(tqs.size()==0){ %>
                                 <p style="color:grey;">You have not taken any quiz yet.</p>
                             <% } else {
                             for (int i = 0; i < Math.min(maxElementsToShow, tqs.size()); i++) {
-                                QuizHistory qh = tqs.get(i); %>
-                                <li> <a href="<%= " quizSummary.jsp?id=" + qh.getQuiz_id() %>">
-                                         <button class="button quizButton">
-                                             <%= dbConn.getQuizById(qh.getQuiz_id()).quiz_name %>
-                                         </button>
-                                     </a>
-                                </li>
-                            <% }} %>
+                                QuizHistory qh = tqs.get(i);
+                                if(!alreadyAdded.contains(qh.getQuiz_id())) {%>
+                                    <li> <a href="<%= " quizSummary.jsp?id=" + qh.getQuiz_id() %>">
+                                             <button class="button quizButton">
+                                                 <%= dbConn.getQuizById(qh.getQuiz_id()).quiz_name %>
+                                             </button>
+                                         </a>
+                                    </li>
+                                    <%alreadyAdded.add(qh.getQuiz_id());
+                            }}} %>
                     </ul>
                 </div>
 

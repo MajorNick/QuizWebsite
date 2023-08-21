@@ -21,6 +21,7 @@ public class DBConn{
             stmt = conn.createStatement();
             executeUpdate("USE " + database);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -440,7 +441,7 @@ public class DBConn{
 
     public ArrayList<User> getUsersByUsername(String username) {
         String query = "SELECT * FROM users";
-            query = String.format("SELECT * FROM users u where u.username = '%s'", username);
+        query = String.format("SELECT * FROM users u where u.username = '%s'", username);
 
         ArrayList<User> selection = new ArrayList<>();
         try{
@@ -531,8 +532,8 @@ public class DBConn{
 
     public void removeExactReview(rateAndReview review){
         String q = String.format("DELETE FROM rateAndReview r WHERE (r.user_id = %d) &&" +
-                                    "(r.quiz_id = %d) && (r.rating = %d) && (r.review = '%s')",
-                                    review.userId, review.quizId, review.rating, review.review);
+                        "(r.quiz_id = %d) && (r.rating = %d) && (r.review = '%s')",
+                review.userId, review.quizId, review.rating, review.review);
         executeUpdate(q);
     }
 
@@ -612,17 +613,17 @@ public class DBConn{
 
     public ArrayList<QuizHistory> GetUserQuizHistory(int user_id) {
         String query = "SELECT qh.id,\n" +
-                              "qh.score, \n" +
-                              "qh.quiz_id, \n" +
-                              "qh.time_taken, \n" +
-                              "q.creator_id,\n" +
-                              "q.quiz_name,\n" +
-                              "q.is_single_page,\n" +
-                              "q.can_be_practiced,\n" +
-                              "q.rand_question_order,\n" +
-                              "q.description,\n" +
-                              "u.username\n" +
-                       "FROM quiz_history qh JOIN quizzes q ON(qh.quiz_id = q.id) JOIN users u ON(q.creator_id = u.id)";
+                "qh.score, \n" +
+                "qh.quiz_id, \n" +
+                "qh.time_taken, \n" +
+                "q.creator_id,\n" +
+                "q.quiz_name,\n" +
+                "q.is_single_page,\n" +
+                "q.can_be_practiced,\n" +
+                "q.rand_question_order,\n" +
+                "q.description,\n" +
+                "u.username\n" +
+                "FROM quiz_history qh JOIN quizzes q ON(qh.quiz_id = q.id) JOIN users u ON(q.creator_id = u.id)";
         if(user_id != -1){
             query += String.format(" WHERE qh.user_id = %d", user_id);
         }
@@ -673,7 +674,7 @@ public class DBConn{
             while (rs.next()) {
                 QuizHistory qh = new QuizHistory(rs.getInt("id"), rs.getDouble("score"), rs.getInt("quiz_id"), rs.getInt("creator_id"), rs.getInt("time_taken"));
                 if(rs.getTimestamp("take_date")!= null)
-                qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
+                    qh.setTakeDate(rs.getTimestamp("take_date").toLocalDateTime());
                 Quiz q = new Quiz(qh.getQuiz_id(), rs.getInt("creator_id"), rs.getString("quiz_name"), rs.getString("description"), rs.getBoolean("is_single_page"), rs.getBoolean("can_be_practiced"), rs.getBoolean("rand_question_order"));
                 q.creatorName = rs.getString("username");
                 qh.setQuiz(q);
@@ -874,14 +875,14 @@ public class DBConn{
         try{
             executeQuery(quizzesQuery);
             rs.next();
-             result = new Quiz(rs.getInt("id"),
+            result = new Quiz(rs.getInt("id"),
                     rs.getInt("creator_id"),
                     rs.getString("quiz_name"),
                     rs.getString("description"),
                     rs.getBoolean("is_single_page"),
                     rs.getBoolean("can_be_practiced"),
-                     rs.getBoolean("rand_question_order")
-                );
+                    rs.getBoolean("rand_question_order")
+            );
 
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -998,13 +999,13 @@ public class DBConn{
         Question selection;
         try{
             executeQuery(questionQuery);
-                rs.next();
-                Question question  = new Question(rs.getInt("id"),
-                        rs.getInt("quiz_id"),
-                        rs.getString("question"),
-                        rs.getInt("question_type"),
-                        rs.getInt("question_num"));
-                selection = question;
+            rs.next();
+            Question question  = new Question(rs.getInt("id"),
+                    rs.getInt("quiz_id"),
+                    rs.getString("question"),
+                    rs.getInt("question_type"),
+                    rs.getInt("question_num"));
+            selection = question;
 
         } catch (Exception e){
             e.printStackTrace();
@@ -1015,7 +1016,7 @@ public class DBConn{
     public ArrayList<Answer> getAnswers( int question_id,boolean onlyCorrect){
         String questionQuery;
         if(onlyCorrect){
-             questionQuery = String.format("SELECT * FROM answers where question_id = %d AND is_correct = TRUE;",question_id);
+            questionQuery = String.format("SELECT * FROM answers where question_id = %d AND is_correct = TRUE;",question_id);
         }else{
             questionQuery = String.format("SELECT * FROM answers where question_id = %d",question_id);
         }
@@ -1155,7 +1156,7 @@ public class DBConn{
 
     public void updateQuiz(Quiz qu){
         String q = "UPDATE quizzes q\n" +
-                   String.format("SET q.quiz_name = '%s', q.description = '%s', q.is_single_page = %b, q.can_be_practiced = %b, q.rand_question_order = %b WHERE q.id = %d;", qu.quiz_name, qu.description, qu.is_single_page, qu.can_be_practiced, qu.rand_question_order, qu.id);
+                String.format("SET q.quiz_name = '%s', q.description = '%s', q.is_single_page = %b, q.can_be_practiced = %b, q.rand_question_order = %b WHERE q.id = %d;", qu.quiz_name, qu.description, qu.is_single_page, qu.can_be_practiced, qu.rand_question_order, qu.id);
         executeUpdate(q);
     }
     public void updateRateAndReview(rateAndReview r){

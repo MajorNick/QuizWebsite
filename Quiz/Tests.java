@@ -72,7 +72,7 @@ public class Tests extends TestCase{
         assertTrue(dbConn.getUsers(user1.getId()).get(0).getUsername().equals(user1.getUsername()));
         dbConn.removeUser(user1.getId());
 
-        dbConn.closeDBConn();
+//        dbConn.closeDBConn();
 
     }
 
@@ -114,7 +114,7 @@ public class Tests extends TestCase{
             assertTrue(e.getMessage().equals("Provided UserAchievement is null"));
         }
 
-        dbConn.closeDBConn();
+
     }
 //    public void testJson(){
 //        String jsonString = "{\n" +
