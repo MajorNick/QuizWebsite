@@ -19,9 +19,14 @@ import java.util.LinkedHashMap;
 public class QuizPractice extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        LinkedHashMap <Question, ArrayList<Answer>> mp = (LinkedHashMap) session.getAttribute("questionMap");
-
+        HttpSession ses = req.getSession();
+        Integer trials = (Integer)ses.getAttribute("trialsLeft");
+        if (trials == 0){
+            //quiz ended
+        }else{
+            LinkedHashMap <Question, ArrayList<Answer>> mp = (LinkedHashMap) ses.getAttribute("questionMap");
+            ses.setAttribute("trialsLeft",trials-1);
+        }
     }
 
 }

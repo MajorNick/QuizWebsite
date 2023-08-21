@@ -67,8 +67,8 @@
 
     LocalTime quizStartTime = LocalTime.now();
 
-    ses.setAttribute("quizStartTime", quizStartTime);
-    ses.setAttribute("shuffledQuestions", questions);
+    ses.setAttribute("quizStartTime"+quizID+"_"+user.getId(), quizStartTime);
+    ses.setAttribute("shuffledQuestions"+quizID+"_"+user.getId(), questions);
 
     for (int i = 0; i < questions.size(); i++) {
         Question question = questions.get(i);
@@ -126,7 +126,7 @@
 </html>
 
 
-<% ArrayList<Integer> iyo = (ArrayList<Integer>) session.getAttribute("xulignobs");
+<% ArrayList<Integer> iyo = (ArrayList<Integer>) session.getAttribute("xulignobs"+quizID+"_"+user.getId());
       if (iyo != null) {
           if (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get(0) == 1) {
               response.sendRedirect(request.getContextPath() + "/quizResults.jsp?id=" + quizID);
