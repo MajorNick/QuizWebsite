@@ -1,5 +1,6 @@
 <%@ page import="Quiz.src.main.java.models.Question" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Answer" %>
@@ -7,6 +8,7 @@
 <%@ page import="Quiz.src.main.java.HelperMethods.AnswerChecker" %>
 <%@ page import="java.time.LocalTime" %>
 <%@ page import="java.util.Collections" %>
+<%@ page import="java.util.Collection" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -44,25 +46,34 @@
 </div>
 
 <%
-    HttpSession ses = request.getSession();
-    Integer iterator = (Integer) ses.getAttribute("iterator");
-
     boolean correction  = Boolean.parseBoolean(request.getParameter("correction"));
     int quizID = Integer.parseInt(request.getParameter("id"));;
+    User user1 = (User) session.getAttribute("user");
+    HttpSession ses = request.getSession();
+    Integer iterator = (Integer) ses.getAttribute("iterator"+quizID+"_"+user1.getId());
+
+
+    if (user1 == null) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
+
+    //boolean correction  = Boolean.valueOf(request.getParameter("correction"));
+
     DBConn con = new DBConn();
     Quiz quiz = con.getQuiz(quizID);
-    ArrayList<Question> questions = (ArrayList) ses.getAttribute("shuffledQuestions");
+    ArrayList<Question> questions = (ArrayList) ses.getAttribute("shuffledQuestions"+quizID+"_"+user1.getId());
     if(questions == null){
         questions = con.getQuestions(quizID);
         if(quiz.rand_question_order){
             Collections.shuffle(questions);
         }
-        ses.setAttribute("shuffledQuestions",questions);
+        ses.setAttribute("shuffledQuestions"+quizID+"_"+user1.getId(),questions);
     }
 
     if(iterator == null) {
         LocalTime quizStartTime = LocalTime.now();
-        ses.setAttribute("quizStartTime", quizStartTime);
+        ses.setAttribute("quizStartTime"+quizID+"_"+user1.getId(), quizStartTime);
         iterator = 0;
     }else{
         Question quest = questions.get(iterator);
@@ -77,39 +88,38 @@
 
             }
 
-            ses.setAttribute("question"+iterator,tmp);
+            ses.setAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator,tmp);
         }else{
 
             ArrayList<String> tmp =new ArrayList<String>();
             tmp.add(request.getParameter("question"+iterator));
-            ses.setAttribute("question"+iterator,tmp);
+            ses.setAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator,tmp);
         }
     }
 
     String action = request.getParameter("action");
     if ("Next".equals(action)) {
         iterator++;
-    } else if ("Previous".equals(action)) {
+    } else if ("Prev".equals(action)) {
         iterator--;
     }else if ("submit".equals(action)) {
-        %>
-    <%
-            if (questions.get(iterator).type == QuestionType.QUESTION_RESPONSE){
-                String responseAnswer = request.getParameter("response_answer");
-                double score = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
-            }
+
+        if (questions.get(iterator).type == QuestionType.QUESTION_RESPONSE){
+            String responseAnswer = request.getParameter("response_answer");
+          //  double score = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
+        }
     }else if("End Quiz".equals(action)){
-        ses.setAttribute("iterator",null);
-        response.sendRedirect("ProcessAnswers");
-        }else if( action != null){
+        ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
+        response.sendRedirect("quizResults.jsp?id=" + request.getParameter("id"));
+    }else if( action != null){
         try {
             int selected = Integer.parseInt(action);
             iterator = selected - 1;
         } catch (NumberFormatException e) {
-            %> <h1> erroooooooor while parsing request</h1> <%
+%> <h1> erroooooooor while parsing request</h1> <%
         }
     }
-    ses.setAttribute("iterator", iterator);
+    ses.setAttribute("iterator"+quizID+"_"+user1.getId(), iterator);
 
     if (iterator >= 0 && iterator < questions.size()) {
         Question question = questions.get(iterator);
@@ -120,17 +130,17 @@
     <p>Question <%= iterator + 1 %>: <%= questionType == QuestionType.PICTURE_RESPONSE?"":question.question %></p>
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) {
-        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+iterator);
+        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
         String v = "";
         if(answ != null) {
-             v = answ.get(0) == null ? "" : answ.get(0);
+            v = answ.get(0) == null ? "" : answ.get(0);
         }
     %>
     <input type="text" name=<%="question"+iterator%>  value=<%=v%> >
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) {
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
-        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator);
+        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
 
         for (int j = 0; j < answers.size(); j++) {
             String v = "";
@@ -144,10 +154,9 @@
         }
     %>
 
-    <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
-    <%
+    <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) {
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
-        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question" + iterator);
+        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
         String selectedAnswer = selected==null ?"":selected.get(0);
         for (int j = 0; j < answers.size(); j++) {
 
@@ -160,7 +169,7 @@
     %>
 
     <% } else if (questionType == QuestionType.PICTURE_RESPONSE) {
-        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+iterator);
+        ArrayList<String> answ = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
         String v = "";
         if(answ != null) {
             v = answ.get(0) == null ? "" : answ.get(0);
@@ -174,7 +183,7 @@
 
 
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
-        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator);
+        ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
 
         for (int j = 0; j < answers.size(); j++) {
             String v = "";
@@ -190,7 +199,7 @@
 
     <% } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>
     <%
-        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question" + iterator);
+        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question"+quizID+"_"+user1.getId()+"_"+iterator);
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
 
         for (int j = 0; j < answers.size(); j++) {
@@ -207,7 +216,7 @@
         <%
             if (iterator != 0){
         %>
-        <input class="submit_button" type="submit" name="action" value="Previous">
+        <input class="submit_button" type="submit" name="action" value="Prev">
         <% } %>
         <%
             if (iterator != questions.size()-1){
@@ -231,7 +240,7 @@
 </form>
 <%
 } else {
-        ses.setAttribute("iterator",null);
+    ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
 %>
 
 <p>Quiz completed.</p>
