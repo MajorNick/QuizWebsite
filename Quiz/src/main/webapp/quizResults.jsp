@@ -16,6 +16,7 @@
 <%@ page import="Quiz.src.main.java.models.Question" %>
 <%@ page import="Quiz.src.main.java.models.Answer" %>
 <%@ page import="Quiz.src.main.java.models.enums.QuestionType" %>
+<%@ page import="Quiz.src.main.java.HelperMethods.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -192,8 +193,7 @@ for(int i = 0; i < questions.size(); i++){
 
 <%
 
-double time_taken = (double)(((Duration)session.getAttribute("time")).toSeconds() / 60.0);
-con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), time_taken));
+con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)((Duration)session.getAttribute("time")).toSeconds()));
 
 %>
 

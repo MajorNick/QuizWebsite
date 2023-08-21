@@ -5,10 +5,10 @@ public class QuizHistory {
     private double Score;
     private int Quiz_id;
     private int User_id;
-    private double Time_taken;
+    private int Time_taken;
     private Quiz _quiz;
 
-    public QuizHistory(int id, double score, int quiz_id, int user_id, double time_taken){
+    public QuizHistory(int id, double score, int quiz_id, int user_id, int time_taken){
         Id = id;
         Score = score;
         Quiz_id = quiz_id;
@@ -32,7 +32,7 @@ public class QuizHistory {
         return Score;
     }
 
-    public double getTime_taken() {
+    public int getTime_taken() {
         return Time_taken;
     }
 

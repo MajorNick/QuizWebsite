@@ -153,7 +153,7 @@
         }
     %>
 
-    <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
+    <%  else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
     <%
         ArrayList<Answer> answers = con.getAnswers(question.id,false);
         ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question" + iterator);

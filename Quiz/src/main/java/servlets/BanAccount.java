@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.time;
+
 
 @WebServlet("/BanUser")
 public class BanAccount extends HttpServlet {
@@ -26,7 +26,7 @@ public class BanAccount extends HttpServlet {
 
         DBConn dbConn = new DBConn();
         User u = dbConn.getUsers(userId).get(0);
-        u.setEventTime(time());
+        //u.setEventTime(time());
         dbConn.closeDBConn();
 
         response.sendRedirect("bannedUser.jsp");

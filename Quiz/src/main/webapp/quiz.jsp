@@ -38,7 +38,7 @@
     }
 </style>
 <body>
-<div class  = header>
+<div class  = "header">
     <header style = "color: white">
         Quiz
     </header>
@@ -88,7 +88,7 @@
 
     <% }
 
-    <% } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
+     } else if (questionType == QuestionType.MULTIPLE_CHOICE) { %>
     <p>Question <%= i + 1 %>: <%= question.question %></p>
     <%
         ArrayList < Answer>  answers = con.getAnswers(questions.get(i).id,false);

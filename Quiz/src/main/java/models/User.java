@@ -10,13 +10,13 @@ public class User {
     private boolean isPrivate;
     private String EventTime;
 
-    public User(int id, String username, String passwordHash, String role, boolean isPrivate, String eventTime){
+    public User(int id, String username, String passwordHash, String role, boolean isPrivate){
         Id = id;
         Username = username;
         PasswordHash = passwordHash;
         Role = role;
         this.isPrivate = isPrivate;
-        EventTime = eventTime;
+        //EventTime = eventTime;
     }
 
     public int getId() { return Id; }

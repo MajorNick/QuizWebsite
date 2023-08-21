@@ -105,7 +105,7 @@ CREATE TABLE quiz_history (
     score DECIMAL(5, 2),
     quiz_id INT,
     user_id INT,
-    time_taken INT,
+    time_taken VARCHAR(2000),
     take_date TIMESTAMP,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
