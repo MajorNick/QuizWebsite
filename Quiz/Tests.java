@@ -1,5 +1,6 @@
 package Quiz;
 
+import Quiz.src.main.java.HelperMethods.AnswerChecker;
 import Quiz.src.main.java.HelperMethods.PassHasher;
 import Quiz.src.main.java.models.*;
 import Quiz.src.main.java.servlets.CreateQuizJson;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -172,6 +174,23 @@ public class Tests extends TestCase{
             assertEquals(history.getUser_id(),(int)ids.get(i++));
         }
         con.restartDBbase("./oop_proj.sql");
+        con.closeDBConn();
+    }
+
+    public void testDBQuestionsAndAnswers(){
+        DBConn con = new DBConn();
+        con.restartDBbase("./oop_proj.sql");
+        var questions = con.getQuestions(1);
+        assertEquals(7,questions.size());
+
+        assertTrue("Sauketeso Gundi msoflioshi?".equalsIgnoreCase(questions.get(1).question));
+        var answer = con.getAnswers(questions.get(1).id,true);
+        assertEquals(1,answer.size());
+        assertTrue("Milani".equalsIgnoreCase(answer.get(0).answer));
+        ArrayList<String> testAnswers = new ArrayList<>();
+        testAnswers.add("Milani");
+        assertTrue(AnswerChecker.checkAnswerBool(questions.get(1).id, testAnswers));
+        assertEquals(AnswerChecker.checkAnswer(questions.get(1).id, testAnswers), testAnswers);
         con.closeDBConn();
     }
 

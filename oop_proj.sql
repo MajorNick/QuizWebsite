@@ -238,5 +238,5 @@ VALUES (5,'TRUE',false),
        (7,'nika tarkashvili',TRUE),
        (7,'giorgi javakhishvili',TRUE),
        (7,'mariam gamrekelashvili',TRUE),
-       (7,'vakhtang jandieri',FALSE),
+       (7,'Don corleone',FALSE),
         (1,'tbilisi',TRUE);
