@@ -5,6 +5,8 @@
 <%@ page import="Quiz.src.main.java.models.User" %>
 <%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="Quiz.src.main.java.HelperMethods.CreateLittleStarRatings" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.Comparator" %>
 <html>
 <title>
     Quiz summary
@@ -218,7 +220,8 @@
     session.setAttribute("xulignobs"+quizid+"_"+user.getId(), iyo);
     ArrayList<Question> questions = con.getQuestions(quizid);
     for(int i = 0; i < questions.size(); i++){
-        session.setAttribute("question" + i+"_"+quizid+"_"+userId, null);
+        session.setAttribute("question" + i+"_" + quizid + "_" + userId, null);
+        session.setAttribute("daechira" + i + "_" + quizid + "_" + user1.getId(), false);
     }
 %>
 
@@ -366,7 +369,7 @@
     </script>
     <% } %>
     <%if(user1 != null) {%>
-        <form id="quizPracticeForm" action="./EditQuiz?userId=<%=userId%>&&quizId=<%=quizid%>" method="POST">
+        <form id="quizPracticeForm1" action="./EditQuiz?userId=<%=userId%>&&quizId=<%=quizid%>" method="POST">
             <button class="test_start_button">Edit Quiz</button>
         </form>
     <%}%>
@@ -410,7 +413,15 @@
         <% ArrayList<rateAndReview> rateAndReviews = con.getRateAndReview(quizid); %>
         <% if (!rateAndReviews.isEmpty()) { %>
             <ul>
-                <% for (rateAndReview rateAndReviewer : rateAndReviews) { %>
+                <%
+                Comparator<rateAndReview> compareRat = new Comparator<rateAndReview>() {
+                    @Override
+                    public int compare(rateAndReview q1, rateAndReview q2) {
+                        return Integer.compare(q2.id, q1.id);
+                    }
+                };
+                Collections.sort(rateAndReviews, compareRat);
+                for (rateAndReview rateAndReviewer : rateAndReviews) { %>
                 <li>
                     <div class="review-container">
                         <p><strong>User:</strong> <%= con.getUsers(rateAndReviewer.userId).get(0).getUsername() %>
@@ -421,17 +432,12 @@
                         <p><strong>Rating:</strong> <%= CreateLittleStarRatings.generateRatingStars(rateAndReviewer.rating) %></p>
                         <form action="/changeRatingServlet" id="editRatingForm<%= rateAndReviewer.id %>" method="post" class="edit-form" style="display: none;">
                             <select name="editedRating">
-                                                            <option value="1">1</option>
-                                                            <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
-                                                            <option value="5">5</option>
-                                                            <option value="6">6</option>
-                                                            <option value="7">7</option>
-                                                            <option value="8">8</option>
-                                                            <option value="9">9</option>
-                                                            <option value="10">10</option>
-                                                        </select>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
                             <input type="hidden" name="reviewId" value="<%= rateAndReviewer.id %>">
                             <input type="hidden" name="quizId" value="<%= quizid %>">
                             <button type="submit" name="action" value="Save">Save</button>

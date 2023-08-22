@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class Tests extends TestCase{
 
+
     public void testDBConn() {
         String AchBody = "test achievement 1";
         String AchToEarn = "get tested";
@@ -72,7 +73,9 @@ public class Tests extends TestCase{
         assertTrue(dbConn.getUsers(user1.getId()).get(0).getUsername().equals(user1.getUsername()));
         dbConn.removeUser(user1.getId());
 
-//        dbConn.closeDBConn();
+
+        dbConn.restartDBbase("C:/Users/giorgi/IdeaProjects/oop-final-project-placefolder/oop_proj.sql");
+
 
     }
 

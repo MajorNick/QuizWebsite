@@ -9,6 +9,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.HashSet" %>
 <%@ page import="java.time.Duration" %>
 <%@ page import="javax.servlet.http.HttpSession" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
@@ -175,6 +176,7 @@ for(int i = 0; i < questions.size(); i++){
     }
 
 
+
     if (questionType == QuestionType.QUESTION_RESPONSE){
         String answer =  request.getParameter("question" + i);
         if(quiz.is_single_page) answer = userAnswersSingle.get(0);
@@ -245,13 +247,18 @@ for(int i = 0; i < questions.size(); i++){
             userAnswers.add(request.getParameter("question" + i +"_"+j));
         }
         }
+        Map<String, Integer> correctFrequencyMap = new HashMap<String, Integer>();
+        for (Answer curAnswer : correctAnswers) {
+            correctFrequencyMap.put(curAnswer.answer, correctFrequencyMap.getOrDefault(curAnswer.answer, 0) + 1);
+        }
 
-        for(int k = 0; k < userAnswers.size(); k++){
-            for(int j = 0; j < correctAnswers.size(); j++){
-                if(userAnswers.get(k) != null)
-                if(userAnswers.get(k).equalsIgnoreCase(correctAnswers.get(j).answer)){
-                    totalScore++;
-                }
+        for (int k = 0; k < userAnswers.size(); k++) {
+            String userAnswer = userAnswers.get(k);
+
+            if(userAnswer != null)
+            if (correctFrequencyMap.containsKey(userAnswer) && correctFrequencyMap.get(userAnswer) > 0) {
+                correctFrequencyMap.put(userAnswer, correctFrequencyMap.get(userAnswer) - 1);
+                totalScore++;
             }
         }
     }
@@ -263,6 +270,46 @@ int time_taken = (int)((Duration)session.getAttribute("time"+quizID+"_"+user.get
 ArrayList<Integer> iyo = (ArrayList<Integer>) session.getAttribute("xulignobs"+quizID+"_"+user.getId());
 if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get(0) == 0)){
     con.insertQuizHistory(new QuizHistory(1, totalScore, quizID, user.getId(), (int)((Duration)session.getAttribute("time"+quizID+"_"+user.getId())).toSeconds()));
+
+    ArrayList<QuizHistory> userHistory = con.getUserQuizHistory(user.getId());
+    HashSet<Integer> uniqueQuizIds = new HashSet<Integer>();
+    ArrayList<QuizHistory> uniqueQuizHistories = new ArrayList<QuizHistory>();
+
+    for (QuizHistory history : userHistory) {
+        int quizId = history.getQuiz_id();
+        if (!uniqueQuizIds.contains(quizId)) {
+            uniqueQuizIds.add(quizId);
+            uniqueQuizHistories.add(history);
+        }
+    }
+    if(uniqueQuizHistories.size() == 10){
+        con.insertUserAchievement(new UserAchievement(1, user.getId(), 4));
+    }
+
+    ArrayList<QuizHistory> quizQuizHistory = con.GetquizQuizHistoryAndDate(quizID);
+
+    Comparator<QuizHistory> customComparator = new Comparator<QuizHistory>() {
+        @Override
+        public int compare(QuizHistory q1, QuizHistory q2) {
+            return Double.compare(q2.getScore(), q1.getScore());
+        }
+    };
+    Collections.sort(quizQuizHistory, customComparator);
+
+    ArrayList<Achievement> userAchievements = con.getUserAchievements(user.getId());
+    boolean isttr = false;
+    for(int d = 0 ; d < userAchievements.size(); d++){
+        if(userAchievements.get(d).getId() == 5) isttr = true;
+    }
+
+    if((quizQuizHistory.isEmpty() || (quizQuizHistory.get(0).getScore() <= totalScore)) && !isttr){
+        con.insertUserAchievement(new UserAchievement(1, user.getId(), 5));
+    }
+
+    if(uniqueQuizHistories.size() == 1){
+        con.insertUserAchievement(new UserAchievement(1, user.getId(), 6));
+    }
+
 
     iyo = new ArrayList<Integer>();
     iyo.clear();
@@ -487,11 +534,6 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
                 </select>
                 <br>
                 <label for="review">Review:</label>
