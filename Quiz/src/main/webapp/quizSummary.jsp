@@ -221,6 +221,7 @@
     ArrayList<Question> questions = con.getQuestions(quizid);
     for(int i = 0; i < questions.size(); i++){
         session.setAttribute("question" + i+"_" + quizid + "_" + userId, null);
+        session.setAttribute("daechira" + i + "_" + quizid + "_" + user1.getId(), false);
     }
 %>
 

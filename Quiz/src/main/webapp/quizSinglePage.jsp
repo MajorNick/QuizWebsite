@@ -37,7 +37,21 @@
         cursor: pointer;
         border-radius: 5px;
     }
+    .normal{
+        background-color : white;
+    }
+    .redOne{
+        background-color : red;
+    }
+    .greenOne{
+        background-color : green;
+    }
 </style>
+
+<%
+
+%>
+
 <body>
 <div class="header">
     <header style="color: white">
@@ -90,6 +104,7 @@
             }
             ses.setAttribute("shuffledQuestions"+quizID+"_"+user1.getId(),questions);
         }
+        ses.setAttribute("shuffledQuestions"+quizID+"_"+user1.getId(),questions);
     }
 
     if(iterator == null) {
@@ -124,10 +139,22 @@
     } else if ("Prev".equals(action)) {
         iterator--;
     }else if ("submit".equals(action)) {
-                ArrayList<String> responseAnswer =(ArrayList<String>) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
-                ArrayList<String> userCorrectAnswers = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
+        ArrayList<String> responseAnswer =(ArrayList<String>) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
+        ArrayList<String> userCorrectAnswers = AnswerChecker.checkAnswer(questions.get(iterator).id,responseAnswer);
+        session.setAttribute("daechira" + iterator + "_" + quizID + "_" + user1.getId(), true);
+        //ArrayList<Answer> answers = con.getAnswers(question.id,true);
+        //here do the work
 
     }else if("End Quiz".equals(action)){
+
+        ArrayList<Integer> iyo = (ArrayList<Integer>) session.getAttribute("xulignobs"+quizID+"_"+user1.getId());
+          if (iyo != null) {
+              if (user1.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get(0) == 1) {
+                  response.sendRedirect(request.getContextPath() + "/quizResults.jsp?id=" + quizID);
+                  return;
+              }
+          }
+
         ses.setAttribute("iterator"+quizID+"_"+user1.getId(),null);
         response.sendRedirect("quizResults.jsp?id=" + request.getParameter("id"));
         }else if( action != null){
@@ -154,12 +181,19 @@
         if(answ != null) {
              v = answ.get(0) == null ? "" : answ.get(0);
         }
+        String className = "normal";
+        boolean questionCompleted = ((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue();
+        if(questionCompleted && correction){
+            className = AnswerChecker.checkAnswerByString(question.id, v, false, 1) ?
+                        "greenOne" : "redOne";
+        }
     %>
-    <input type="text" name=<%="question"+iterator%>  value="<%=v%>" >
+    <input type="text" name=<%="question"+iterator%>  value="<%=v%>" class="<%=className%>">
 
     <% } else if (questionType == QuestionType.FILL_IN_THE_BLANK) {
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
         ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
+        ArrayList<Boolean> answerArray = AnswerChecker.checkAnswerByStringForMulties(question.id, definedAnswers);
 
         for (int j = 0; j < answers.size(); j++) {
             String v = "";
@@ -167,8 +201,14 @@
 
                 v = definedAnswers.get(j) == null ? "" : definedAnswers.get(j);
 
+            }
+            String className = "normal";
+            boolean questionCompleted = ((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue();
+            if(questionCompleted && correction){
+                className = (answerArray.get(j)) ?
+                            "greenOne" : "redOne";
             } %>
-    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value="<%=v%>">
+    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value="<%=v%>"class="<%=className%>">
     <%
         }
     %>
@@ -180,8 +220,15 @@
         for (int j = 0; j < answers.size(); j++) {
 
             boolean isSelected = answers.get(j).answer.equals(selectedAnswer);
+            String className = "normal";
+
+            boolean questionCompleted = ((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue();
+            if(questionCompleted && correction && isSelected){
+                className = AnswerChecker.checkAnswerByString(question.id, selectedAnswer, false, 1) ?
+                            "greenOne" : "redOne";
+            }
     %>
-    <input type="radio" name=<%="question"+iterator%> value="<%= answers.get(j).answer %>" <%= isSelected ? "checked" : "" %>>
+    <input type="radio" name=<%="question"+iterator%> value="<%= answers.get(j).answer %>" <%= isSelected ? "checked" : "" %> class="<%=className%>">
     <%= answers.get(j).answer %><br>
     <%
         }
@@ -192,17 +239,30 @@
         String v = "";
         if(answ != null) {
             v = answ.get(0) == null ? "" : answ.get(0);
-        } %>
+        }
+        String className = "normal";
+        boolean questionCompleted = ((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue();
+        if(questionCompleted && correction){
+            className = AnswerChecker.checkAnswerByString(question.id, v, false, 1) ?
+                        "greenOne" : "redOne";
+        }
+        %>
 
     <img src=<%=question.question%>  width="300" height="200" style="border: 2px solid black;">
     <br>
-    <input type="text" name=<%="question"+iterator%> value="<%=v%>">
+    <input type="text" name=<%="question"+iterator%> value="<%=v%>"class="<%=className%>">
 
     <% } else if (questionType == QuestionType.MULTI_ANSWER) {
 
 
         ArrayList<Answer> answers = con.getAnswers(question.id,true);
         ArrayList<String> definedAnswers = (ArrayList) ses.getAttribute("question"+iterator+"_"+quizID+"_"+user1.getId());
+        for (int j = 0; j < answers.size(); j++) {
+            if(definedAnswers!=null && definedAnswers.get(j) == null) {
+                definedAnswers.set(j, "");
+            }
+        }
+        ArrayList<Boolean> sworebi = AnswerChecker.checkAnswerByStringForMulties(question.id, definedAnswers);
 
         for (int j = 0; j < answers.size(); j++) {
             String v = "";
@@ -210,28 +270,43 @@
 
                 v = definedAnswers.get(j) == null ? "" : definedAnswers.get(j);
 
-            } %>
+            }
 
-
-    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value="<%=v%>">
+    String className = "normal";
+    boolean questionCompleted = ((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue();
+    if(questionCompleted && correction){
+        className = sworebi.get(j) ?
+                    "greenOne" : "redOne";
+    }%>
+    <input type="text" name=<%=String.format("question%d_%d",iterator,j)%> value="<%=v%>" class="<%= className%>">
     <%
         }
     %>
+        <% } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>
+        <%
+            ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question" + iterator + "_" + quizID + "_" + user1.getId());
+            ArrayList<Answer> answers = con.getAnswers(question.id, false);
+            ArrayList<Boolean> isAnswerCorrectList = AnswerChecker.checkAnswerByStringForMulties(question.id, selected);
 
-    <% } else if (questionType == QuestionType.MULTI_AN_CHOICE) { %>
-    <%
-        ArrayList<String> selected = (ArrayList<String>) ses.getAttribute("question" +iterator+"_"+quizID+"_"+user1.getId());
-        ArrayList<Answer> answers = con.getAnswers(question.id,false);
-
-        for (int j = 0; j < answers.size(); j++) {
+            for (int j = 0; j < answers.size(); j++) {
             boolean isSelected = selected != null && selected.contains(answers.get(j).answer);
-    %>
-    <input type="checkbox" name=<%="question"+iterator+"_"+j%> value="<%= answers.get(j).answer %>"<%= isSelected ? "checked" : "" %>>
-    <%= answers.get(j).answer %><br>
-    <%
-        }
-    %>
-    <% } %>
+
+            String className = "normal";
+            boolean questionCompleted = ((Boolean) session.getAttribute("daechira" + iterator + "_" + quizID + "_" + user1.getId())).booleanValue();
+            if (questionCompleted && correction) {
+                className = isAnswerCorrectList.get(j) ?
+                            "greenOne" : "redOne";
+            }
+        %>
+        <label class="<%=className%>">
+        <input type="checkbox" name=<%="question"+iterator+"_"+j%> value="<%= answers.get(j).answer %>" <%= isSelected ? "checked" : "" %> class="<%=className%>">
+        </label>
+        <%= answers.get(j).answer %><br>
+        <%
+            }
+        %>
+        <% } %>
+
 
     <div>
         <%
@@ -244,7 +319,7 @@
         %>
         <input class="submit_button" type="submit" name="action" value="Next">
         <% } %>
-        <% if (correction) { %>
+        <% if (correction && !((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue()) { %>
         <input class="submit_button" type="submit" name="action" value="submit">
         <%}%>
         <input class="submit_button" type="submit" name="action" value="End Quiz">
