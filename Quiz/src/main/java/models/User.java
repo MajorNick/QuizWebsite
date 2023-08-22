@@ -30,6 +30,10 @@ public class User {
     public void setPfpLink(String pfpLink) { PfpLink = pfpLink; }
     public boolean isPrivate() { return isPrivate; }
     public String getEventTime() { return EventTime; }
-    public void setEventTime(String eventTime) { EventTime = eventTime; }
 
+    @Override
+    public String toString() {
+        return "" + getId() + " " + isAdmin() + getRole() + getUsername() + getPasswordHash() + getPfpLink() + isPrivate()
+                +getEventTime();
+    }
 }

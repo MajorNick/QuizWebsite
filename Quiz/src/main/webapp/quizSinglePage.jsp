@@ -123,12 +123,13 @@
                 tmp.add(request.getParameter(key));
 
             }
-
+            if(!((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue())
             ses.setAttribute("question"+iterator+"_"+quizID+"_"+user1.getId(),tmp);
         }else{
 
             ArrayList<String> tmp =new ArrayList<String>();
             tmp.add(request.getParameter("question"+iterator));
+            if(!((Boolean) session.getAttribute("daechira" + iterator +"_"+ quizID + "_" + user1.getId())).booleanValue())
             ses.setAttribute("question"+iterator+"_"+quizID+"_"+user1.getId(),tmp);
         }
     }

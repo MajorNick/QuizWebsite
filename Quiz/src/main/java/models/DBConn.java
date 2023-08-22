@@ -537,7 +537,10 @@ public class DBConn{
     }
 
     public ArrayList<rateAndReview> getRateAndReview(int quizId) {
-        String query = String.format("SELECT * FROM rateAndReview u where u.quiz_id = %d", quizId);
+        String query = "SELECT * FROM rateAndReview";
+        if(quizId != -1){
+            query = String.format("SELECT * FROM rateAndReview u where u.quiz_id = %d", quizId);
+        }
 
         ArrayList<rateAndReview> selection = new ArrayList<>();
         try{

@@ -28,8 +28,7 @@ CREATE TABLE users (
     password_hash VARCHAR(255),
     role VARCHAR(255),
     pfp VARCHAR(1000),
-    isPrivate bool,
-    event_time TIMESTAMP
+    isPrivate bool
 );
 
 INSERT INTO users (username, password_hash, role, isPrivate)
@@ -160,25 +159,33 @@ CREATE TABLE user_achievements (
 
 -- TEST DATA:
 
-INSERT INTO users (username, password_hash, role, isPrivate)
-VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user', false),
+ INSERT INTO users (username, password_hash, role, isPrivate)
+ VALUES ('John Deer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'user', false),
 	   ('Serena Anderson', '2abd55e001c524cb2cf6300a89ca6366848a77d5', 'user', false),
        ('Xavier Patel', 'd5f12e53a182c062b6bf30c1445153faff12269a', 'user', false);
 
-INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body)
-VALUES (1, 2, 'note', 'Hello'),
+ INSERT INTO userBan (user_id, ban_until)
+ VALUES (3, '2023-08-30 12:00:00'),
+        (4, '2023-08-30 11:00:00');
+
+ INSERT INTO quiz_categories (category)
+ VALUES ("category1"),
+        ("category2");
+
+ INSERT INTO notifications (receiver_id, sender_id, notif_type, notif_body)
+ VALUES (1, 2, 'note', 'Hello'),
 	   (2, 1, 'note', 'Hi'),
 	   (1, 2, 'note', 'Test1'),
 	   (1, 3, 'note', 'Test2'),
        (3, 2, 'note', 'qwer'),
 	   (3, 1, 'note', 'tyui');
 
-INSERT INTO quizzes(creator_id, quiz_name, description, is_single_page, can_be_practiced, rand_question_order)
-VALUES  (1,'dinozavrebi','Dinosaurs are a diverse group of reptiles of the clade Dinosauria. They first appeared during the Triassic period, between 245 and 233.23 million years ago (mya), although the exact origin and timing of the evolution of dinosaurs is a subject of active research. They became the dominant terrestrial vertebrates after the Triassic–Jurassic extinction event 201.3 mya and their dominance continued throughout the Jurassic and Cretaceous periods. The fossil record shows that birds are feathered dinosaurs, having evolved from earlier theropods during the Late Jurassic epoch, and are the only dinosaur lineage known to have survived the Cretaceous–Paleogene extinction event approximately 66 mya. Dinosaurs can therefore be divided into avian dinosaurs—birds—and the extinct non-avian dinosaurs, which are all dinosaurs other than birds.',
+ INSERT INTO quizzes(creator_id, quiz_name, description, is_single_page, can_be_practiced, rand_question_order)
+ VALUES  (1,'dinozavrebi','Dinosaurs are a diverse group of reptiles of the clade Dinosauria. They first appeared during the Triassic period, between 245 and 233.23 million years ago (mya), although the exact origin and timing of the evolution of dinosaurs is a subject of active research. They became the dominant terrestrial vertebrates after the Triassic–Jurassic extinction event 201.3 mya and their dominance continued throughout the Jurassic and Cretaceous periods. The fossil record shows that birds are feathered dinosaurs, having evolved from earlier theropods during the Late Jurassic epoch, and are the only dinosaur lineage known to have survived the Cretaceous–Paleogene extinction event approximately 66 mya. Dinosaurs can therefore be divided into avian dinosaurs—birds—and the extinct non-avian dinosaurs, which are all dinosaurs other than birds.',
          true, false, false);
 
-INSERT INTO user_achievements(user_id, achievement_id)
-VALUES (1,1),
+ INSERT INTO user_achievements(user_id, achievement_id)
+ VALUES (1,1),
        (1,2),
        (1,3),
        (1,4),
@@ -190,34 +197,34 @@ VALUES (1,1),
        (3,1),
        (3,2);
 
-INSERT INTO announcements(announcement)
-VALUES ('New quiz added'),
+ INSERT INTO announcements(announcement)
+ VALUES ('New quiz added'),
 	   ('Create quiz and get achievement');
 
-INSERT INTO friends(user_id, friend_id)
-VALUES (1,2),
+ INSERT INTO friends(user_id, friend_id)
+ VALUES (1,2),
        (2,1),
        (1,3),
        (3,1);
 
-INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced, rand_question_order)
-VALUES (1, 'History', true, false, false),
+ INSERT INTO quizzes (creator_id, quiz_name, is_single_page, can_be_practiced, rand_question_order)
+ VALUES (1, 'History', true, false, false),
 	   (1, 'Geography', true, false, false),
        (2, 'Physics', true, false, false),
        (3, 'Chemistry', true, false, false);
 
-INSERT INTO quiz_history(score, quiz_id, user_id)
-VALUES (80.6,1,1),
-       (95.2,1,2),
-       (12.4,3,1);
+ INSERT INTO quiz_history(score, quiz_id, user_id, take_date)
+ VALUES (80.6,1,1, '2023-08-30 13:00:00'),
+       (95.2,1,2, '2023-08-30 10:00:00'),
+       (12.4,3,1,'2023-08-30 9:00:00');
 
-INSERT INTO rateAndReview (quiz_id, rating, user_id, review)
-VALUES (1, 5, 1, 'kargia xoici'),
+ INSERT INTO rateAndReview (quiz_id, rating, user_id, review)
+ VALUES (1, 5, 1, 'kargia xoici'),
        (1, 5, 1, 'kargia?'),
        (1, 5, 1, 'mgoni ki'),
        (1, 5, 1, 'naah');
 
-INSERT INTO questions(question_num, quiz_id, question_type, question)
+ INSERT INTO questions(question_num, quiz_id, question_type, question)
      VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
         (2,1,0,'tavisufali universiteti  sauketesoa?'),
         (3,1,0,'ra aris veqtoruli velis potenciali?'),
@@ -226,14 +233,14 @@ INSERT INTO questions(question_num, quiz_id, question_type, question)
         (6,1,4,'chamotvalet top kanonieri qurdebi'),
         (6,1,5,'shemoxaset top kanonieri qurdebi');
 
-INSERT INTO answers( question_id, answer, is_correct)
-VALUES (5,'TRUE',false),
+ INSERT INTO answers( question_id, answer, is_correct)
+ VALUES (5,'TRUE',false),
        (5,'FALSE',true),
        (6,'tornike ramishvili',TRUE),
        (6,'giorgi lekva lekveishvili',TRUE),
        (7,'tornike ramishvili',TRUE),
-       (7,'nika tarkashvili',TRUE),
-       (7,'giorgi javakhishvili',TRUE),
-       (7,'mariam gamrekelashvili',TRUE),
-       (7,'vakhtang jandieri',FALSE),
+       (6,'nika tarkashvili',TRUE),
+       (6,'giorgi javakhishvili',TRUE),
+       (6,'mariam gamrekelashvili',TRUE),
+       (6,'vakhtang jandieri',FALSE),
         (1,'tbilisi',TRUE);

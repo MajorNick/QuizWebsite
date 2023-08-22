@@ -1,7 +1,6 @@
 package Quiz.src.main.java.servlets;
 
 import Quiz.src.main.java.models.*;
-import Quiz.src.main.java.models.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.ServletException;
@@ -13,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Part;

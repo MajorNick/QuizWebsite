@@ -1,17 +1,14 @@
 package Quiz.src.main.java.servlets;
 
 import Quiz.src.main.java.models.*;
-import Quiz.src.main.java.models.models.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
-import javax.swing.text.html.HTML;
 
 class HTMLTag {
     public String tag;

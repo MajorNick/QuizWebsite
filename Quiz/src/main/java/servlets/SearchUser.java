@@ -2,14 +2,12 @@ package Quiz.src.main.java.servlets;
 
 import Quiz.src.main.java.models.DBConn;
 import Quiz.src.main.java.models.User;
-import Quiz.src.main.java.models.models.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.servlet.annotation.WebServlet;
