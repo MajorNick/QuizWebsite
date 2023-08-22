@@ -978,8 +978,9 @@ public class DBConn{
         }
         return scores;
     }
-    public ArrayList<Integer> getLastQuizPerformers(int quiz_id){
-        String query = String.format("SELECT user_id " +
+    public List<Map.Entry<Integer, Double>> getLastQuizPerformers(int quiz_id){
+        List<Map.Entry<Integer, Double>> result = new ArrayList<>();
+        String query = String.format("SELECT user_id, score " +
                 "FROM quiz_history WHERE quiz_id = %d " +
                 "ORDER BY take_date DESC " +
                 "LIMIT 3;", quiz_id);
@@ -989,8 +990,10 @@ public class DBConn{
             executeQuery(query);
 
             while (rs.next()) {
-                int result = rs.getInt("user_id");;
-                users.add(result);
+                int us_id = rs.getInt("user_id");
+                System.out.println(us_id);
+                double score = rs.getDouble("score");
+                result.add(new AbstractMap.SimpleEntry<>(us_id,score));
             }
 
         } catch (Exception e){
@@ -998,10 +1001,11 @@ public class DBConn{
             e.printStackTrace();
             return  null;
         }
-        return users;
+        return result;
     }
-    public ArrayList<Integer> getBestPerformance(int quiz_id,boolean today){
+    public List<Map.Entry<Integer, Double>> getBestPerformance(int quiz_id,boolean today){
         String query;
+        List<Map.Entry<Integer, Double>> result = new ArrayList<>();
         if (today){
             query = String.format("SELECT user_id, MAX(score) AS max_score " +
                     "FROM quiz_history " +
@@ -1018,13 +1022,14 @@ public class DBConn{
                     "LIMIT 3;",quiz_id);
 
         }
-        ArrayList<Integer> users = new ArrayList<>();
+
         try{
             executeQuery(query);
 
             while (rs.next()) {
-                int result = rs.getInt("user_id");;
-                users.add(result);
+                int us_id = rs.getInt("user_id");
+                double score = rs.getDouble("max_score");
+                result.add(new AbstractMap.SimpleEntry<>(us_id,score));
             }
 
         } catch (Exception e){
@@ -1032,7 +1037,7 @@ public class DBConn{
             e.printStackTrace();
             return  null;
         }
-        return users;
+        return result;
     }
     public ArrayList<Question> getQuestions(int quiz_id){
         String questionQuery = String.format("SELECT * FROM questions where quiz_id = %d  ORDER BY question_num;",quiz_id);
