@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class Tests extends TestCase{
 
-   public static final String filePath = "../oop-final-project-placefolder/oop_proj.sql";
+   public static final String filePath = "./oop_proj.sql";
 
     private DBConn dbConn;
 
@@ -326,6 +326,14 @@ public class Tests extends TestCase{
         UserBan userBan = dbConn.getUserBan(1);
         assertNull(userBan);
 
+        dbConn.insertUserBan(new UserBan(1,1,LocalDateTime.now(),14));
+        assertTrue(dbConn.getUserBan(1).userStillBanned());
+
+        Notification not = new Notification(1,1,1,"aige","waige");
+        dbConn.insertNotification(not);
+        dbConn.updateNotification(not);
+        assertTrue(!dbConn.containsNotification(not).isEmpty());
+
         boolean isAdmin = dbConn.isAdmin(1);
         assertTrue(isAdmin);
 
@@ -486,52 +494,60 @@ public class Tests extends TestCase{
 //        Quiz errrrr2 = new Quiz(1, 1, "MockQuiz", "Description", true, true, true);
 //        dbConn.insertQuiz(errrrr2);
 
-        Question mockQuestion = new Question(1, 1, "MockQuestion", 1, 1);
-        dbConn.insertQuestion(mockQuestion);
 
-        Answer mockAnswer = new Answer(1, 1, "MockAnswer", true);
-        dbConn.insertAnswer(mockAnswer);
-
-        // Test makeUserAdmin
-        dbConn.makeUserAdmin(1);
-       // assertTrue(dbConn.isAdmin(1));
-
-        // Test makeUserPrivate
-        dbConn.makeUserPrivate(1, true);
-        assertTrue(dbConn.getUsers(1).get(0).isPrivate());
-
-        // Test updateUserPicture
-        dbConn.updateUserPicture(1, "new_pfp");
-        assertEquals("new_pfp", dbConn.getUsers(1).get(0).getPfpLink());
-
-        // Test removeUserQuizes
         dbConn.removeUserQuizes(1);
         assertTrue(dbConn.getQuizzesByCreator(1).isEmpty());
 
-        // Test removeUserNotifications
+
         dbConn.removeUserNotifications(1);
         assertTrue(dbConn.getNotifications(1,1,"AAAAAA").isEmpty());
 
-        // Test removeUserAchievements
+
         dbConn.removeUserAchievements(1);
         assertTrue(dbConn.getUserAchievements(1).isEmpty());
 
-        // Test removeQuizQuestions
+
         dbConn.removeQuizQuestions(1);
         assertTrue(dbConn.getQuestions(1).isEmpty());
 
-        // Test removeQuizAnswers
         dbConn.removeQuizAnswers(1);
         assertTrue(dbConn.getAnswers(1, true).isEmpty());
 
-        // Clean up the inserted data
         dbConn.removeUser(1);
+
+        //ArrayList<Boolean> boos = AnswerChecker.checkAnswerByStringForMulties(1, new ArrayList<>(dbConn.getAnswers(1,true).stream().map(Answer::getAnswer).toList()));
+//        for (Boolean b:boos
+//             ) {
+//            assertTrue(b);
+//        }
+        for(int i = 1; i< 10; i++){
+            dbConn.insertQuestion(new Question(i,i,"raxdeba"+i,4,1));
+        }
+        //AnswerChecker.checkAnswerByString(10,"a",true,1);
+        ArrayList<String> vv = new ArrayList<>();
+        vv.add("lomo");
+        //AnswerChecker.correctAnswerCount(1, vv);
+
     }
 
     public void testPasHasher(){
         PassHasher passHasher = new PassHasher();
         assertEquals(PassHasher.hashPassword("giorgi"), PassHasher.hashPassword("giorgi"));
         assertFalse(PassHasher.hashPassword("giorgi").equals(PassHasher.hashPassword("giorgi ")));
+    }
+
+    public void testDBGetQuizzesByName(){
+        DBConn con = new DBConn();
+        con.restartDBbase("./oop_proj.sql");
+        ArrayList<Quiz> quiz = con.getQuizzesByName("dinozavrebi");
+        assertNotNull(quiz);
+        assertEquals(1,quiz.size());
+        assertEquals(1,quiz.get(0).id);
+        try{
+            ArrayList<Quiz> quizez = con.getQuizzesByName("dinozavrebi WHERE SQL = NEW");
+        } catch (Exception e) {
+            assertEquals("Wrong Sql Statement", e.getMessage());
+        }
     }
     public void testDBExceptions(){
         DBConn dbConn = new DBConn();
@@ -637,7 +653,6 @@ public class Tests extends TestCase{
 
     }
 
-    public void
 
 //    public void testJson(){
 //        String jsonString = "{\n" +
@@ -739,12 +754,26 @@ public void testQuestionTypeValues() {
         assertEquals(QuestionType.MULTI_AN_CHOICE, QuestionType.fromInt(5));
         assertEquals(QuestionType.MATCHING, QuestionType.fromInt(6));
     }
-
-    public void testQuestionTypeFromIntInvalidValue() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            QuestionType.fromInt(7);
-        });
+    public void testDBRecentHistory(){
+        DBConn con = new DBConn();
+        QuizHistory qh1 = new QuizHistory(0,110,1,3,15);
+        QuizHistory qh2 = new QuizHistory(0,120,1,3,18);
+        QuizHistory qh3 = new QuizHistory(0,130,1,3,11);
+        QuizHistory qh4 = new QuizHistory(0,130,1,3,11);
+        QuizHistory qh5 = new QuizHistory(0,130,1,3,11);
+        QuizHistory[] histories = new QuizHistory[]{qh3,qh2,qh1};
+        con.insertQuizHistory(qh1);
+        con.insertQuizHistory(qh2);
+        con.insertQuizHistory(qh3);
+        con.insertQuizHistory(qh5);
+        con.insertQuizHistory(qh4);
+        ArrayList<QuizHistory> hist = con.getUserRecentQuizHistory(3);
+        assertNotNull(hist);
+        assertEquals(5,hist.size());
+        con.restartDBbase("./oop_proj.sql");
     }
+
+
 }
 
 

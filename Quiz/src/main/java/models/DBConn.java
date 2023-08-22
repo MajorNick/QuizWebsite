@@ -1006,11 +1006,7 @@ public class DBConn{
                 result.add(new AbstractMap.SimpleEntry<>(us_id,score));
             }
 
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return  null;
-        }
+        } catch (Exception e){System.out.println(e.getMessage());e.printStackTrace();return  null;}
         return result;
     }
     public List<Map.Entry<Integer, Double>> getBestPerformance(int quiz_id,boolean today){
