@@ -1022,8 +1022,7 @@ public class DBConn{
         Question selection;
         try{
             executeQuery(questionQuery);
-
-
+            rs.next();
 
                 Question question  = new Question(rs.getInt("id"),
                         rs.getInt("quiz_id"),

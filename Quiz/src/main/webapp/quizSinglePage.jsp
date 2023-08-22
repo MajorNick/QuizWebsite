@@ -145,7 +145,7 @@
         QuestionType questionType = question.type;
 %>
 
-<form action=<%="quizSinglePage.jsp?id="+quizID+(correction?"&correction=true":"")%> method="post">
+<form action=<%="quizSinglePage.jsp?id="+quizID+(correction?"&&correction=true":"")%> method="post">
     <p>Question <%= iterator + 1 %>: <%= questionType == QuestionType.PICTURE_RESPONSE?"":question.question %></p>
 
     <% if (questionType == QuestionType.QUESTION_RESPONSE) {
