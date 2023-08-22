@@ -207,7 +207,7 @@
     int quizid = quiz.id;
     HttpSession ses = request.getSession();
     ses.setAttribute("iterator"+quizid+"_"+user1.getId(),null);
-
+    ses.setAttribute("practiceSession"+quizid,null);
     String ReportText = request.getParameter("reporttext");
     ReportText = ReportText == null ? "Inappropriate Quiz" : ReportText;
     ArrayList<Integer> iyo = new ArrayList<Integer>();
