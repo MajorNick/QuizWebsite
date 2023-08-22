@@ -28,7 +28,8 @@ CREATE TABLE users (
     password_hash VARCHAR(255),
     role VARCHAR(255),
     pfp VARCHAR(1000),
-    isPrivate bool
+    isPrivate bool,
+    event_time TIMESTAMP
 );
 
 INSERT INTO users (username, password_hash, role, isPrivate)
@@ -226,21 +227,24 @@ CREATE TABLE user_achievements (
 
  INSERT INTO questions(question_num, quiz_id, question_type, question)
      VALUES (1,1,0,'saqartvelos dedaqalaqia raari'),
-        (2,1,0,'tavisufali universiteti  sauketesoa?'),
+        (2,1,0,'Sauketeso Gundi msoflioshi?'),
         (3,1,0,'ra aris veqtoruli velis potenciali?'),
         (4,1,1,'GO yvelaze  magari .... .'),
-        (5,1,2,'koleidoskopu magra adidebs.'),
+        (5,1,2,'koleidoskopu magrad adidebs.'),
         (6,1,4,'chamotvalet top kanonieri qurdebi'),
         (6,1,5,'shemoxaset top kanonieri qurdebi');
 
  INSERT INTO answers( question_id, answer, is_correct)
  VALUES (5,'TRUE',false),
        (5,'FALSE',true),
+       (2,'Milani',true),
+       (3,'veqtoruli veli',true),
+       (4,'enaa',true),
        (6,'tornike ramishvili',TRUE),
        (6,'giorgi lekva lekveishvili',TRUE),
        (7,'tornike ramishvili',TRUE),
-       (6,'nika tarkashvili',TRUE),
-       (6,'giorgi javakhishvili',TRUE),
-       (6,'mariam gamrekelashvili',TRUE),
-       (6,'vakhtang jandieri',FALSE),
+       (7,'nika tarkashvili',TRUE),
+       (7,'giorgi javakhishvili',TRUE),
+       (7,'mariam gamrekelashvili',TRUE),
+       (7,'Don corleone',FALSE),
         (1,'tbilisi',TRUE);

@@ -1,5 +1,6 @@
 package Quiz;
 
+import Quiz.src.main.java.HelperMethods.AnswerChecker;
 import Quiz.src.main.java.HelperMethods.PassHasher;
 import Quiz.src.main.java.models.*;
 import Quiz.src.main.java.models.enums.*;
@@ -9,6 +10,10 @@ import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Tests extends TestCase{
@@ -87,7 +92,7 @@ public class Tests extends TestCase{
         assertEquals(lastAch.getId(), achAfter.size());
         assertEquals(lastAnn.getId(), annAfter.size());
 //        assertEquals(lastNot.getId(), notsAfter.size());
-   
+
 
         User user = new User(1555555,"mefe", "eacd2617f105704f51c912099316c7aece2df8ef","user",false);
         dbConn.insertUser(user);
@@ -510,7 +515,77 @@ public class Tests extends TestCase{
         }
 
 
+
+
     }
+    public void testDbQuizHistoryDB(){
+        DBConn con = new DBConn();
+        QuizHistory qh1 = new QuizHistory(0,30,1,1,15);
+        QuizHistory qh2 = new QuizHistory(0,35,1,2,18);
+        QuizHistory qh3 = new QuizHistory(0,15,1,3,11);
+        QuizHistory[] histories = new QuizHistory[]{qh3,qh2,qh1};
+        con.insertQuizHistory(qh1);
+        con.insertQuizHistory(qh2);
+        con.insertQuizHistory(qh3);
+        List<Map.Entry<Integer, Double>> result = con.getLastQuizPerformers(1);
+        assertEquals(3,result.size());
+        int i=0;
+        List <Integer> ids = result.stream().map(Map.Entry<Integer, Double>::getKey).toList();
+        List <Double> scores = result.stream().map(Map.Entry<Integer, Double>::getValue).toList();
+        for(QuizHistory history : histories){
+            assertTrue(ids.contains(history.getUser_id()));
+        }
+        for(QuizHistory history : histories){
+            assertTrue(scores.contains(history.getScore()));
+        }
+        con.restartDBbase("./oop_proj.sql");
+        con.closeDBConn();
+    }
+
+    public void testDBHighScore(){
+        DBConn con = new DBConn();
+        QuizHistory qh1 = new QuizHistory(0,110,1,1,15);
+        QuizHistory qh2 = new QuizHistory(0,120,1,2,18);
+        QuizHistory qh3 = new QuizHistory(0,130,1,3,11);
+        QuizHistory[] histories = new QuizHistory[]{qh3,qh2,qh1};
+        con.insertQuizHistory(qh1);
+        con.insertQuizHistory(qh2);
+        con.insertQuizHistory(qh3);
+        List<Map.Entry<Integer, Double>> result = con.getBestPerformance(1,true);
+        assertEquals(3,result.size());
+
+        List <Integer> ids = result.stream().map(Map.Entry<Integer, Double>::getKey).toList();
+        List <Double> scores = result.stream().map(Map.Entry<Integer, Double>::getValue).toList();
+        int i = 0;
+        for(QuizHistory history : histories){
+            assertEquals(history.getScore(),scores.get(i++));
+        }
+        i=0;
+        ;
+        for(QuizHistory history : histories){
+            assertEquals(history.getUser_id(),(int)ids.get(i++));
+        }
+        con.restartDBbase("./oop_proj.sql");
+        con.closeDBConn();
+    }
+
+    public void testDBQuestionsAndAnswers(){
+        DBConn con = new DBConn();
+        con.restartDBbase("./oop_proj.sql");
+        var questions = con.getQuestions(1);
+        assertEquals(7,questions.size());
+
+        assertTrue("Sauketeso Gundi msoflioshi?".equalsIgnoreCase(questions.get(1).question));
+        var answer = con.getAnswers(questions.get(1).id,true);
+        assertEquals(1,answer.size());
+        assertTrue("Milani".equalsIgnoreCase(answer.get(0).answer));
+        ArrayList<String> testAnswers = new ArrayList<>();
+        testAnswers.add("Milani");
+        assertTrue(AnswerChecker.checkAnswerBool(questions.get(1).id, testAnswers));
+        assertEquals(AnswerChecker.checkAnswer(questions.get(1).id, testAnswers), testAnswers);
+        con.closeDBConn();
+    }
+
 //    public void testJson(){
 //        String jsonString = "{\n" +
 //                "  \"creator_id\": 123,\n" +
@@ -592,3 +667,5 @@ public class Tests extends TestCase{
 //        }
 //    }
 }
+
+

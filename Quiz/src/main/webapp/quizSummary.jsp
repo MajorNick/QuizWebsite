@@ -1,12 +1,10 @@
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="Quiz.src.main.java.models.Quiz" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="Quiz.src.main.java.models.Question" %>
 <%@ page import="Quiz.src.main.java.models.User" %>
 <%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="Quiz.src.main.java.HelperMethods.CreateLittleStarRatings" %>
-<%@ page import="java.util.Collections" %>
-<%@ page import="java.util.Comparator" %>
+<%@ page import="java.util.*" %>
 <html>
 <title>
     Quiz summary
@@ -209,7 +207,7 @@
     int quizid = quiz.id;
     HttpSession ses = request.getSession();
     ses.setAttribute("iterator"+quizid+"_"+user1.getId(),null);
-
+    ses.setAttribute("practiceSession"+quizid,null);
     String ReportText = request.getParameter("reporttext");
     ReportText = ReportText == null ? "Inappropriate Quiz" : ReportText;
     ArrayList<Integer> iyo = new ArrayList<Integer>();
@@ -274,22 +272,20 @@
 <div>
     <p>Quiz Creator: <a href = <%="../userProfile.jsp?id="+quiz.creator_id%>><%=creator.getUsername()%></a></p>
 </div>
-<% } %>
+<% }
 
 
-<% if (user1 != null) { %>
+    if (user1 != null) { %>
 <div class = best_performances>
     <h3> Your Best Performances</h3>
-    <%
-
-    %>
     <%
         ArrayList<Integer> best = con.getYourBestPerformance(id,userId);
     %>
     <ul>
         <% for(int i : best){
+
             %>
-        <li> <%=i%></li>
+        <li> <%=(double)i%></li>
         <% } %>
     </ul>
 </div>
@@ -299,15 +295,20 @@
     <h3>Highest Scores</h3>
 
     <%
-        ArrayList<Integer> bestUsers = con.getBestPerformance(id,false);
+        List<Map.Entry<Integer, Double>> bestUsers = con.getBestPerformance(id,false);
     %>
 
 
     <ul>
-        <% for(int i : bestUsers){
-            User us = con.getUsers(i).get(0);%>
-        <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a></li>
-        <% } %>
+        <% for(Map.Entry<Integer,Double> entry : bestUsers){
+            User us = con.getUsers(entry.getKey()).get(0);
+            boolean canBeSeen = !us.isPrivate()||con.areFriends(us.getId(),userId);
+            if (canBeSeen){
+            %>
+            <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a> <%=entry.getValue()%></li>
+            <% }else{ %>
+            <li><%="anonymous"%> <%=entry.getValue()%></li>
+            <%}}%>
     </ul>
 </div>
 <div class = today_highest_scores>
@@ -317,23 +318,33 @@
     %>
 
     <ul>
-        <% for(int i : bestUsers){
-            User us = con.getUsers(i).get(0);%>
-        <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a></li>
-        <% } %>
+        <% for(Map.Entry<Integer,Double> entry : bestUsers){
+            User us = con.getUsers(entry.getKey()).get(0);
+            boolean canBeSeen = !us.isPrivate()||con.areFriends(us.getId(),userId);
+            if (canBeSeen){
+            %>
+            <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a> <%=entry.getValue()%></li>
+            <% }else{ %>
+            <li><%="anonymous"%> <%=entry.getValue()%></li>
+            <%}}%>
     </ul>
 </div>
 <div class = last_quiz_takers>
     <h3>3 Last Quiz Taker</h3>
     <%
-        ArrayList<Integer> lastTaker= con.getLastQuizPerformers(id);
+        List<Map.Entry<Integer, Double>> lastTaker = con.getLastQuizPerformers(id);
     %>
 
     <ul>
-        <% for(int i : lastTaker){
-            User us = con.getUsers(i).get(0);%>
-        <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a></li>
-        <% } %>
+        <% for(Map.Entry<Integer,Double> entry : lastTaker){
+            User us = con.getUsers(entry.getKey()).get(0);
+            boolean canBeSeen = !us.isPrivate()||con.areFriends(us.getId(),userId);
+            if (canBeSeen){
+        %>
+        <li><a href="<%="/userProfile.jsp?id="+us.getId()%>"><%=us.getUsername()%></a> <%=entry.getValue()%></li>
+        <% }else{ %>
+        <li><%="anonymous"%> <%=entry.getValue()%></li>
+        <%}}%>
     </ul>
 </div>
 <div class="flex-container">

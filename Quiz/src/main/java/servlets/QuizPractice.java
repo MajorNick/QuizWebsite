@@ -27,6 +27,7 @@ public class QuizPractice extends HttpServlet {
         int quizId = Integer.parseInt(req.getParameter("id"));
         String act = req.getParameter("action");
         if ("End Practice".equals(act)){
+            ses.setAttribute("practiceSession"+quizId,null);
             RequestDispatcher dispatcher = req.getRequestDispatcher(String.format("/quizSummary.jsp?id=%d",quizId));
             dispatcher.forward(req, resp);
 
