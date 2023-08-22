@@ -2,11 +2,10 @@ package Quiz;
 
 import Quiz.src.main.java.HelperMethods.PassHasher;
 import Quiz.src.main.java.models.*;
-import Quiz.src.main.java.servlets.CreateQuizJson;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import Quiz.src.main.java.models.enums.QuestionType;
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Tests extends TestCase{
 
@@ -199,4 +198,30 @@ public class Tests extends TestCase{
 //            e.printStackTrace();
 //        }
 //    }
+
+public void testQuestionTypeValues() {
+    assertEquals(0, QuestionType.QUESTION_RESPONSE.value);
+    assertEquals(1, QuestionType.FILL_IN_THE_BLANK.value);
+    assertEquals(2, QuestionType.MULTIPLE_CHOICE.value);
+    assertEquals(3, QuestionType.PICTURE_RESPONSE.value);
+    assertEquals(4, QuestionType.MULTI_ANSWER.value);
+    assertEquals(5, QuestionType.MULTI_AN_CHOICE.value);
+    assertEquals(6, QuestionType.MATCHING.value);
+}
+
+    public void testQuestionTypeFromInt() {
+        assertEquals(QuestionType.QUESTION_RESPONSE, QuestionType.fromInt(0));
+        assertEquals(QuestionType.FILL_IN_THE_BLANK, QuestionType.fromInt(1));
+        assertEquals(QuestionType.MULTIPLE_CHOICE, QuestionType.fromInt(2));
+        assertEquals(QuestionType.PICTURE_RESPONSE, QuestionType.fromInt(3));
+        assertEquals(QuestionType.MULTI_ANSWER, QuestionType.fromInt(4));
+        assertEquals(QuestionType.MULTI_AN_CHOICE, QuestionType.fromInt(5));
+        assertEquals(QuestionType.MATCHING, QuestionType.fromInt(6));
+    }
+
+    public void testQuestionTypeFromIntInvalidValue() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            QuestionType.fromInt(7);
+        });
+    }
 }
