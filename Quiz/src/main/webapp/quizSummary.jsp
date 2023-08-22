@@ -361,9 +361,8 @@
             checkbox.addEventListener('change', function () {
                 const isChecked = checkbox.checked;
                 quizForm.action = isChecked ? '<%="/quizSinglePage.jsp?id="+quiz.id+"&correction=true"%>' :'<%="/quizSinglePage.jsp?id="+quiz.id%>';
-                quizPracticeForm.action = isChecked ? '/preparePractice' : '/preparePractice';
+                quizPracticeForm.action = isChecked ? '/preparePractice?id=' +quizid: '/preparePractice?id=' +quizid;
             });
-
         });
 
     </script>

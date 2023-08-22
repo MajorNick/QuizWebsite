@@ -555,6 +555,13 @@ public class DBConn{
         return selection;
     }
 
+//    public boolean areFriends(int user_id, int target_id) {
+//        ArrayList<Friend> friends = getUserFriends(user_id);
+//        List<Integer> friend_id = friends.stream().map(Friend::getFriend_id).toList();
+//        if(friend_id.contains(target_id)) return true;
+//        return false;
+//    }
+
     public ArrayList<Friend> getUserFriends(int user_id) {
         String query = "SELECT * FROM friends";
         if(user_id != -1){

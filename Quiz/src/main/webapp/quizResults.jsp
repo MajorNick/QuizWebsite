@@ -479,6 +479,8 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                     ArrayList<Integer> gavlilebi = new ArrayList<Integer>();
                     for(int i = 0; i < quizHistoriess.size(); i++){
                     if(quizHistoriess.get(i) != null && !gavlilebi.contains(quizHistoriess.get(i).getUser_id())){
+                       User currUser = con.getUsers(quizHistoriess.get(i).getUser_id()).get(0);
+                       if((currUser.getId() == user.getId())||!currUser.isPrivate()||(currUser.isPrivate() && con.areFriends(user.getId(),currUser.getId()))){
                        %>
                     <tr>
                         <td><%= con.getUsers(quizHistoriess.get(i).getUser_id()).get(0).getUsername()%></td>
@@ -486,7 +488,7 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
                         <td><%=TimeInStrings.timeToStrings(quizHistoriess.get(i).getTime_taken())%></td>
                     </tr>
 
-                    <% }
+                    <% }}
                        gavlilebi.add(quizHistoriess.get(i).getUser_id());
                      } %>
                 </table>

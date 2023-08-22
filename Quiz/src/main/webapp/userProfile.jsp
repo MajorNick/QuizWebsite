@@ -251,6 +251,16 @@ button.navbarItem {
         }
     }
 
+    User targetUser = dbConn.getUsers(targetId).get(0);
+
+if(targetId != user.getId())
+    if(!user.isAdmin()){
+        if(targetUser.isPrivate() && !dbConn.areFriends(user.getId(), targetId)){
+            response.sendRedirect(request.getContextPath() + "/userProfile.jsp?id=" + user.getId());
+            return;
+        }
+    }
+
     String buttonName = !dbConn.getUsers(userId).get(0).isPrivate() ? "Make private" : "Make Public";
 
 
@@ -432,13 +442,13 @@ button.navbarItem {
                 <input type="hidden" name="userId" value="<%= userId %>">
                 <input type="hidden" name="targetId" value="<%= targetId %>">
               </form>
-
+              <%if(user.getId() == targetId){%>
               <form action="./makePrivate" method="post">
                   <br>
                   <button class="action-button"><%= buttonName %></button>
                   <input type="hidden" name="userId" value="<%= userId %>">
                </form>
-
+                <%}%>
             </div>
             </div>
 
