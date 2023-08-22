@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 
 public class Tests extends TestCase{
+    DBConn dbConn = new DBConn();
 
     public void testDBConn() {
         String AchBody = "test achievement 1";
@@ -21,7 +22,7 @@ public class Tests extends TestCase{
 
         int userId = 1;
 
-        DBConn dbConn = new DBConn();
+
 
         var achBefore = dbConn.getAchievements(-1);
         var annBefore = dbConn.getAnnouncements();
@@ -72,7 +73,9 @@ public class Tests extends TestCase{
         assertTrue(dbConn.getUsers(user1.getId()).get(0).getUsername().equals(user1.getUsername()));
         dbConn.removeUser(user1.getId());
 
-        dbConn.closeDBConn();
+
+        dbConn.restartDBbase("C:/Users/giorgi/IdeaProjects/oop-final-project-placefolder/oop_proj.sql");
+
 
     }
 
@@ -114,7 +117,7 @@ public class Tests extends TestCase{
             assertTrue(e.getMessage().equals("Provided UserAchievement is null"));
         }
 
-        dbConn.closeDBConn();
+
     }
 //    public void testJson(){
 //        String jsonString = "{\n" +

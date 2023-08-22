@@ -219,7 +219,6 @@
               <input class="navbarSubItem" name="search_text" rows="1" cols="30" placeholder="Look up user"/>
               <button class="action-button">Search User</button>
             </form>
-            <a href="<%= request.getContextPath() %>/createQuiz/index.jsp" class="middle-button"> Create Quiz </a>
             <form class="navbarItem" action="./AddCategory" method="post">
               <input class="navbarSubItem" name="add_text" rows="1" cols="30" placeholder="Add quiz category"/>
               <button class="action-button">Add Category</button>

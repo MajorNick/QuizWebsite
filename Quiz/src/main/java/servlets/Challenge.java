@@ -2,6 +2,7 @@ package Quiz.src.main.java.servlets;
 
 import Quiz.src.main.java.models.DBConn;
 import Quiz.src.main.java.models.Notification;
+import Quiz.src.main.java.models.QuizHistory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,6 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/Challenge")
@@ -34,12 +39,20 @@ public class Challenge extends HttpServlet {
         int quizId = Integer.parseInt(QuizId);
 
         // check if challenger completed quiz
+
         // get challenger score
 
         DBConn dbConn = new DBConn();
 
+        ArrayList<QuizHistory> quizHistories = dbConn.getUserQuizHistory(userId);
+
+        List<QuizHistory> ls = new ArrayList<>(quizHistories.stream().filter(a -> a.getQuiz_id() == quizId).toList());
+
         String quizLink = String.format("<a href=\"./quizSummary.jsp?id=%d\">%s</a>", quizId, dbConn.getQuizById(quizId).quiz_name);
-        String challengeText = String.format("%s has challenged you to %s", dbConn.getUsers(userId).get(0).getUsername(), quizLink);
+
+        String challengeText = !ls.isEmpty() ? String.format("%s has challenged you to %s\n%s got %s on this quiz.", dbConn.getUsers(userId).get(0).getUsername(), quizLink,dbConn.getUsers(userId).get(0).getUsername(),String.format("%.1f", ls.get(0).getScore())):
+                String.format("%s has challenged you to %s", dbConn.getUsers(userId).get(0).getUsername(), quizLink);
+
         System.out.println(challengeText);
 
         Notification notification = new Notification(-1, targetId, userId, "challenge", challengeText);

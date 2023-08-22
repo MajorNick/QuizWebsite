@@ -63,12 +63,33 @@
     DBConn con = new DBConn();
     Quiz quiz = con.getQuiz(quizID);
     ArrayList<Question> questions = (ArrayList) ses.getAttribute("shuffledQuestions"+quizID+"_"+user1.getId());
+
+
+    if(!quiz.rand_question_order){
+        questions = con.getQuestions(quizID);
+    }
+
     if(questions == null){
         questions = con.getQuestions(quizID);
         if(quiz.rand_question_order){
             Collections.shuffle(questions);
         }
         ses.setAttribute("shuffledQuestions"+quizID+"_"+user1.getId(),questions);
+    } else {
+        boolean b = false;
+        for(int i = 0; i < questions.size(); i++){
+            if(con.getQuestion(questions.get(i).id) == null){
+                b = true;
+                break;
+            }
+        }
+        if(b){
+            questions = con.getQuestions(quizID);
+            if(quiz.rand_question_order){
+                Collections.shuffle(questions);
+            }
+            ses.setAttribute("shuffledQuestions"+quizID+"_"+user1.getId(),questions);
+        }
     }
 
     if(iterator == null) {
