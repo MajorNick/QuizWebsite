@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Tests extends TestCase{
 
@@ -74,7 +77,7 @@ public class Tests extends TestCase{
         dbConn.removeUser(user1.getId());
 
 
-        dbConn.restartDBbase("C:/Users/giorgi/IdeaProjects/oop-final-project-placefolder/oop_proj.sql");
+        dbConn.restartDBbase("./oop_proj.sql");
 
 
     }
@@ -118,7 +121,60 @@ public class Tests extends TestCase{
         }
 
 
+
+
     }
+    public void testDbQuizHistoryDB(){
+        DBConn con = new DBConn();
+        QuizHistory qh1 = new QuizHistory(0,30,1,1,15);
+        QuizHistory qh2 = new QuizHistory(0,35,1,2,18);
+        QuizHistory qh3 = new QuizHistory(0,15,1,3,11);
+        QuizHistory[] histories = new QuizHistory[]{qh3,qh2,qh1};
+        con.insertQuizHistory(qh1);
+        con.insertQuizHistory(qh2);
+        con.insertQuizHistory(qh3);
+        List<Map.Entry<Integer, Double>> result = con.getLastQuizPerformers(1);
+        assertEquals(3,result.size());
+        int i=0;
+        List <Integer> ids = result.stream().map(Map.Entry<Integer, Double>::getKey).toList();
+        List <Double> scores = result.stream().map(Map.Entry<Integer, Double>::getValue).toList();
+        for(QuizHistory history : histories){
+            assertTrue(ids.contains(history.getUser_id()));
+        }
+        for(QuizHistory history : histories){
+            assertTrue(scores.contains(history.getScore()));
+        }
+        con.restartDBbase("./oop_proj.sql");
+        con.closeDBConn();
+    }
+
+    public void testDBHighScore(){
+        DBConn con = new DBConn();
+        QuizHistory qh1 = new QuizHistory(0,110,1,1,15);
+        QuizHistory qh2 = new QuizHistory(0,120,1,2,18);
+        QuizHistory qh3 = new QuizHistory(0,130,1,3,11);
+        QuizHistory[] histories = new QuizHistory[]{qh3,qh2,qh1};
+        con.insertQuizHistory(qh1);
+        con.insertQuizHistory(qh2);
+        con.insertQuizHistory(qh3);
+        List<Map.Entry<Integer, Double>> result = con.getBestPerformance(1,true);
+        assertEquals(3,result.size());
+
+        List <Integer> ids = result.stream().map(Map.Entry<Integer, Double>::getKey).toList();
+        List <Double> scores = result.stream().map(Map.Entry<Integer, Double>::getValue).toList();
+        int i = 0;
+        for(QuizHistory history : histories){
+            assertEquals(history.getScore(),scores.get(i++));
+        }
+        i=0;
+        ;
+        for(QuizHistory history : histories){
+            assertEquals(history.getUser_id(),(int)ids.get(i++));
+        }
+        con.restartDBbase("./oop_proj.sql");
+        con.closeDBConn();
+    }
+
 //    public void testJson(){
 //        String jsonString = "{\n" +
 //                "  \"creator_id\": 123,\n" +
@@ -200,3 +256,5 @@ public class Tests extends TestCase{
 //        }
 //    }
 }
+
+
