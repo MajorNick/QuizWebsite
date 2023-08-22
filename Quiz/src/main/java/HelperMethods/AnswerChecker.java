@@ -119,4 +119,22 @@ public class AnswerChecker {
         }
         return score;
     }
+    public static boolean checkAnswerBool(int questionId,ArrayList<String> givenAnswers){
+        DBConn con = new DBConn();
+        Question quest = con.getQuestion(questionId);
+        List<Answer> answers = con.getAnswers(questionId,true);
+        ArrayList<String> correctAnswers= new ArrayList<>();
+        double score = answers.size();
+        if(quest.isMultiAnswerType()){
+            for (Answer answer : answers) {
+                if (!givenAnswers.contains(answer.answer)) {
+                    return false;
+                }
+            }
+        }else{
+
+            return givenAnswers.contains(answers.get(0).answer);
+        }
+        return true;
+    }
 }

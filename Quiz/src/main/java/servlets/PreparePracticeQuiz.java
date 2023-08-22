@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
 
@@ -21,17 +23,17 @@ public class PreparePracticeQuiz extends HttpServlet{
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int quizId = Integer.parseInt(req.getParameter("id"));
 
-        LinkedHashMap<Question, ArrayList<Answer>> sessionQuestions = new LinkedHashMap<>();
+        LinkedHashMap<Question, Integer> correctness = new LinkedHashMap<>();
         DBConn con = new DBConn();
         ArrayList<Question> questions = con.getQuestions(quizId);
         for(Question quest : questions){
-            sessionQuestions.put(quest,con.getAnswers(quest.quiz_id,true));
+            correctness.put(quest,0);
         }
         HttpSession session = req.getSession();
-        session.setAttribute("questionMap",sessionQuestions);
-        session.setAttribute("trialsLeft",3);
 
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/quizPractice");
+        session.setAttribute(String.format("practiceSession%d",quizId),correctness);
+
+        RequestDispatcher dispatcher = req.getRequestDispatcher(String.format("/practice.jsp?id=%d",quizId));
         dispatcher.forward(req, resp);
     }
 
