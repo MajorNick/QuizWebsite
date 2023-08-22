@@ -4,6 +4,7 @@ package Quiz.src.main.java.servlets;
 import Quiz.src.main.java.HelperMethods.CreateLittleStarRatings;
 import Quiz.src.main.java.models.DBConn;
 import Quiz.src.main.java.models.User;
+import Quiz.src.main.java.models.UserBan;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,6 +25,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException, IOException {
         DBConn acc = (DBConn) getServletContext().getAttribute("manacc");
 
+
         String name = httpServletRequest.getParameter("username");
         ArrayList<User> user = acc.getUsersByUsername(name);
 
@@ -32,6 +34,15 @@ public class LoginServlet extends HttpServlet {
             String password = httpServletRequest.getParameter("password");
             password = hashPassword(password);
             if (user.get(0).getPasswordHash().equals(password)) {
+                UserBan userban = acc.getUserBan(user.get(0).getId());
+                if (userban != null) {
+                    if(userban.userStillBanned()){
+                        httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/MainPageServlet");
+                        return;
+                    } else {
+                        acc.removeUserBan(user.get(0).getId());
+                    }
+                }
                 HttpSession session = httpServletRequest.getSession();
 
                 session.setAttribute("loggedIn", true);

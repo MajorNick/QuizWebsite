@@ -91,6 +91,24 @@ public class DBConn{
         executeUpdate(q);
     }
 
+    public void insertUserBan(UserBan u){
+        if(u == null)
+            throw new RuntimeException("Provided userBan is null");
+
+        String query = "INSERT INTO userBan (user_id, ban_until) VALUES (?, ?)";
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, u.user_id);
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(u.getBan_Unitl()));
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        executeUpdate(query);
+    }
+
     public void insertCategory(Categorya c){
         if(c == null)
             throw new RuntimeException("Provided Category is null");
@@ -432,6 +450,26 @@ public class DBConn{
         return selection;
     }
 
+    public UserBan getUserBan(int userId) {
+        String query = "SELECT * FROM UserBan";
+        if(userId != -1){
+            query = String.format("SELECT * FROM UserBan u where u.user_id = %d", userId);
+        }
+
+        UserBan userBan = null;
+        try{
+            executeQuery(query);
+
+            if(rs.next()){
+                userBan = new UserBan(rs.getInt("id"), rs.getInt("user_id"),rs.getTimestamp("ban_until").toLocalDateTime(),-1);
+            }
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return userBan;
+    }
+
     public boolean isAdmin(int id) {
         String query = "SELECT * FROM users";
         if(id != -1){
@@ -541,6 +579,11 @@ public class DBConn{
 
     public void removeUser(int user_id){
         String q = String.format("DELETE FROM users u WHERE (u.id = %d)", user_id);
+        executeUpdate(q);
+    }
+
+    public void removeUserBan(int userId){
+        String q = String.format("DELETE FROM userBan u WHERE (u.user_id = %d)", userId);
         executeUpdate(q);
     }
 

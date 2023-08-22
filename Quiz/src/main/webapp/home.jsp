@@ -195,6 +195,15 @@
             response.sendRedirect(request.getContextPath() + "/MainPageServlet");
             return;
         }
+        UserBan userban = dbConn.getUserBan(user.getId());
+        if (userban != null) {
+            if(userban.userStillBanned()){
+                response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+                return;
+            } else {
+                dbConn.removeUserBan(user.getId());
+            }
+        }
         ArrayList<User> users = dbConn.getUsersByUsername(user.getUsername());
         if(users.isEmpty()){
             response.sendRedirect(request.getContextPath() + "/MainPageServlet");

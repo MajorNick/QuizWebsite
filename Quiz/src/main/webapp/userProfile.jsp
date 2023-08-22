@@ -4,6 +4,7 @@
 <%@ page import="Quiz.src.main.java.models.Notification" %>
 <%@ page import="Quiz.src.main.java.models.QuizHistory" %>
 <%@ page import="Quiz.src.main.java.models.Quiz" %>
+<%@ page import="Quiz.src.main.java.models.*" %>
 <%@ page import="Quiz.src.main.java.models.DBConn" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
@@ -68,6 +69,16 @@ button.navbarItem {
     border: 2px solid #007bff;
     border-radius: 12px;
 }
+.ban-user-container {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+
+.ban-user-container form {
+    margin-bottom: 10px;
+}
+
 
 .block-contents {
     display: flex;
@@ -206,7 +217,6 @@ button.navbarItem {
 
 
 </style>
-  <!-- get userId from context !!! -->
   <%
     DBConn dbConn=new DBConn();
     User user = (User) session.getAttribute("user");
@@ -214,13 +224,35 @@ button.navbarItem {
         response.sendRedirect(request.getContextPath() + "/MainPageServlet");
         return;
     }
+    UserBan userban1 = dbConn.getUserBan(user.getId());
+
+    if (userban1 != null) {
+        if(userban1.userStillBanned()){
+            response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+            return;
+        } else {
+            dbConn.removeUserBan(user.getId());
+        }
+    }
     int userId= user.getId();
     String TargetId = request.getParameter("id");
+    TargetId = TargetId == null ? ""+userId : TargetId;
+    int targetId=Integer.parseInt(TargetId);
+
+    UserBan targetBan = dbConn.getUserBan(targetId);
+    if(!user.isAdmin()){
+        if (targetBan != null) {
+            if(targetBan.userStillBanned()){
+                response.sendRedirect(request.getContextPath() + "/userProfile.jsp?id=" + user.getId());
+                return;
+            } else {
+                dbConn.removeUserBan(targetBan.user_id);
+            }
+        }
+    }
 
     String buttonName = !dbConn.getUsers(userId).get(0).isPrivate() ? "Make private" : "Make Public";
 
-    TargetId = TargetId == null ? ""+userId : TargetId;
-    int targetId=Integer.parseInt(TargetId);
 
     String AddFriendText = request.getParameter("addfriendtext");
     AddFriendText = AddFriendText == null ? "Add friend" : AddFriendText;
@@ -319,18 +351,32 @@ button.navbarItem {
     </div>
     <div class="right-side1">
         <% if (user.isAdmin() && userId != targetId) { %>
-        <form class="navbarItem" action="./BanUser" method="post">
-          <button id = "id2" class="action-button">Ban User</button>
-          <input type="hidden" name="userId" value="<%= userId %>">
-          <input type="hidden" name="targetId" value="<%= targetId %>">
-        </form>
+        <div class="ban-user-container">
+            <form class="navbarItem" action="./BanUser" method="post">
+                <% UserBan userban = dbConn.getUserBan(targetId);
+                 if (userban == null) { %>
+                <label for="banDays">Days:</label>
+                <input type="number" id="banDays" name="banDays" min="1" value="1" style="width: 50px;">
 
+                <button id="id2" class="action-button">Ban User</button>
+                <input type="hidden" name="userId" value="<%= userId %>">
+                <input type="hidden" name="targetId" value="<%= targetId %>">
+                <%
+                } else {%>
+                    <button id="id2" class="action-button">unBan User</button>
+                    <input type="hidden" name="userId" value="<%= userId %>">
+                    <input type="hidden" name="targetId" value="<%= targetId %>">
+                <%
+                }%>
+            </form>
+        </div>
         <form class="navbarItem" action="./RemoveAccount" method="post">
-          <button id = "id" class="action-button">Remove Account</button>
-          <input type="hidden" name="userId" value="<%= userId %>">
-          <input type="hidden" name="targetId" value="<%= targetId %>">
+            <button id="id" class="action-button">Remove Account</button>
+            <input type="hidden" name="userId" value="<%= userId %>">
+            <input type="hidden" name="targetId" value="<%= targetId %>">
         </form>
         <% } %>
+
 
         <% if (user.isAdmin() && userId == targetId) { %>
            <a href="<%= request.getContextPath() %>/adminPage.jsp" class="admin-button">Admin</a>

@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS quiz_tags;
 DROP TABLE IF EXISTS rateAndReview;
 DROP TABLE IF EXISTS quizzes;
 DROP TABLE IF EXISTS quiz_categories;
+DROP TABLE IF EXISTS userBan;
 DROP TABLE IF EXISTS users;
 
 
@@ -33,6 +34,13 @@ CREATE TABLE users (
 
 INSERT INTO users (username, password_hash, role, isPrivate)
 VALUES ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin', false);
+
+CREATE TABLE userBan (
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	user_id INT,
+	ban_until TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 CREATE TABLE friends (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
