@@ -175,7 +175,6 @@ for(int i = 0; i < questions.size(); i++){
         }
     }
 
-    ArrayList<String> userAnswersSingle = (ArrayList<String>)ses.getAttribute("question" + i +"_"+quizID+"_"+user.getId());
 
 
     if (questionType == QuestionType.QUESTION_RESPONSE){
