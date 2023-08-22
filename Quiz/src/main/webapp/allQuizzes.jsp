@@ -153,8 +153,12 @@
         quizzes = dbConn.getRecentlyCreatedQuizzes(-1);
     } else if ("Recently Taken Quizzes".equals(type)) {
         ArrayList<QuizHistory> quizHist = dbConn.getUserRecentQuizHistory(targetId);
+        ArrayList<Integer> alreadyAdded = new ArrayList<Integer>();
         for(QuizHistory qh : quizHist) {
-            quizzes.add(dbConn.getQuizById(qh.getQuiz_id()));
+            if(!alreadyAdded.contains(qh.getQuiz_id())) {
+                quizzes.add(dbConn.getQuizById(qh.getQuiz_id()));
+                alreadyAdded.add(qh.getQuiz_id());
+            }
         }
     } else if ("My Recently Created Quizzes".equals(type)) {
         quizzes = dbConn.getRecentlyCreatedQuizzes(targetId);

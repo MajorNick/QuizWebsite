@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 
 public class Tests extends TestCase{
-    DBConn dbConn = new DBConn();
+
 
     public void testDBConn() {
         String AchBody = "test achievement 1";
@@ -22,7 +22,7 @@ public class Tests extends TestCase{
 
         int userId = 1;
 
-
+        DBConn dbConn = new DBConn();
 
         var achBefore = dbConn.getAchievements(-1);
         var annBefore = dbConn.getAnnouncements();

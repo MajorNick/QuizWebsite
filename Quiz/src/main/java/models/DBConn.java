@@ -460,7 +460,7 @@ public class DBConn{
 
     public ArrayList<User> getUsersByUsername(String username) {
         String query = "SELECT * FROM users";
-            query = String.format("SELECT * FROM users u where u.username = '%s'", username);
+        query = String.format("SELECT * FROM users u where u.username = '%s'", username);
 
         ArrayList<User> selection = new ArrayList<>();
         try{
@@ -618,9 +618,6 @@ public class DBConn{
         try{
             executeQuery(q);
             rs.next();
-            if(rs == null){
-                return false;
-            }
 
             int friends = rs.getInt("are_friends");
             System.out.println(friends);
@@ -898,7 +895,6 @@ public class DBConn{
         try{
             executeQuery(quizzesQuery);
             rs.next();
-
              result = new Quiz(rs.getInt("id"),
                     rs.getInt("creator_id"),
                     rs.getString("quiz_name"),
@@ -1022,8 +1018,7 @@ public class DBConn{
         Question selection;
         try{
             executeQuery(questionQuery);
-            rs.next();
-
+                rs.next();
                 Question question  = new Question(rs.getInt("id"),
                         rs.getInt("quiz_id"),
                         rs.getString("question"),

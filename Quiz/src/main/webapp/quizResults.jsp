@@ -111,6 +111,20 @@
               flex: 1;
               margin-right: 20px;
           }
+          .homeButton {
+              background-color: #007bff;
+              color: #ffffff;
+              position: absolute;
+              top: 0;
+              right: 0;
+              margin: 10px;
+              padding: 10px;
+              border: none;
+              border-radius: 5px;
+              font-size: 16px;
+              cursor: pointer;
+              box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          }
       </style>
 </head>
 
@@ -318,6 +332,11 @@ if(iyo == null || (user.getId() == iyo.get(1) && quizID == iyo.get(2) && iyo.get
         <header>
             <h1>Quiz Results</h1>
         </header>
+
+        <a href="<%= " quizSummary.jsp?id=" + quizID %>">
+            <button class="homeButton">Done</button>
+        </a>
+
         <div class="score">
             Your Score: <%=totalScore%> out of <%=correctAnswers1.size()%>
              <br>
