@@ -2,9 +2,10 @@ package Quiz.src.main.java.models;
 
 import Quiz.src.main.java.models.enums.QuestionType;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Question{
+public class Question implements Serializable {
     public int id;
     public int quiz_id;
     public String question;

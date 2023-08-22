@@ -24,6 +24,7 @@
         color: white;
         cursor: pointer;
         border-radius: 5px;
+        font-weight: bold;
     }
 </style>
 <html>
