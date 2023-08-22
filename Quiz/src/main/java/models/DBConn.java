@@ -1165,7 +1165,6 @@ public class DBConn{
         try{
             executeQuery(q);
             rs.next();
-
             int cur_id = rs.getInt("cur_id");
             return  cur_id;
         } catch (Exception e){
