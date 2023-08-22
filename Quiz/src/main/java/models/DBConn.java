@@ -21,10 +21,11 @@ public class DBConn{
         try{
             conn = DriverManager.getConnection("jdbc:mysql://" + server, account, password);
             stmt = conn.createStatement();
+
             executeUpdate("USE " + database);
         } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     public void restartDBbase(String filePath){
@@ -56,6 +57,7 @@ public class DBConn{
     private void executeQuery(String q) {
         try{
             System.out.println(String.format("Executing querry: %s", q));
+
             rs = stmt.executeQuery(q);
         } catch (Exception e){
             System.out.println("query: " + q + " " + e.getMessage());
@@ -966,22 +968,21 @@ public class DBConn{
     public ArrayList<Integer> getBestPerformance(int quiz_id,boolean today){
         String query;
         if (today){
-            query = "SELECT user_id, MAX(score) AS max_score " +
+            query = String.format("SELECT user_id, MAX(score) AS max_score " +
                     "FROM quiz_history " +
-                    "WHERE DATE(take_date) = CURDATE() " +
-                    "GROUP BY user_id " +
-                    "ORDER BY total_score DESC " +
-                    "LIMIT 3;";
-        }else{
-            query = "SELECT user_id, MAX(score) AS max_score " +
-                    "FROM quiz_history " +
-                    "WHERE DATE_ADD(CURDATE(), INTERVAL 0 DAY) = DATE(user_id) " +
+                    "WHERE  DATE(take_date) = CURDATE() AND quiz_id = %d " +
                     "GROUP BY user_id " +
                     "ORDER BY max_score DESC " +
-                    "LIMIT 3;";
+                    "LIMIT 3;",quiz_id);
+        }else{
+            query = String.format("SELECT user_id, MAX(score) AS max_score " +
+                    "FROM quiz_history " +
+                    "WHERE   quiz_id = %d  " +
+                    "GROUP BY user_id " +
+                    "ORDER BY max_score DESC " +
+                    "LIMIT 3;",quiz_id);
 
         }
-
         ArrayList<Integer> users = new ArrayList<>();
         try{
             executeQuery(query);
