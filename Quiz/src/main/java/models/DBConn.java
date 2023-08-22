@@ -803,9 +803,7 @@ public class DBConn{
         try{
             executeQuery(quizzesQuery);
             rs.next();
-            if(rs == null){
-                return -1;
-            }
+
             id = rs.getInt("id");
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -900,9 +898,7 @@ public class DBConn{
         try{
             executeQuery(quizzesQuery);
             rs.next();
-            if(rs == null){
-                return result;
-            }
+
              result = new Quiz(rs.getInt("id"),
                     rs.getInt("creator_id"),
                     rs.getString("quiz_name"),
@@ -1026,11 +1022,9 @@ public class DBConn{
         Question selection;
         try{
             executeQuery(questionQuery);
-                rs.next();
 
-            if(rs == null){
-                return null;
-            }
+
+
                 Question question  = new Question(rs.getInt("id"),
                         rs.getInt("quiz_id"),
                         rs.getString("question"),
@@ -1162,9 +1156,7 @@ public class DBConn{
         try{
             executeQuery(q);
             rs.next();
-            if(rs == null){
-                return -1;
-            }
+
             int nextId = rs.getInt("next_id");
             return  nextId;
         } catch (Exception e){
@@ -1179,9 +1171,7 @@ public class DBConn{
         try{
             executeQuery(q);
             rs.next();
-            if(rs == null){
-                return -1;
-            }
+
             int cur_id = rs.getInt("cur_id");
             return  cur_id;
         } catch (Exception e){
@@ -1252,9 +1242,7 @@ public class DBConn{
         try{
             executeQuery(q);
             rs.next();
-            if(rs == null){
-                return -1;
-            }
+
             int cur_id = rs.getInt("cur_id");
             return  cur_id;
         } catch (Exception e) {
@@ -1275,9 +1263,7 @@ public class DBConn{
         try{
             executeQuery(q);
             rs.next();
-            if(rs == null){
-                return -1;
-            }
+
 
             int category_id = rs.getInt("category_id");
             System.out.println("quiz category ID: " + category_id);
