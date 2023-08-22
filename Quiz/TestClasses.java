@@ -97,7 +97,7 @@ public class TestClasses extends TestCase{
         assertTrue(quiz.rand_question_order);
     }
 
-    public void testQuizHistoryConstructorAndGetters() {
+    public void testQuizHistory() {
         QuizHistory quizHistory = new QuizHistory(1, 7.5, 1, 1, 10);
         LocalDateTime takeDate = LocalDateTime.now();
         quizHistory.setTakeDate(takeDate);
@@ -114,4 +114,7 @@ public class TestClasses extends TestCase{
         assertTrue(quiz.equals(quizHistory2.getQuiz()));
     }
 
+    public void testRateAndReview() {
+
+    }
 }
