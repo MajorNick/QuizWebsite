@@ -27,8 +27,7 @@ public class RemoveQuizHistory extends HttpServlet {
         dbConn.closeDBConn();
 
 
-        response.sendRedirect("quiz.jsp");
-
+        response.sendRedirect("./quizSummary.jsp?id=" + Quizid);
     }
 }
 
