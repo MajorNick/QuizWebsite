@@ -241,7 +241,6 @@ CREATE TABLE user_achievements (
        (3,'veqtoruli veli',true),
        (4,'enaa',true),
        (6,'tornike ramishvili',TRUE),
-       (6,'giorgi lekva lekveishvili',TRUE),
        (7,'tornike ramishvili',TRUE),
        (7,'nika tarkashvili',TRUE),
        (7,'giorgi javakhishvili',TRUE),

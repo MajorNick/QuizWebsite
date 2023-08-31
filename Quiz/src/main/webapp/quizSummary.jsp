@@ -206,20 +206,27 @@
     User creator = con.getUsers(quiz.creator_id).get(0);
     int quizid = quiz.id;
     HttpSession ses = request.getSession();
-    ses.setAttribute("iterator"+quizid+"_"+user1.getId(),null);
-    ses.setAttribute("practiceSession"+quizid,null);
+    if(user1 !=null ){
+        ses.setAttribute("iterator"+quizid+"_"+user1.getId(),null);
+        ses.setAttribute("practiceSession"+quizid,null);
+    }
+
     String ReportText = request.getParameter("reporttext");
     ReportText = ReportText == null ? "Inappropriate Quiz" : ReportText;
-    ArrayList<Integer> iyo = new ArrayList<Integer>();
-    iyo.add(0);
-    iyo.add(user.getId());
-    iyo.add(quizid);
+    if (user1 != null) {
+        ArrayList<Integer> iyo = new ArrayList<Integer>();
+        iyo.add(0);
+        iyo.add(user.getId());
+        iyo.add(quizid);
 
-    session.setAttribute("xulignobs"+quizid+"_"+user.getId(), iyo);
-    ArrayList<Question> questions = con.getQuestions(quizid);
-    for(int i = 0; i < questions.size(); i++){
-        session.setAttribute("question" + i+"_" + quizid + "_" + userId, null);
-        session.setAttribute("daechira" + i + "_" + quizid + "_" + user1.getId(), false);
+        session.setAttribute("xulignobs" + quizid + "_" + user.getId(), iyo);
+
+
+        ArrayList<Question> questions = con.getQuestions(quizid);
+        for (int i = 0; i < questions.size(); i++) {
+            session.setAttribute("question" + i + "_" + quizid + "_" + userId, null);
+            session.setAttribute("daechira" + i + "_" + quizid + "_" + user1.getId(), false);
+        }
     }
 %>
 
