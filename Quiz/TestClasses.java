@@ -1,24 +1,22 @@
 package Quiz;
 
 import Quiz.src.main.java.models.*;
+import Quiz.src.main.java.models.enums.QuestionType;
 import junit.framework.TestCase;
 import java.time.LocalDateTime;
 
 public class TestClasses extends TestCase{
-    public void testAchievementGetters() {
+    public void testAchievement() {
         Achievement achievement = new Achievement(1, "Prolific Author", "Create 5 quizzes");
         assertEquals(1, achievement.getId());
         assertEquals("Prolific Author", achievement.getAchievementBody());
         assertEquals("Create 5 quizzes", achievement.getAchievementToEarn());
-    }
 
+        Achievement achievement1 = new Achievement(1, "Amateur Author", "Create your first quiz");
+        assertNull(achievement1.getAchievementIcon());
 
-    public void testAchievementIcon() {
-        Achievement achievement = new Achievement(1, "Amateur Author", "Create your first quiz");
-        assertNull(achievement.getAchievementIcon());
-
-        achievement.setAchievementIcon("icon.png");
-        assertEquals("icon.png", achievement.getAchievementIcon());
+        achievement1.setAchievementIcon("icon.png");
+        assertEquals("icon.png", achievement1.getAchievementIcon());
     }
 
     public void testAnnouncement() {
@@ -37,6 +35,7 @@ public class TestClasses extends TestCase{
         Answer answer1 = new Answer(1, 2, "B", false);
         assertEquals("Answer{answer='B', isCorrect=false}", answer1.toString());
         assertFalse(answer1.question_id == 3);
+        assertEquals("B", answer1.getAnswer());
     }
 
     public void testCategorya() {
@@ -97,7 +96,7 @@ public class TestClasses extends TestCase{
         assertTrue(quiz.rand_question_order);
     }
 
-    public void testQuizHistoryConstructorAndGetters() {
+    public void testQuizHistory() {
         QuizHistory quizHistory = new QuizHistory(1, 7.5, 1, 1, 10);
         LocalDateTime takeDate = LocalDateTime.now();
         quizHistory.setTakeDate(takeDate);
@@ -114,4 +113,72 @@ public class TestClasses extends TestCase{
         assertTrue(quiz.equals(quizHistory2.getQuiz()));
     }
 
+    public void testRateAndReview() {
+        rateAndReview r = new rateAndReview(1,1,1,5,"Good quiz");
+        assertEquals(1, r.id);
+        assertEquals(1, r.quizId);
+        assertEquals(1, r.userId);
+        assertEquals(5, r.rating);
+        assertEquals("Good quiz", r.review);
+    }
+
+    public void testTag() {
+        Tag t = new Tag(1,"Test");
+        assertEquals(1, t.id);
+        assertEquals("Test", t.tag);
+        assertFalse(t.tag.equals("test"));
+    }
+
+    public void testTagQuiz() {
+        TagQuiz t = new TagQuiz(1, 2, 3);
+        assertEquals(1, t.id);
+        assertEquals(2, t.tag_id);
+        assertEquals(3, t.quiz_id);
+    }
+
+    public void testUser() {
+        int id = 1;
+        String username = "testUser";
+        String passwordHash = "hashedPassword";
+        String role = "user";
+        boolean isPrivate = true;
+
+        User testUser = new User(id, username, passwordHash, role, isPrivate);
+
+        assertEquals(id, testUser.getId());
+        assertEquals(username, testUser.getUsername());
+        assertEquals(passwordHash, testUser.getPasswordHash());
+        assertEquals(role, testUser.getRole());
+        assertTrue(testUser.isPrivate());
+
+        User admin = new User(1, "admin", "adminpass", "admin", false);
+        assertTrue(admin.isAdmin());
+
+        User user = new User(2, "user", "userpass", "user", false);
+        assertFalse(user.isAdmin());
+
+        user.setPfpLink("Profile Picture");
+        assertFalse(user.getPfpLink().equals(null));
+        assertTrue(user.getPfpLink().equals("Profile Picture"));
+    }
+
+    public void testUserAchievement() {
+        UserAchievement userAchievement = new UserAchievement(1, 1, 3);
+        assertEquals(1, userAchievement.getId());
+        assertEquals(1, userAchievement.getUserId());
+        assertEquals(3, userAchievement.getAchievementId());
+    }
+
+    public void testQuestionType() {
+        int validValue = 2;
+        QuestionType questionType = QuestionType.fromInt(validValue);
+        assertEquals(QuestionType.MULTIPLE_CHOICE, questionType);
+
+        int invalidValue = 7;
+        try {
+            QuestionType.fromInt(invalidValue);
+        } catch(IllegalArgumentException e) {
+            assertEquals(" 7", e.getMessage());
+        }
+    }
 }

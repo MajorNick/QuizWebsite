@@ -97,7 +97,9 @@
         <input type="radio" name=<%="question"+i%> value="<%=answers.get(j).answer%>"> <%=answers.get(j).answer%><br>
 
     <% } } else if (questionType == QuestionType.PICTURE_RESPONSE) { %>
+        <p>Question <%= i + 1 %>: </p>
         <img src=<%=question.question%>  width="300" height="200" style="border: 2px solid black;">
+        <br><br>
         <input type="text" name=<%="question"+i%>>
 
     <% } else if (questionType == QuestionType.MULTI_ANSWER) { %>
