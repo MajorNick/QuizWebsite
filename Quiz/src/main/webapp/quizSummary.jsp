@@ -228,7 +228,7 @@
 <div class  = header>
     <div class= "lft" >
     <header style = "color: white">
-        Quiz Summary
+        <a class = "user-link" href="./home.jsp">Home</a>
     </header>
     </div>
     <% if (user1 != null) { %>
