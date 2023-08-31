@@ -422,12 +422,14 @@ if(targetId != user.getId())
                 <% } %>
             </div>
             <div class="right-side">
+              <% if(userId != targetId) { %>
               <form action="./AddFriend" method="post">
                 <button class="<%= friendButtonClass %>"><%= AddFriendText%></button>
                 <input type="hidden" name="userId" value="<%= userId %>">
                 <input type="hidden" name="targetId" value="<%= targetId %>">
                 <input type="hidden" name="removeFriend" value="<%= removeParam %>">
               </form>
+              <% } %>
               <form action="./Challenge" method="post">
                 <input name="quizId" class="note_text" placeholder="<%= ChallengeText%>" type="number" step="1"></input>
                 <br>
