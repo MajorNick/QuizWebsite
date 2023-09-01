@@ -220,7 +220,7 @@ button.navbarItem {
   <%
     DBConn dbConn=new DBConn();
     User user = (User) session.getAttribute("user");
-    if (user == null) {
+    if (user == null || dbConn.getUsers(user.getId()).isEmpty()) {
         response.sendRedirect(request.getContextPath() + "/MainPageServlet");
         return;
     }

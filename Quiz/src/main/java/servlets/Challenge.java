@@ -44,6 +44,12 @@ public class Challenge extends HttpServlet {
 
         DBConn dbConn = new DBConn();
 
+        if(dbConn.getQuizById(quizId) == null) {
+            String redirectUrl = String.format("./userProfile.jsp?id=%d&challengetext=%s", targetId, "Incorrect Quiz Id");
+            response.sendRedirect(redirectUrl);
+            return;
+        }
+
         ArrayList<QuizHistory> quizHistories = dbConn.getUserQuizHistory(userId);
 
         List<QuizHistory> ls = new ArrayList<>(quizHistories.stream().filter(a -> a.getQuiz_id() == quizId).toList());

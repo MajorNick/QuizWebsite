@@ -1152,6 +1152,12 @@ public class DBConn{
         return q;
     }
 
+    public Quiz getlastQuizadded(){
+        int id = getNextQuizId();
+        Quiz q = getQuiz(id - 1);
+        return q;
+    }
+
     public ArrayList<Quiz> getRecentlyCreatedQuizzes(int creator_id){
         String query = String.format("SELECT * FROM quizzes ORDER BY id DESC");
         if(creator_id != -1) {

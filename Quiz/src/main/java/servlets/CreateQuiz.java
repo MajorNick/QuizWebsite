@@ -90,7 +90,10 @@ public class CreateQuiz extends HttpServlet {
             dbConn.trimQuiz(quiz);
         } else {
             dbConn.insertQuiz(quiz);
+            quiz = dbConn.getlastQuizadded();
+            quizId = quiz.id;
         }
+
         ArrayList<Question> questionsToInsert = new ArrayList<>();
         ArrayList<Answer> answersToInsert = new ArrayList<>();
 
@@ -113,15 +116,15 @@ public class CreateQuiz extends HttpServlet {
             int question_num = i;
 
             Question question = new Question(questionId, quizId, questionText, questionType_INT, question_num);
-//            dbConn.insertQuestion(question);
-            questionsToInsert.add(question);
+            dbConn.insertQuestion(question);
+            //questionsToInsert.add(question);
 
             if(questionType_INT == 0 || questionType_INT == 3){                                     // 1/1 answer
                 String answer_text = request.getParameter(String.format("q%d", i));
                 boolean is_correct = true;
-                Answer answer = new Answer(-1, questionId, answer_text, is_correct);
-//                dbConn.insertAnswer(answer);
-                answersToInsert.add(answer);
+                Answer answer = new Answer(-1, dbConn.getLastQuestionId(), answer_text, is_correct);
+                dbConn.insertAnswer(answer);
+                //answersToInsert.add(answer);
 
             } else if(questionType_INT == 1 || questionType_INT == 4){                              // n/n answers
                 for(int k = 1; k <= answerCount_Int; k++) {
@@ -129,9 +132,9 @@ public class CreateQuiz extends HttpServlet {
                     String answer_text = request.getParameter(String.format("q%d-ans%d", i, k));
                     System.out.println("answer_text: " + answer_text);
                     boolean is_correct = true;
-                    Answer answer = new Answer(-1, questionId, answer_text, is_correct);
-                    answersToInsert.add(answer);
-//                    dbConn.insertAnswer(answer);
+                    Answer answer = new Answer(-1, dbConn.getLastQuestionId(), answer_text, is_correct);
+                   // answersToInsert.add(answer);
+                    dbConn.insertAnswer(answer);
                 }
             } else if(questionType_INT == 2){                                                       // 1/n answer
                 String correctAnswerIndex = request.getParameter(String.format("rb%d", i));
@@ -144,9 +147,9 @@ public class CreateQuiz extends HttpServlet {
                     int answer_num = k;
                     String answer_text = request.getParameter(String.format("q%d-ans%d", i, k));
                     boolean is_correct = k == correctAnswerIndex_INT;
-                    Answer answer = new Answer(-1, questionId, answer_text, is_correct);
-                    answersToInsert.add(answer);
-//                    dbConn.insertAnswer(answer);
+                    Answer answer = new Answer(-1, dbConn.getLastQuestionId(), answer_text, is_correct);
+//                    answersToInsert.add(answer);
+                    dbConn.insertAnswer(answer);
                 }
             } else if(questionType_INT == 5){                                                       // m/n answer
                 for(int k = 1; k <= answerCount_Int; k++) {
@@ -155,9 +158,9 @@ public class CreateQuiz extends HttpServlet {
                     boolean is_correct = parseBooleanFromReq(isCorrect);
 
                     String answer_text = request.getParameter(String.format("q%d-ans%d", i, k));
-                    Answer answer = new Answer(-1, questionId, answer_text, is_correct);
-                    answersToInsert.add(answer);
-//                    dbConn.insertAnswer(answer);
+                    Answer answer = new Answer(-1, dbConn.getLastQuestionId(), answer_text, is_correct);
+//                    answersToInsert.add(answer);
+                    dbConn.insertAnswer(answer);
                 }
             }
         }
@@ -193,20 +196,25 @@ public class CreateQuiz extends HttpServlet {
 
         if(!editingQuiz){
             int quizNum = dbConn.getQuizNumCreatedByUser(creator_id);
-            if(quizNum == 1){
+            ArrayList<Achievement> userAchievements = dbConn.getUserAchievements(creator_id);
+            int isttr = 0;
+            for(int d = 0 ; d < userAchievements.size(); d++){
+                int id = userAchievements.get(d).getId();
+                if(id == 1 || id == 2 || id == 3) isttr ++;
+            }
+            if(quizNum == 1 && isttr == 0){
                 UserAchievement userAchievement = new UserAchievement(-1, creator_id, 1);
                 dbConn.insertUserAchievement(userAchievement);
-            } else if(quizNum == 5){
+            } else if(quizNum == 5 && isttr == 1){
                 UserAchievement userAchievement = new UserAchievement(-1, creator_id, 2);
                 dbConn.insertUserAchievement(userAchievement);
-            } else if(quizNum == 10){
+            } else if(quizNum == 10 && isttr == 2){
                 UserAchievement userAchievement = new UserAchievement(-1, creator_id, 3);
                 dbConn.insertUserAchievement(userAchievement);
             }
         }
 
         dbConn.closeDBConn();
-
-        response.sendRedirect("./quizSummary.jsp?id=" + quiz.id);
+        response.sendRedirect("./quizSummary.jsp?id=" + quizId);
     }
 }

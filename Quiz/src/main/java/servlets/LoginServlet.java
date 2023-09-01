@@ -23,6 +23,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException, IOException {
+        System.out.println("login servlet");
         DBConn acc = (DBConn) getServletContext().getAttribute("manacc");
 
 

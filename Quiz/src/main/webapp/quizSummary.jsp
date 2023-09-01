@@ -197,6 +197,10 @@
     //int id = 1;
     //int userid=1;
     Quiz quiz = con.getQuiz(id);
+    if(quiz == null){
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
     User user = user1;
     if (user1 != null) {
     ArrayList<User> u = con.getUsers(userId);
@@ -385,7 +389,7 @@
 
     </script>
     <% } %>
-    <%if(user1 != null) {%>
+    <%if(user1 != null && user1.getId() == creator.getId()) {%>
         <form id="quizPracticeForm1" action="./EditQuiz?userId=<%=userId%>&&quizId=<%=quizid%>" method="POST">
             <button class="test_start_button">Edit Quiz</button>
         </form>

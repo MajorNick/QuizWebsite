@@ -552,6 +552,11 @@ public class Tests extends TestCase{
     public void testDBExceptions(){
         DBConn dbConn = new DBConn();
 
+        User user = new User(1, "giro", "wayiraveba","user", true);
+        dbConn.makeUserAdmin(1);
+
+        assertTrue(dbConn.getUsers(1).get(0).isAdmin());
+
         try{
             dbConn.insertAchievement(null);
         } catch (Exception e) {

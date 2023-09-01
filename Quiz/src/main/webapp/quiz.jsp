@@ -61,6 +61,10 @@
 
     ArrayList<Question> questions = con.getQuestions(quizID);
     Quiz quiz = con.getQuiz(quizID);
+    if(quiz == null) {
+        response.sendRedirect(request.getContextPath() + "/MainPageServlet");
+        return;
+    }
     if (quiz.rand_question_order) {
         Collections.shuffle(questions);
     }
